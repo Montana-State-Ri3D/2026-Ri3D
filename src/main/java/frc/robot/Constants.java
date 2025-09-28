@@ -18,6 +18,10 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -41,13 +45,34 @@ public final class Constants {
   }
 
   public static class DriveConstants {
-    // Location of the wheels relative to the robot center
-    public static Translation2d[] WHEEL_OFFSETS = {
+    public static final int NUM_MODULES = 4;
+
+    public static final LinearVelocity MAX_LINEAR_SPEED =
+        Units.MetersPerSecond.of(4); // TODO: find actual value
+
+    public static final double GEAR_RATIO = 1; // TODO: find actual value
+
+    public static final Distance WHEEL_RAD = Units.Inch.of(3);
+
+    public static final Distance WHEEL_CIRC = WHEEL_RAD.times(Math.PI * 2);
+
+    // Location of the wheels relative to the robot center TODO: measure imperically before driving robot!
+    public static final Translation2d[] WHEEL_OFFSETS = {
       new Translation2d(0.381, 0.381),
       new Translation2d(0.381, -0.381),
       new Translation2d(-0.381, 0.381),
       new Translation2d(-0.381, -0.381)
     };
+
+    // Creating my kinematics object using the wheel locations.
+    public static final MecanumDriveKinematics KINEMATICS =
+        new MecanumDriveKinematics(
+            DriveConstants.WHEEL_OFFSETS[0],
+            DriveConstants.WHEEL_OFFSETS[1],
+            DriveConstants.WHEEL_OFFSETS[2],
+            DriveConstants.WHEEL_OFFSETS[3]);
+
+    public static final boolean[] MOTOR_INVERTS = {false, false, true, true};
   }
 
   public class VisionConstants {
@@ -87,5 +112,14 @@ public final class Constants {
     public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
     public static double angularStdDevMegatag2Factor =
         Double.POSITIVE_INFINITY; // No rotation data available
+  }
+
+  public class CanIDs {
+    public static final int FRONT_LEFT_DRIVE_CAN_ID = 1;
+    public static final int FRONT_RIGHT_DRIVE_CAN_ID = 2;
+    public static final int BACK_LEFT_DRIVE_CAN_ID = 3;
+    public static final int BACK_RIGHT_DRIVE_CAN_ID = 4;
+    public static final int[] DRIVE_CAN_IDS = {FRONT_LEFT_DRIVE_CAN_ID, FRONT_RIGHT_DRIVE_CAN_ID, BACK_LEFT_DRIVE_CAN_ID, BACK_RIGHT_DRIVE_CAN_ID};
+    public static final int PIGEON_CAN_ID = 5;
   }
 }
