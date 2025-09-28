@@ -50,7 +50,7 @@ public final class Constants {
     public static final LinearVelocity MAX_LINEAR_SPEED =
         Units.MetersPerSecond.of(4); // TODO: find actual value
 
-    public static final double GEAR_RATIO = 1; // TODO: find actual value
+    public static final double GEAR_RATIO = 16;
 
     public static final Distance WHEEL_RAD = Units.Inch.of(3);
 
