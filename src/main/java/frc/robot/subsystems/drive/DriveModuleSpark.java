@@ -53,6 +53,6 @@ public class DriveModuleSpark extends SubsystemBase {
 
   public Distance getAbsolutePosition() {
     return DriveConstants.WHEEL_CIRC.times(
-        motor.getAbsoluteEncoder().getPosition() * DriveConstants.GEAR_RATIO);
+        motor.getAbsoluteEncoder().getPosition() / DriveConstants.GEAR_RATIO);
   }
 }
