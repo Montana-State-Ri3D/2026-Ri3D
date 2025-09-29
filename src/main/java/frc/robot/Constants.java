@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -20,6 +23,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -50,11 +54,22 @@ public final class Constants {
     public static final LinearVelocity MAX_LINEAR_SPEED =
         Units.MetersPerSecond.of(4); // TODO: find actual value
 
+    public static final AngularVelocity MAX_ANGULAR_SPEED = Units.RadiansPerSecond.of(7); // TODO: find actual value
+
     public static final double GEAR_RATIO = 16;
 
     public static final Distance WHEEL_RAD = Units.Inch.of(3);
 
     public static final Distance WHEEL_CIRC = WHEEL_RAD.times(Math.PI * 2);
+
+    public static final SparkMaxConfig MOTOR_CONFIG(int id) {
+      SparkMaxConfig config = new SparkMaxConfig();
+      config.absoluteEncoder.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
+      config.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      return config;
+    }
 
     // Location of the wheels relative to the robot center TODO: measure imperically before driving robot!
     public static final Translation2d[] WHEEL_OFFSETS = {
