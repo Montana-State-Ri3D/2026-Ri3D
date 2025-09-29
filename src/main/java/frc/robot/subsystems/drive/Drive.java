@@ -10,6 +10,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.drive.gyro.GyroIO;
 import frc.robot.subsystems.drive.gyro.GyroIOInputsAutoLogged;
@@ -32,9 +33,16 @@ public class Drive extends SubsystemBase {
           new MecanumDriveWheelPositions(),
           Pose2d.kZero);
 
+  // TODO: tune PID
+  private LoggedTunableNumber tunableP = new LoggedTunableNumber("Drive/pidf/p", 0);
+  private LoggedTunableNumber tunableI = new LoggedTunableNumber("Drive/pidf/i", 0);
+  private LoggedTunableNumber tunableD = new LoggedTunableNumber("Drive/pidf/d", 0);
+  private LoggedTunableNumber tunableFF = new LoggedTunableNumber("Drive/pidf/ff", 0);
+
   public Drive(DriveIO io, GyroIO gyroIO) {
     this.io = io;
     this.gyroIO = gyroIO;
+    updateConstants();
   }
 
   @Override
@@ -43,14 +51,17 @@ public class Drive extends SubsystemBase {
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive", inputs);
     poseEstimator.update(gyroInputs.yawPosition, inputs.positions);
+
+    int hc = hashCode();
+    if(tunableP.hasChanged(hc) || tunableI.hasChanged(hc) || tunableD.hasChanged(hc) || tunableFF.hasChanged(hc)) updateConstants();
+  }
+
+  private void updateConstants(){
+    io.updateConstants(tunableP.get(), tunableI.get(), tunableD.get(), tunableFF.get());
   }
 
   public void driveRobotCentric(ChassisSpeeds speeds) {
     io.setVelocity(speeds);
-  }
-
-  public void driveFieldCentric(ChassisSpeeds speeds) {
-    driveRobotCentric(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation()));
   }
 
   /** Adds a new timestamped vision measurement. */
