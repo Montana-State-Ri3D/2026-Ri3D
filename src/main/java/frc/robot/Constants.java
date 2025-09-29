@@ -26,6 +26,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -47,6 +48,8 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static final Voltage MAX_VOLTAGE = Units.Volts.of(12);
 
   public static class DriveConstants {
     public static final int NUM_MODULES = 4;

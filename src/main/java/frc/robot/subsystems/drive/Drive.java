@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.DriveConstants;
@@ -93,5 +94,9 @@ public class Drive extends SubsystemBase {
 
   public void stop(){
     io.setVoltage(Units.Volts.of(0));
+  }
+
+  public void setModuleVoltages(Voltage[] volts){
+    io.setVoltage(volts);
   }
 }

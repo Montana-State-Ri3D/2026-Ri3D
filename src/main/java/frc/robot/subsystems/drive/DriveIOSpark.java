@@ -5,7 +5,6 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
-import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.DriveConstants;
 
 public class DriveIOSpark implements DriveIO {
@@ -68,6 +67,13 @@ public class DriveIOSpark implements DriveIO {
     for (DriveModuleSpark module : modules) {
       module.setVoltage(volts);
     }
+  }
+
+  @Override
+  public void setVoltage(Voltage[] volts) {
+      for (int i = 0; i < DriveConstants.NUM_MODULES; i++) {
+        modules[i].setVoltage(volts[i]);
+      }
   }
 
   @Override
