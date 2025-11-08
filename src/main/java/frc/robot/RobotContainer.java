@@ -16,12 +16,23 @@ package frc.robot;
 import static frc.robot.subsystems.vision.VisionConstants.*;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.LoggedTunableNumber;
+import frc.robot.commands.Intake;
+import frc.robot.commands.Shoot;
+import frc.robot.subsystems.Inshooter.Inshooter;
+import frc.robot.subsystems.Inshooter.InshooterIO;
+import frc.robot.subsystems.Inshooter.InshooterIOReal;
 import frc.robot.subsystems.drive.DemoDrive;
+import frc.robot.subsystems.pivot.Pivot;
+import frc.robot.subsystems.pivot.PivotIO;
+import frc.robot.subsystems.pivot.PivotIOReal;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOLimelight;
@@ -35,9 +46,17 @@ import frc.robot.subsystems.vision.VisionIOPhotonVisionSim;
  */
 public class RobotContainer {
   private final Vision vision;
+  private final Inshooter inshooter;
+  private final Pivot pivot;
+
+  private final LoggedTunableNumber tunableInshooterVoltage = new LoggedTunableNumber("Inshooter/TunableInshooterVoltage", 0);
+  private final LoggedTunableNumber tunableInshooterVelocity = new LoggedTunableNumber("Inshooter/TunableInshooterVelocity", 0);
+  private final LoggedTunableNumber tunablePivotVoltage = new LoggedTunableNumber("Pivot/TunablePivotVoltage", 0);
+  private final LoggedTunableNumber tunablePivotAngleDegrees = new LoggedTunableNumber("Pivot/TunablePivotAngleDegrees", 0);
 
   private final DemoDrive drive = new DemoDrive(); // Demo drive subsystem, sim only
-  private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
+  // private final CommandGenericHID keyboard = new CommandGenericHID(0); // Keyboard 0 on port 0
+  private final CommandXboxController controller = new CommandXboxController(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -54,6 +73,8 @@ public class RobotContainer {
         //         demoDrive::addVisionMeasurement,
         //         new VisionIOPhotonVision(camera0Name, robotToCamera0),
         //         new VisionIOPhotonVision(camera1Name, robotToCamera1));
+        inshooter = new Inshooter(new InshooterIOReal());
+        pivot = new Pivot(new PivotIOReal());
         break;
 
       case SIM:
@@ -63,12 +84,16 @@ public class RobotContainer {
                 drive::addVisionMeasurement,
                 new VisionIOPhotonVisionSim(camera0Name, robotToCamera0, drive::getPose),
                 new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
+        inshooter = new Inshooter(new InshooterIO() {});
+        pivot = new Pivot(new PivotIO(){});
         break;
 
       default:
         // Replayed robot, disable IO implementations
         // (Use same number of dummy implementations as the real robot)
         vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
+        inshooter = new Inshooter(new InshooterIO() {});
+        pivot = new Pivot(new PivotIO(){});
         break;
     }
 
@@ -83,29 +108,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Joystick drive command
-    drive.setDefaultCommand(
-        Commands.run(
-            () -> {
-              drive.run(-keyboard.getRawAxis(1), -keyboard.getRawAxis(0));
-            },
-            drive));
-
-    // Auto aim command example
-    @SuppressWarnings("resource")
-    PIDController aimController = new PIDController(0.2, 0.0, 0.0);
-    aimController.enableContinuousInput(-Math.PI, Math.PI);
-    keyboard
-        .button(1)
-        .whileTrue(
-            Commands.startRun(
-                () -> {
-                  aimController.reset();
-                },
-                () -> {
-                  drive.run(0.0, aimController.calculate(vision.getTargetX(0).getRadians()));
-                },
-                drive));
+    controller.rightBumper().whileTrue(new Intake(inshooter, pivot));
+    controller.rightTrigger().whileTrue(new Shoot(inshooter));
+    controller.a().whileTrue(Commands.run(() -> inshooter.setVoltage(tunableInshooterVoltage.get())).finallyDo(() -> inshooter.setVoltage(0)));
+    controller.b().whileTrue(Commands.run(() -> inshooter.setVelocity(tunableInshooterVelocity.get())).finallyDo(() -> inshooter.setVoltage(0)));
+    controller.y().whileTrue(Commands.run(() -> pivot.setVoltage(tunablePivotVoltage.get())).finallyDo(() -> pivot.setVoltage(0)));
+    controller.x().whileTrue(Commands.run(() -> pivot.setAngle(Rotation2d.fromDegrees(tunablePivotAngleDegrees.get()))).finallyDo(() -> pivot.setVoltage(0)));
   }
 
   /**
