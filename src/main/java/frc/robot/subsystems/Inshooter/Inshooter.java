@@ -4,20 +4,22 @@
 
 package frc.robot.subsystems.Inshooter;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.LoggedTunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class Inshooter extends SubsystemBase {
 
   private InshooterIO io;
-  private InshooterIO.Inputs inputs;
+  private InshooterIOInputsAutoLogged inputs = new InshooterIOInputsAutoLogged();
 
   private LoggedTunableNumber p = new LoggedTunableNumber("Inshooter/p", 0);
   private LoggedTunableNumber i = new LoggedTunableNumber("Inshooter/i", 0);
   private LoggedTunableNumber d = new LoggedTunableNumber("Inshooter/d", 0);
-  private LoggedTunableNumber f = new LoggedTunableNumber("Inshooter/f", 0);
+  private LoggedTunableNumber f = new LoggedTunableNumber("Inshooter/f", 0.000151);
+
+  private LoggedTunableNumber toleranceRPM = new LoggedTunableNumber("Inshooter/toleranceRPM", 200);
+  private double targetVelRPM = 0;
 
   /** Creates a new Inshooter. */
   public Inshooter(InshooterIO io) {
@@ -28,8 +30,9 @@ public class Inshooter extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("Inshooter", inputs);
     int hc = hashCode();
-    if(p.hasChanged(hc) || i.hasChanged(hc) || d.hasChanged(hc) || f.hasChanged(hc)) configMotor();
+    if (p.hasChanged(hc) || i.hasChanged(hc) || d.hasChanged(hc) || f.hasChanged(hc)) configMotor();
   }
 
   public void setVoltage(double volts) {
@@ -38,10 +41,15 @@ public class Inshooter extends SubsystemBase {
 
   public void setVelocity(double velocityRPM) {
     Logger.recordOutput("Inshooter/TargetVelocityRPM", velocityRPM);
+    targetVelRPM = velocityRPM;
     io.setVelocity(velocityRPM);
   }
 
   public void configMotor() {
     io.configMotor(p.get(), i.get(), d.get(), f.get());
+  }
+
+  public boolean isAtTargetVel() {
+    return Math.abs(targetVelRPM - inputs.velocityRPM) < toleranceRPM.get();
   }
 }

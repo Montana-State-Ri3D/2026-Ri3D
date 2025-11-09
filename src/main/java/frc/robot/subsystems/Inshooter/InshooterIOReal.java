@@ -1,27 +1,28 @@
 package frc.robot.subsystems.Inshooter;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import frc.robot.Constants.CanIDs;
 
 public class InshooterIOReal implements InshooterIO {
 
-  private SparkFlex motor = new SparkFlex(0, MotorType.kBrushless);
+  private SparkFlex motor = new SparkFlex(CanIDs.INSHOOTER_ID, MotorType.kBrushless);
   private RelativeEncoder encoder;
   private SparkClosedLoopController closedLoop;
 
   public InshooterIOReal() {
     closedLoop = motor.getClosedLoopController();
-    encoder = motor.getExternalEncoder();
+    encoder = motor.getEncoder();
   }
 
   @Override
-  public void updateInputs(Inputs inputs) {
+  public void updateInputs(InshooterIOInputs inputs) {
     inputs.voltage = motor.getBusVoltage();
     inputs.velocityRPM = encoder.getVelocity();
     inputs.current = motor.getOutputCurrent();

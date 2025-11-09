@@ -35,10 +35,12 @@ public final class Constants {
     REPLAY
   }
 
-  public static class InshooterConstants{
+  public static class CanIDs {
+    public static final int INSHOOTER_ID = 1;
+    public static final int PIVOT_ID = 2;
   }
 
-  public static class CanIDs{
-    
+  public static class PivotConstants {
+    public static final double GEAR_RATIO = 140.0;
   }
 }

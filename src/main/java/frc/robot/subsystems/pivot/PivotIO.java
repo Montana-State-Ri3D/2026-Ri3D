@@ -6,17 +6,19 @@ import org.littletonrobotics.junction.AutoLog;
 public interface PivotIO {
 
   @AutoLog
-  public class Inputs {
-    double volts;
-    Rotation2d angle;
-    double current;
+  public static class PivotIOInputs {
+    public double volts;
+    public Rotation2d angle = Rotation2d.kZero;
+    public double current;
   }
 
-  public default void updateInputs(Inputs inputs){}
+  public default void updateInputs(PivotIOInputs inputs) {}
 
-  public default void setVoltage(double volts){}
+  public default void setVoltage(double volts) {}
 
-  public default void setAngle(Rotation2d angle){}
+  public default void setAngle(Rotation2d angle) {}
 
-  public default void configMotor(double p, double i, double d, double f){}
+  public default void configMotor(double p, double i, double d, double f) {}
+
+  public default void resetSensorPosition(Rotation2d angle) {}
 }

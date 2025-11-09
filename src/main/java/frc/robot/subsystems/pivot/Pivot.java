@@ -4,18 +4,17 @@
 
 package frc.robot.subsystems.pivot;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.LoggedTunableNumber;
+import org.littletonrobotics.junction.Logger;
 
 public class Pivot extends SubsystemBase {
 
   private PivotIO io;
-  private PivotIO.Inputs inputs;
+  private PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
 
-  private LoggedTunableNumber p = new LoggedTunableNumber("Pivot/p", 0);
+  private LoggedTunableNumber p = new LoggedTunableNumber("Pivot/p", 0.02);
   private LoggedTunableNumber i = new LoggedTunableNumber("Pivot/i", 0);
   private LoggedTunableNumber d = new LoggedTunableNumber("Pivot/d", 0);
   private LoggedTunableNumber f = new LoggedTunableNumber("Pivot/f", 0);
@@ -29,8 +28,9 @@ public class Pivot extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("Pivot", inputs);
     int hc = hashCode();
-    if(p.hasChanged(hc) || i.hasChanged(hc) || d.hasChanged(hc) || f.hasChanged(hc)) configMotor();
+    if (p.hasChanged(hc) || i.hasChanged(hc) || d.hasChanged(hc) || f.hasChanged(hc)) configMotor();
   }
 
   public void setVoltage(double volts) {
@@ -44,5 +44,9 @@ public class Pivot extends SubsystemBase {
 
   public void configMotor() {
     io.configMotor(p.get(), i.get(), d.get(), f.get());
+  }
+
+  public void zeroMotor() {
+    io.resetSensorPosition(Rotation2d.kZero);
   }
 }
