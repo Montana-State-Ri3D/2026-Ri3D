@@ -22,10 +22,10 @@ public class DriveIOSpark implements DriveIO {
   public void updateInputs(DriveIOInputs inputs) {
     inputs.positions =
         new MecanumDriveWheelPositions(
-            modules[0].getAbsolutePosition(),
-            modules[1].getAbsolutePosition(),
-            modules[2].getAbsolutePosition(),
-            modules[3].getAbsolutePosition());
+            modules[0].getRelativePosition(),
+            modules[1].getRelativePosition(),
+            modules[2].getRelativePosition(),
+            modules[3].getRelativePosition());
     inputs.realSpeeds =
         DriveConstants.KINEMATICS.toChassisSpeeds(
             new MecanumDriveWheelSpeeds(

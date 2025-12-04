@@ -2,12 +2,14 @@ package frc.robot.subsystems.drive;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkFlex;
 
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -18,18 +20,21 @@ import org.littletonrobotics.junction.Logger;
 
 public class DriveModuleSpark extends SubsystemBase {
 
-  private final SparkMax motor;
+  private final SparkFlex motor;
+  private final RelativeEncoder encoder;
   private final int id;
 
   public DriveModuleSpark(int id) {
     this.id = id;
-    motor = new SparkMax(CanIDs.DRIVE_CAN_IDS[id], MotorType.kBrushless);
+    motor = new SparkFlex(CanIDs.DRIVE_CAN_IDS[id], MotorType.kBrushless);
+    encoder = motor.getEncoder();
   }
 
   @Override
   public void periodic() {
     Logger.recordOutput("Drive/Module" + id + "/voltage", motor.getAppliedOutput());
-    Logger.recordOutput("Drive/Module" + id + "/vel", getVel());
+    Logger.recordOutput("Drive/Module" + id + "/relativePosMeters", getRelativePosition().in(Units.Meter));
+    Logger.recordOutput("Drive/Module" + id + "/velMetersPerSecond", getVel().in(Units.MetersPerSecond));
     Logger.recordOutput("Drive/Module" + id + "/current", motor.getOutputCurrent());
   }
 
@@ -38,16 +43,15 @@ public class DriveModuleSpark extends SubsystemBase {
   }
 
   public void setVelocity(LinearVelocity vel) {
-    motor.getClosedLoopController().setReference(vel.div(DriveConstants.MAX_LINEAR_SPEED).magnitude(), ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+    motor.getClosedLoopController().setReference(Units.RadiansPerSecond.of(vel.div(DriveConstants.WHEEL_RAD).magnitude()).in(Units.RPM) / DriveConstants.GEAR_RATIO, ControlType.kVelocity, ClosedLoopSlot.kSlot0);
   }
 
   public LinearVelocity getVel() {
-    return DriveConstants.MAX_LINEAR_SPEED.times(motor.get());
+    return Units.MetersPerSecond.of(Units.RPM.of(encoder.getVelocity()).in(Units.RadiansPerSecond) * DriveConstants.WHEEL_RAD.in(Units.Meter));
   }
 
-  public Distance getAbsolutePosition() {
-    return DriveConstants.WHEEL_CIRC.times(
-        motor.getAbsoluteEncoder().getPosition() / DriveConstants.GEAR_RATIO);
+  public Distance getRelativePosition() {
+    return Units.Meter.of(Units.Rotations.of(encoder.getPosition()).in(Units.Radians) * DriveConstants.WHEEL_RAD.in(Units.Meter));
   }
 
   public void updateMotorConfig(double p, double i, double d, double ff){

@@ -71,6 +71,8 @@ public final class Constants {
       config.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
       config.idleMode(IdleMode.kBrake);
       config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(GEAR_RATIO);
+      config.encoder.velocityConversionFactor(GEAR_RATIO);
       return config;
     }
 
