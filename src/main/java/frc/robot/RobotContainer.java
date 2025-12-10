@@ -95,7 +95,7 @@ public class RobotContainer {
     return Commands.none();
   }
 
-  public void onDisabled(){
+  public void onDisabled() {
     drive.stop();
   }
 }

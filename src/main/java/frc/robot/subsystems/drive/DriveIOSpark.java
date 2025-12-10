@@ -39,7 +39,8 @@ public class DriveIOSpark implements DriveIO {
   @Override
   public void setVelocity(ChassisSpeeds speeds) {
     // Convert to wheel speeds
-    MecanumDriveWheelSpeeds wheelSpeeds = constrainSpeedsToMaxSpeed(DriveConstants.KINEMATICS.toWheelSpeeds(speeds));
+    MecanumDriveWheelSpeeds wheelSpeeds =
+        constrainSpeedsToMaxSpeed(DriveConstants.KINEMATICS.toWheelSpeeds(speeds));
     // Store desired speed
     desiredSpeeds = DriveConstants.KINEMATICS.toChassisSpeeds(wheelSpeeds);
     // Set the individual wheel speeds
@@ -49,14 +50,14 @@ public class DriveIOSpark implements DriveIO {
     modules[3].setVelocity(Units.MetersPerSecond.of(wheelSpeeds.rearRightMetersPerSecond));
   }
 
-  private MecanumDriveWheelSpeeds constrainSpeedsToMaxSpeed(MecanumDriveWheelSpeeds speeds){
+  private MecanumDriveWheelSpeeds constrainSpeedsToMaxSpeed(MecanumDriveWheelSpeeds speeds) {
     double max = 0;
-    if(speeds.frontLeftMetersPerSecond > max) max = speeds.frontLeftMetersPerSecond;
-    if(speeds.frontRightMetersPerSecond > max) max = speeds.frontRightMetersPerSecond;
-    if(speeds.rearLeftMetersPerSecond > max) max = speeds.rearLeftMetersPerSecond;
-    if(speeds.rearRightMetersPerSecond > max) max = speeds.rearRightMetersPerSecond;
+    if (speeds.frontLeftMetersPerSecond > max) max = speeds.frontLeftMetersPerSecond;
+    if (speeds.frontRightMetersPerSecond > max) max = speeds.frontRightMetersPerSecond;
+    if (speeds.rearLeftMetersPerSecond > max) max = speeds.rearLeftMetersPerSecond;
+    if (speeds.rearRightMetersPerSecond > max) max = speeds.rearRightMetersPerSecond;
     double multiplier = 1;
-    if(max > DriveConstants.MAX_LINEAR_SPEED.in(Units.MetersPerSecond)){
+    if (max > DriveConstants.MAX_LINEAR_SPEED.in(Units.MetersPerSecond)) {
       multiplier = DriveConstants.MAX_LINEAR_SPEED.in(Units.MetersPerSecond);
     }
     return speeds.times(multiplier);
@@ -71,15 +72,15 @@ public class DriveIOSpark implements DriveIO {
 
   @Override
   public void setVoltage(Voltage[] volts) {
-      for (int i = 0; i < DriveConstants.NUM_MODULES; i++) {
-        modules[i].setVoltage(volts[i]);
-      }
+    for (int i = 0; i < DriveConstants.NUM_MODULES; i++) {
+      modules[i].setVoltage(volts[i]);
+    }
   }
 
   @Override
   public void updateConstants(double p, double i, double d, double ff) {
-      for (DriveModuleSpark module : modules) {
-        module.updateMotorConfig(p, i, d, ff);
-      }
+    for (DriveModuleSpark module : modules) {
+      module.updateMotorConfig(p, i, d, ff);
+    }
   }
 }

@@ -15,7 +15,6 @@ import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.drive.gyro.GyroIO;
 import frc.robot.subsystems.drive.gyro.GyroIOInputsAutoLogged;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -54,10 +53,13 @@ public class Drive extends SubsystemBase {
     poseEstimator.update(gyroInputs.yawPosition, inputs.positions);
 
     int hc = hashCode();
-    if(tunableP.hasChanged(hc) || tunableI.hasChanged(hc) || tunableD.hasChanged(hc) || tunableFF.hasChanged(hc)) updateConstants();
+    if (tunableP.hasChanged(hc)
+        || tunableI.hasChanged(hc)
+        || tunableD.hasChanged(hc)
+        || tunableFF.hasChanged(hc)) updateConstants();
   }
 
-  private void updateConstants(){
+  private void updateConstants() {
     io.updateConstants(tunableP.get(), tunableI.get(), tunableD.get(), tunableFF.get());
   }
 
@@ -70,9 +72,9 @@ public class Drive extends SubsystemBase {
       Pose2d visionRobotPoseMeters,
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
-        poseEstimator.addVisionMeasurement(
+    poseEstimator.addVisionMeasurement(
         visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
-      }
+  }
 
   /** Returns the latest estimated rotation from the pose estimator. */
   public Rotation2d getRotation() {
@@ -92,11 +94,11 @@ public class Drive extends SubsystemBase {
     poseEstimator.resetRotation(rot);
   }
 
-  public void stop(){
+  public void stop() {
     io.setVoltage(Units.Volts.of(0));
   }
 
-  public void setModuleVoltages(Voltage[] volts){
+  public void setModuleVoltages(Voltage[] volts) {
     io.setVoltage(volts);
   }
 }

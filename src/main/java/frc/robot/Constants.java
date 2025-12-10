@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -57,7 +56,8 @@ public final class Constants {
     public static final LinearVelocity MAX_LINEAR_SPEED =
         Units.MetersPerSecond.of(4); // TODO: find actual value
 
-    public static final AngularVelocity MAX_ANGULAR_SPEED = Units.RadiansPerSecond.of(7); // TODO: find actual value
+    public static final AngularVelocity MAX_ANGULAR_SPEED =
+        Units.RadiansPerSecond.of(7); // TODO: find actual value
 
     public static final double GEAR_RATIO = 16;
 
@@ -76,7 +76,8 @@ public final class Constants {
       return config;
     }
 
-    // Location of the wheels relative to the robot center TODO: measure imperically before driving robot!
+    // Location of the wheels relative to the robot center TODO: measure imperically before driving
+    // robot!
     public static final Translation2d[] WHEEL_OFFSETS = {
       new Translation2d(0.381, 0.381),
       new Translation2d(0.381, -0.381),
@@ -139,7 +140,12 @@ public final class Constants {
     public static final int FRONT_RIGHT_DRIVE_CAN_ID = 2;
     public static final int BACK_LEFT_DRIVE_CAN_ID = 3;
     public static final int BACK_RIGHT_DRIVE_CAN_ID = 4;
-    public static final int[] DRIVE_CAN_IDS = {FRONT_LEFT_DRIVE_CAN_ID, FRONT_RIGHT_DRIVE_CAN_ID, BACK_LEFT_DRIVE_CAN_ID, BACK_RIGHT_DRIVE_CAN_ID};
+    public static final int[] DRIVE_CAN_IDS = {
+      FRONT_LEFT_DRIVE_CAN_ID,
+      FRONT_RIGHT_DRIVE_CAN_ID,
+      BACK_LEFT_DRIVE_CAN_ID,
+      BACK_RIGHT_DRIVE_CAN_ID
+    };
     public static final int PIGEON_CAN_ID = 5;
   }
 }

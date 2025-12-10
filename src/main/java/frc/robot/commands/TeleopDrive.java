@@ -35,9 +35,9 @@ public class TeleopDrive extends Command {
   public void execute() {
     LinearVelocity speedX = DriveConstants.MAX_LINEAR_SPEED.times(controller.getLeftY());
     LinearVelocity speedY = DriveConstants.MAX_LINEAR_SPEED.times(-controller.getLeftX());
-    if(DriverStation.getAlliance().get().equals(Alliance.Red)){
-        speedX = speedX.unaryMinus();
-        speedY = speedY.unaryMinus();
+    if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
+      speedX = speedX.unaryMinus();
+      speedY = speedY.unaryMinus();
     }
     drive.driveRobotCentric(
         ChassisSpeeds.fromFieldRelativeSpeeds(
