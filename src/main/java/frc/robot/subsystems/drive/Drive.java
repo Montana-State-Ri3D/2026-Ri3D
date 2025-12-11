@@ -37,7 +37,7 @@ public class Drive extends SubsystemBase {
   private LoggedTunableNumber tunableP = new LoggedTunableNumber("Drive/pidf/p", 0);
   private LoggedTunableNumber tunableI = new LoggedTunableNumber("Drive/pidf/i", 0);
   private LoggedTunableNumber tunableD = new LoggedTunableNumber("Drive/pidf/d", 0);
-  private LoggedTunableNumber tunableFF = new LoggedTunableNumber("Drive/pidf/ff", 0);
+  private LoggedTunableNumber tunableFF = new LoggedTunableNumber("Drive/pidf/ff", 0.009);
 
   public Drive(DriveIO io, GyroIO gyroIO) {
     this.io = io;
