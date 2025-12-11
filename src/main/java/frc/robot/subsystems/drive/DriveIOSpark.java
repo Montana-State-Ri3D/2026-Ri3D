@@ -8,7 +8,7 @@ import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants.DriveConstants;
 
 public class DriveIOSpark implements DriveIO {
-  private DriveModuleSpark[] modules;
+  private DriveModuleSpark[] modules = new DriveModuleSpark[DriveConstants.NUM_MODULES];
 
   private ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
 
@@ -38,11 +38,13 @@ public class DriveIOSpark implements DriveIO {
 
   @Override
   public void setVelocity(ChassisSpeeds speeds) {
+    System.out.println("Ori" + speeds.vxMetersPerSecond);
     // Convert to wheel speeds
     MecanumDriveWheelSpeeds wheelSpeeds =
         constrainSpeedsToMaxSpeed(DriveConstants.KINEMATICS.toWheelSpeeds(speeds));
     // Store desired speed
     desiredSpeeds = DriveConstants.KINEMATICS.toChassisSpeeds(wheelSpeeds);
+    System.out.println("New" + desiredSpeeds.vxMetersPerSecond);
     // Set the individual wheel speeds
     modules[0].setVelocity(Units.MetersPerSecond.of(wheelSpeeds.frontLeftMetersPerSecond));
     modules[1].setVelocity(Units.MetersPerSecond.of(wheelSpeeds.frontRightMetersPerSecond));
@@ -52,13 +54,17 @@ public class DriveIOSpark implements DriveIO {
 
   private MecanumDriveWheelSpeeds constrainSpeedsToMaxSpeed(MecanumDriveWheelSpeeds speeds) {
     double max = 0;
-    if (speeds.frontLeftMetersPerSecond > max) max = speeds.frontLeftMetersPerSecond;
-    if (speeds.frontRightMetersPerSecond > max) max = speeds.frontRightMetersPerSecond;
-    if (speeds.rearLeftMetersPerSecond > max) max = speeds.rearLeftMetersPerSecond;
-    if (speeds.rearRightMetersPerSecond > max) max = speeds.rearRightMetersPerSecond;
+    if (Math.abs(speeds.frontLeftMetersPerSecond) > max)
+      max = Math.abs(speeds.frontLeftMetersPerSecond);
+    if (Math.abs(speeds.frontRightMetersPerSecond) > max)
+      max = Math.abs(speeds.frontRightMetersPerSecond);
+    if (Math.abs(speeds.rearLeftMetersPerSecond) > max)
+      max = Math.abs(speeds.rearLeftMetersPerSecond);
+    if (Math.abs(speeds.rearRightMetersPerSecond) > max)
+      max = Math.abs(speeds.rearRightMetersPerSecond);
     double multiplier = 1;
     if (max > DriveConstants.MAX_LINEAR_SPEED.in(Units.MetersPerSecond)) {
-      multiplier = DriveConstants.MAX_LINEAR_SPEED.in(Units.MetersPerSecond);
+      multiplier = DriveConstants.MAX_LINEAR_SPEED.in(Units.MetersPerSecond) / max;
     }
     return speeds.times(multiplier);
   }
