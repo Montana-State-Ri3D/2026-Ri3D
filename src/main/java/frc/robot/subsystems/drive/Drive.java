@@ -50,6 +50,7 @@ public class Drive extends SubsystemBase {
     io.updateInputs(inputs);
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive", inputs);
+    Logger.processInputs("Drive/Gyro", gyroInputs);
     poseEstimator.update(gyroInputs.yawPosition, inputs.positions);
 
     int hc = hashCode();
