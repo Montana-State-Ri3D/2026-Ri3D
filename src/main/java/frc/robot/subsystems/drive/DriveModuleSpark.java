@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -23,6 +25,8 @@ public class DriveModuleSpark extends SubsystemBase {
   private final RelativeEncoder encoder;
   private final int id;
 
+  private LinearVelocity desiredVel = MetersPerSecond.of(0);
+
   public DriveModuleSpark(int id) {
     this.id = id;
     motor = new SparkMax(CanIDs.DRIVE_CAN_IDS[id], MotorType.kBrushless);
@@ -36,6 +40,8 @@ public class DriveModuleSpark extends SubsystemBase {
         "Drive/Module" + id + "/relativePosMeters", getRelativePosition().in(Units.Meter));
     Logger.recordOutput(
         "Drive/Module" + id + "/velMetersPerSecond", getVel().in(Units.MetersPerSecond));
+    Logger.recordOutput(
+        "Drive/Module" + id + "/DesiredVelMetersPerSecond", desiredVel.in(Units.MetersPerSecond));
     Logger.recordOutput("Drive/Module" + id + "/current", motor.getOutputCurrent());
   }
 
@@ -44,6 +50,7 @@ public class DriveModuleSpark extends SubsystemBase {
   }
 
   public void setVelocity(LinearVelocity vel) {
+    desiredVel = vel;
     motor
         .getClosedLoopController()
         .setReference(
