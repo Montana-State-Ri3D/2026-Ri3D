@@ -39,6 +39,8 @@ public class DriveModuleSpark extends SubsystemBase {
     Logger.recordOutput(
         "Drive/Module" + id + "/relativePosMeters", getRelativePosition().in(Units.Meter));
     Logger.recordOutput(
+        "Drive/Module" + id + "/relativePosRotations", encoder.getPosition());
+    Logger.recordOutput(
         "Drive/Module" + id + "/velMetersPerSecond", getVel().in(Units.MetersPerSecond));
     Logger.recordOutput(
         "Drive/Module" + id + "/DesiredVelMetersPerSecond", desiredVel.in(Units.MetersPerSecond));
