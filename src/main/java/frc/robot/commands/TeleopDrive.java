@@ -4,12 +4,14 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.drive.Drive;
 
@@ -18,6 +20,7 @@ public class TeleopDrive extends Command {
 
   private Drive drive;
   private CommandXboxController controller;
+  private final double DEADBAND = 0.1;
 
   /** Creates a new TeleopDrive. */
   public TeleopDrive(Drive drive, CommandXboxController controller) {
@@ -33,8 +36,9 @@ public class TeleopDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    LinearVelocity speedX = DriveConstants.MAX_LINEAR_SPEED.times(controller.getLeftY());
-    LinearVelocity speedY = DriveConstants.MAX_LINEAR_SPEED.times(-controller.getLeftX());
+    double angMagnitude = MathUtil.applyDeadband(controller.getRightX(), DEADBAND);
+    LinearVelocity speedX = DriveConstants.MAX_LINEAR_SPEED.times(MathUtil.applyDeadband(controller.getLeftY(), DEADBAND));
+    LinearVelocity speedY = DriveConstants.MAX_LINEAR_SPEED.times(MathUtil.applyDeadband(-controller.getLeftX(), DEADBAND));
     if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
       speedX = speedX.unaryMinus();
       speedY = speedY.unaryMinus();
@@ -43,7 +47,7 @@ public class TeleopDrive extends Command {
         ChassisSpeeds.fromFieldRelativeSpeeds(
             speedX,
             speedY,
-            DriveConstants.MAX_ANGULAR_SPEED.times(controller.getRightX()),
+            Constants.DriveConstants.MAX_ANGULAR_SPEED.times(Math.copySign(angMagnitude * angMagnitude, angMagnitude)),
             drive.getRotation()));
   }
 
