@@ -59,7 +59,7 @@ public final class Constants {
     public static final AngularVelocity MAX_ANGULAR_SPEED =
         Units.RadiansPerSecond.of(7); // TODO: find actual value
 
-    public static final double GEAR_RATIO = 8;
+    public static final double GEAR_RATIO = 1.0/9.0; // how many wheel rot per motor rotation
 
     public static final Distance WHEEL_RAD = Units.Inch.of(3);
 
@@ -71,8 +71,8 @@ public final class Constants {
       config.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
       config.idleMode(IdleMode.kBrake);
       config.smartCurrentLimit(40);
-      config.encoder.positionConversionFactor(1 / GEAR_RATIO);
-      config.encoder.velocityConversionFactor(1 / GEAR_RATIO);
+      config.encoder.positionConversionFactor(GEAR_RATIO);
+      config.encoder.velocityConversionFactor(GEAR_RATIO);
       return config;
     }
 
