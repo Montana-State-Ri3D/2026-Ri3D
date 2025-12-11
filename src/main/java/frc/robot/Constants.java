@@ -59,7 +59,7 @@ public final class Constants {
     public static final AngularVelocity MAX_ANGULAR_SPEED =
         Units.RadiansPerSecond.of(7); // TODO: find actual value
 
-    public static final double GEAR_RATIO = 1.0/9.0; // how many wheel rot per motor rotation
+    public static final double GEAR_RATIO = 1.0 / 9.0; // how many wheel rot per motor rotation
 
     public static final Distance WHEEL_RAD = Units.Inch.of(3);
 
@@ -79,10 +79,10 @@ public final class Constants {
     // Location of the wheels relative to the robot center TODO: measure imperically before driving
     // robot!
     public static final Translation2d[] WHEEL_OFFSETS = {
-      new Translation2d(-0.3, 0.381),
-      new Translation2d(0.3, 0.381),
-      new Translation2d(-0.3, -0.381),
-      new Translation2d(-0.3, 0.381)
+      new Translation2d(0.321, 0.2921),
+      new Translation2d(0.321, -0.2921),
+      new Translation2d(-0.321, 0.2921),
+      new Translation2d(-0.321, -0.2921)
     };
 
     // Creating my kinematics object using the wheel locations.

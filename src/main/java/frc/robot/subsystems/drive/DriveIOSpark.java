@@ -38,13 +38,11 @@ public class DriveIOSpark implements DriveIO {
 
   @Override
   public void setVelocity(ChassisSpeeds speeds) {
-    System.out.println("Ori" + speeds.vxMetersPerSecond);
     // Convert to wheel speeds
     MecanumDriveWheelSpeeds wheelSpeeds =
         constrainSpeedsToMaxSpeed(DriveConstants.KINEMATICS.toWheelSpeeds(speeds));
     // Store desired speed
     desiredSpeeds = DriveConstants.KINEMATICS.toChassisSpeeds(wheelSpeeds);
-    System.out.println("New" + desiredSpeeds.vxMetersPerSecond);
     // Set the individual wheel speeds
     modules[0].setVelocity(Units.MetersPerSecond.of(wheelSpeeds.frontLeftMetersPerSecond));
     modules[1].setVelocity(Units.MetersPerSecond.of(wheelSpeeds.frontRightMetersPerSecond));
