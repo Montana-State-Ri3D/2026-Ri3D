@@ -54,12 +54,12 @@ public final class Constants {
     public static final int NUM_MODULES = 4;
 
     public static final LinearVelocity MAX_LINEAR_SPEED =
-        Units.MetersPerSecond.of(4); // TODO: find actual value
+        Units.MetersPerSecond.of(2); // TODO: find actual value
 
     public static final AngularVelocity MAX_ANGULAR_SPEED =
         Units.RadiansPerSecond.of(7); // TODO: find actual value
 
-    public static final double GEAR_RATIO = 16;
+    public static final double GEAR_RATIO = 8;
 
     public static final Distance WHEEL_RAD = Units.Inch.of(3);
 
@@ -71,18 +71,18 @@ public final class Constants {
       config.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
       config.idleMode(IdleMode.kBrake);
       config.smartCurrentLimit(40);
-      config.encoder.positionConversionFactor(GEAR_RATIO);
-      config.encoder.velocityConversionFactor(GEAR_RATIO);
+      config.encoder.positionConversionFactor(1 / GEAR_RATIO);
+      config.encoder.velocityConversionFactor(1 / GEAR_RATIO);
       return config;
     }
 
     // Location of the wheels relative to the robot center TODO: measure imperically before driving
     // robot!
     public static final Translation2d[] WHEEL_OFFSETS = {
-      new Translation2d(0.381, 0.381),
-      new Translation2d(0.381, -0.381),
-      new Translation2d(-0.381, 0.381),
-      new Translation2d(-0.381, -0.381)
+      new Translation2d(-0.3, 0.381),
+      new Translation2d(0.3, 0.381),
+      new Translation2d(-0.3, -0.381),
+      new Translation2d(-0.3, 0.381)
     };
 
     // Creating my kinematics object using the wheel locations.
@@ -93,7 +93,7 @@ public final class Constants {
             DriveConstants.WHEEL_OFFSETS[2],
             DriveConstants.WHEEL_OFFSETS[3]);
 
-    public static final boolean[] MOTOR_INVERTS = {false, false, true, true};
+    public static final boolean[] MOTOR_INVERTS = {true, false, true, false};
   }
 
   public class VisionConstants {
