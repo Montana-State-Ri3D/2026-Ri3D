@@ -17,9 +17,22 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.CanIDs;
 import frc.robot.Constants.DriveConstants;
+import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 public class DriveModuleSpark extends SubsystemBase {
+
+  @AutoLog
+  public static class DriveModuleSparkInputs {
+    public double voltage;
+    public double relativePosMeters;
+    public double relativePosRotations;
+    public double velMetersPerSecond;
+    public double desiredVelMetersPerSecond;
+    public double current;
+  }
+
+  private final DriveModuleSparkInputsAutoLogged inputs = new DriveModuleSparkInputsAutoLogged();
 
   private final SparkMax motor;
   private final RelativeEncoder encoder;
@@ -35,15 +48,14 @@ public class DriveModuleSpark extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Drive/Module" + id + "/voltage", motor.getAppliedOutput());
-    Logger.recordOutput(
-        "Drive/Module" + id + "/relativePosMeters", getRelativePosition().in(Units.Meter));
-    Logger.recordOutput("Drive/Module" + id + "/relativePosRotations", encoder.getPosition());
-    Logger.recordOutput(
-        "Drive/Module" + id + "/velMetersPerSecond", getVel().in(Units.MetersPerSecond));
-    Logger.recordOutput(
-        "Drive/Module" + id + "/DesiredVelMetersPerSecond", desiredVel.in(Units.MetersPerSecond));
-    Logger.recordOutput("Drive/Module" + id + "/current", motor.getOutputCurrent());
+    inputs.voltage = motor.getAppliedOutput();
+    inputs.relativePosMeters = getRelativePosition().in(Units.Meter);
+    inputs.relativePosRotations = encoder.getPosition();
+    inputs.velMetersPerSecond = getVel().in(Units.MetersPerSecond);
+    inputs.desiredVelMetersPerSecond = desiredVel.in(Units.MetersPerSecond);
+    inputs.current = motor.getOutputCurrent();
+
+    Logger.processInputs("Drive/Modules/Module" + id, inputs);
   }
 
   public void setVoltage(Voltage volts) {
