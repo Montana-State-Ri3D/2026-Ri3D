@@ -8,9 +8,9 @@ import org.littletonrobotics.junction.AutoLog;
 public interface DriveIO {
   @AutoLog
   public static class DriveIOInputs {
-    public ChassisSpeeds realSpeeds;
-    public ChassisSpeeds desiredSpeeds;
-    public MecanumDriveWheelPositions positions;
+    public ChassisSpeeds realSpeeds = new ChassisSpeeds();
+    public ChassisSpeeds desiredSpeeds = new ChassisSpeeds();
+    public MecanumDriveWheelPositions positions = new MecanumDriveWheelPositions();
   }
 
   /** Updates the set of loggable inputs. */

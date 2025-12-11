@@ -53,7 +53,7 @@ public class RobotContainer {
         break;
 
       case SIM:
-        drive = new Drive(new DriveIOSpark(), new GyroIOPigeon2());
+        drive = new Drive(new DriveIO() {}, new GyroIO() {});
         // Sim robot, instantiate physics sim IO implementations
         // vision =
         //     new Vision(
