@@ -39,10 +39,10 @@ public class TeleopDrive extends Command {
     double angMagnitude = MathUtil.applyDeadband(controller.getRightX(), DEADBAND);
     LinearVelocity speedX =
         DriveConstants.MAX_LINEAR_SPEED.times(
-            MathUtil.applyDeadband(controller.getLeftY(), DEADBAND));
+            MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND));
     LinearVelocity speedY =
         DriveConstants.MAX_LINEAR_SPEED.times(
-            MathUtil.applyDeadband(-controller.getLeftX(), DEADBAND));
+            MathUtil.applyDeadband(controller.getLeftX(), DEADBAND));
     if (DriverStation.getAlliance().get().equals(Alliance.Red)) {
       speedX = speedX.unaryMinus();
       speedY = speedY.unaryMinus();
