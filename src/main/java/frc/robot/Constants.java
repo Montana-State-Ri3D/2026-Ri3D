@@ -141,6 +141,23 @@ public final class Constants {
     }
   }
 
+  public class IntakeConstants {
+    public static final String ROOT_TABLE = "Intake";
+    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
+    public static final boolean INVERT = false; // TODO: determine
+
+    public static final SparkFlexConfig MOTOR_CONFIG() {
+      SparkFlexConfig config = new SparkFlexConfig();
+      config.absoluteEncoder.inverted(INVERT);
+      config.inverted(INVERT);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(GEAR_RATIO);
+      config.encoder.velocityConversionFactor(GEAR_RATIO);
+      return config;
+    }
+  }
+
   public class VisionConstants {
     // AprilTag layout
     public static AprilTagFieldLayout aprilTagLayout =
@@ -194,5 +211,7 @@ public final class Constants {
     public static final int PIGEON_CAN_ID = 5;
     public static final int ELEVATOR_LEAD_CAN_ID = 6;
     public static final int ELEVATOR_FOLLOW_CAN_ID = 7;
+    public static final int ARM_CAN_ID = 8;
+    public static final int INTAKE_CAN_ID = 9;
   }
 }

@@ -2,11 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.intake;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,13 +20,12 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
 
-public class Elevator extends SubsystemBase {
+public class Intake extends SubsystemBase {
   // Logging
 
   private static final LoggerGroup logGroup = LoggerGroup.build(ElevatorConstants.ROOT_TABLE);
 
-  private static final LoggerEntry.Decimal logTargetHeight =
-      logGroup.buildDecimal("targetHeightInches");
+  private static final LoggerEntry.Decimal logTargetAngle = logGroup.buildDecimal("targetVelRPM");
   private static final LoggerEntry.EnumValue<ControlMode> logControlMode =
       logGroup.buildEnum("ControlMode");
 
@@ -36,44 +35,38 @@ public class Elevator extends SubsystemBase {
       new TunableNumberGroup(ElevatorConstants.ROOT_TABLE);
 
   private static final LoggedTunableNumber kP = group.build("kP");
-  private static final LoggedTunableNumber kD = group.build("kD");
-  private static final LoggedTunableNumber kG = group.build("kG");
+  private static final LoggedTunableNumber kV = group.build("kV");
 
-  private static final LoggedTunableNumber maxVelocityConfig = group.build("MaxVelocityConfig");
   private static final LoggedTunableNumber maxAccelerationConfig =
       group.build("MaxAccelerationConfig");
 
-  private final LoggedTunableNumber tolerance = group.build("toleranceInches", 0.1);
+  private final LoggedTunableNumber tolerance = group.build("toleranceRPM", 0.1);
 
   // Motion constants
   // TODO: tune constants
   static {
     if (Constants.currentMode == Mode.SIM) {
       kP.initDefault(0.0);
-      kD.initDefault(0.0);
-      kG.initDefault(0.0);
+      kV.initDefault(0.0);
 
-      maxVelocityConfig.initDefault(0.0);
       maxAccelerationConfig.initDefault(0.0);
 
     } else if (Constants.currentMode == Mode.REAL) {
       kP.initDefault(0.0);
-      kD.initDefault(0.0);
-      kG.initDefault(0.0);
+      kV.initDefault(0.0);
 
-      maxVelocityConfig.initDefault(0.0);
       maxAccelerationConfig.initDefault(0.0);
     }
   }
 
-  private final ElevatorIO io;
-  private final ElevatorInputsAutoLogged inputs = new ElevatorInputsAutoLogged();
+  private final IntakeIO io;
+  private final IntakeInputsAutoLogged inputs = new IntakeInputsAutoLogged();
 
-  private Distance targetHeight = Units.Meters.zero();
+  private AngularVelocity targetVel = Units.RPM.zero();
   private ControlMode controlMode = ControlMode.OPEN_LOOP;
 
-  /** Creates a new ElevatorSubsystem. */
-  public Elevator(ElevatorIO io) {
+  /** Creates a new IntakeSubsystem. */
+  public Intake(IntakeIO io) {
     this.io = io;
 
     configMotor();
@@ -83,17 +76,13 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.processInputs("Elevator", inputs);
+    Logger.processInputs("Intake", inputs);
 
     logControlMode.info(controlMode);
 
     // Updating tunable numbers
     var hc = hashCode();
-    if (kP.hasChanged(hc)
-        || kD.hasChanged(hc)
-        || kG.hasChanged(hc)
-        || maxVelocityConfig.hasChanged(hc)
-        || maxAccelerationConfig.hasChanged(hc)) {
+    if (kP.hasChanged(hc) || kV.hasChanged(hc) || maxAccelerationConfig.hasChanged(hc)) {
       configMotor();
     }
   }
@@ -111,15 +100,11 @@ public class Elevator extends SubsystemBase {
    * @param height
    * @param accel
    */
-  public void setHeight(Distance height) {
-    io.setHeight(height);
-    targetHeight = height;
-    logTargetHeight.info(targetHeight.in(Units.Inches));
+  public void setRPM(AngularVelocity vel) {
+    io.setVel(vel);
+    targetVel = vel;
+    logTargetAngle.info(targetVel.in(Units.RPM));
     controlMode = ControlMode.CLOSED_LOOP;
-  }
-
-  public void resetSensorToHomePosition() {
-    io.setSensorPosition(Constants.ElevatorConstants.HOME_POSITION);
   }
 
   public boolean setIdleMode(IdleMode value) {
@@ -127,26 +112,17 @@ public class Elevator extends SubsystemBase {
   }
 
   public void configMotor() {
-    io.configMotor(
-        kP.get(), kD.get(), kG.get(), maxVelocityConfig.get(), maxAccelerationConfig.get());
-  }
-
-  public void setElevatorManualControl(double percent) {
-    setPercentOut(2 * percent + kG.get());
+    io.configMotor(kV.get(), kP.get(), maxAccelerationConfig.get());
   }
 
   // Getters
 
   public boolean isAtTarget() {
-    return isAtTarget(targetHeight);
+    return isAtTarget(targetVel);
   }
 
-  public boolean isAtTarget(Distance height) {
-    return Math.abs(height.in(Units.Inches) - inputs.heightInches) <= tolerance.get();
-  }
-
-  public Distance getHeight() {
-    return Units.Inches.of(inputs.heightInches);
+  public boolean isAtTarget(AngularVelocity angle) {
+    return Math.abs(angle.in(Units.RPM) - inputs.velocityRPM) <= tolerance.get();
   }
 
   public Voltage getVoltage() {
@@ -154,6 +130,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public LinearVelocity getVelocity() {
-    return Units.InchesPerSecond.of(inputs.velocityInchesPerSecond);
+    return Units.InchesPerSecond.of(inputs.velocityRPM);
   }
 }

@@ -25,7 +25,8 @@ public class Arm extends SubsystemBase {
 
   private static final LoggerGroup logGroup = LoggerGroup.build(ElevatorConstants.ROOT_TABLE);
 
-  private static final LoggerEntry.Decimal logTargetAngle = logGroup.buildDecimal("targetHeight");
+  private static final LoggerEntry.Decimal logTargetAngle =
+      logGroup.buildDecimal("targetAngleDegrees");
   private static final LoggerEntry.EnumValue<ControlMode> logControlMode =
       logGroup.buildEnum("ControlMode");
 
@@ -38,11 +39,11 @@ public class Arm extends SubsystemBase {
   private static final LoggedTunableNumber kD = group.build("kD");
   private static final LoggedTunableNumber kG = group.build("kG");
 
-  private static final LoggedTunableNumber targetVelocityConfig = group.build("MaxVelocityConfig");
-  private static final LoggedTunableNumber targetAccelerationConfig =
-      group.build("TargetAccelerationConfig");
+  private static final LoggedTunableNumber maxVelocityConfig = group.build("MaxVelocityConfig");
+  private static final LoggedTunableNumber maxAccelerationConfig =
+      group.build("MaxAccelerationConfig");
 
-  private final LoggedTunableNumber tolerance = group.build("toleranceInches", 0.1);
+  private final LoggedTunableNumber tolerance = group.build("toleranceDegrees", 0.1);
 
   // Motion constants
   // TODO: tune constants
@@ -52,16 +53,16 @@ public class Arm extends SubsystemBase {
       kD.initDefault(0.0);
       kG.initDefault(0.0);
 
-      targetVelocityConfig.initDefault(0.0);
-      targetAccelerationConfig.initDefault(0.0);
+      maxVelocityConfig.initDefault(0.0);
+      maxAccelerationConfig.initDefault(0.0);
 
     } else if (Constants.currentMode == Mode.REAL) {
       kP.initDefault(0.0);
       kD.initDefault(0.0);
       kG.initDefault(0.0);
 
-      targetVelocityConfig.initDefault(0.0);
-      targetAccelerationConfig.initDefault(0.0);
+      maxVelocityConfig.initDefault(0.0);
+      maxAccelerationConfig.initDefault(0.0);
     }
   }
 
@@ -91,8 +92,8 @@ public class Arm extends SubsystemBase {
     if (kP.hasChanged(hc)
         || kD.hasChanged(hc)
         || kG.hasChanged(hc)
-        || targetVelocityConfig.hasChanged(hc)
-        || targetAccelerationConfig.hasChanged(hc)) {
+        || maxVelocityConfig.hasChanged(hc)
+        || maxAccelerationConfig.hasChanged(hc)) {
       configMotor();
     }
   }
@@ -127,7 +128,7 @@ public class Arm extends SubsystemBase {
 
   public void configMotor() {
     io.configMotor(
-        kP.get(), kD.get(), kG.get(), targetVelocityConfig.get(), targetAccelerationConfig.get());
+        kP.get(), kD.get(), kG.get(), maxVelocityConfig.get(), maxAccelerationConfig.get());
   }
 
   public void setArmManualControl(double percent) {
