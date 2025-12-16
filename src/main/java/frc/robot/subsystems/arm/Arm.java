@@ -2,11 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.elevator;
+package frc.robot.subsystems.arm;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,12 +20,12 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
 
-public class Elevator extends SubsystemBase {
+public class Arm extends SubsystemBase {
   // Logging
 
   private static final LoggerGroup logGroup = LoggerGroup.build(ElevatorConstants.ROOT_TABLE);
 
-  private static final LoggerEntry.Decimal logTargetHeight = logGroup.buildDecimal("targetHeight");
+  private static final LoggerEntry.Decimal logTargetAngle = logGroup.buildDecimal("targetHeight");
   private static final LoggerEntry.EnumValue<ControlMode> logControlMode =
       logGroup.buildEnum("ControlMode");
 
@@ -65,14 +65,14 @@ public class Elevator extends SubsystemBase {
     }
   }
 
-  private final ElevatorIO io;
-  private final ElevatorInputsAutoLogged inputs = new ElevatorInputsAutoLogged();
+  private final ArmIO io;
+  private final ArmInputsAutoLogged inputs = new ArmInputsAutoLogged();
 
-  private Distance targetHeight = Units.Meters.zero();
+  private Angle targetAngle = Units.Degree.zero();
   private ControlMode controlMode = ControlMode.OPEN_LOOP;
 
-  /** Creates a new ElevatorSubsystem. */
-  public Elevator(ElevatorIO io) {
+  /** Creates a new ArmSubsystem. */
+  public Arm(ArmIO io) {
     this.io = io;
 
     configMotor();
@@ -82,7 +82,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.processInputs("Elevator", inputs);
+    Logger.processInputs("Arm", inputs);
 
     logControlMode.info(controlMode);
 
@@ -110,15 +110,15 @@ public class Elevator extends SubsystemBase {
    * @param height
    * @param accel
    */
-  public void setHeight(Distance height) {
-    io.setHeight(height);
-    targetHeight = height;
-    logTargetHeight.info(targetHeight.in(Units.Inches));
+  public void setAngle(Angle angle) {
+    io.setAngle(angle);
+    targetAngle = angle;
+    logTargetAngle.info(targetAngle.in(Units.Degree));
     controlMode = ControlMode.CLOSED_LOOP;
   }
 
   public void resetSensorToHomePosition() {
-    io.setSensorPosition(Constants.ElevatorConstants.HOME_POSITION);
+    io.setSensorPosition(Constants.ArmConstants.HOME_POSITION);
   }
 
   public boolean setIdleMode(IdleMode value) {
@@ -130,22 +130,22 @@ public class Elevator extends SubsystemBase {
         kP.get(), kD.get(), kG.get(), targetVelocityConfig.get(), targetAccelerationConfig.get());
   }
 
-  public void setElevatorManualControl(double percent) {
-    setPercentOut(2 * percent + kG.get());
+  public void setArmManualControl(double percent) {
+    setPercentOut(2 * percent + kG.get() * Math.cos(getAngle().in(Units.Radians)));
   }
 
   // Getters
 
   public boolean isAtTarget() {
-    return isAtTarget(targetHeight);
+    return isAtTarget(targetAngle);
   }
 
-  public boolean isAtTarget(Distance height) {
-    return Math.abs(height.in(Units.Inches) - inputs.heightInches) <= tolerance.get();
+  public boolean isAtTarget(Angle angle) {
+    return Math.abs(angle.in(Units.Degree) - inputs.angleDegrees) <= tolerance.get();
   }
 
-  public Distance getHeight() {
-    return Units.Inches.of(inputs.heightInches);
+  public Angle getAngle() {
+    return Units.Degree.of(inputs.angleDegrees);
   }
 
   public Voltage getVoltage() {
@@ -153,6 +153,6 @@ public class Elevator extends SubsystemBase {
   }
 
   public LinearVelocity getVelocity() {
-    return Units.InchesPerSecond.of(inputs.velocityInchesPerSecond);
+    return Units.InchesPerSecond.of(inputs.velocityDegreesPerSecond);
   }
 }

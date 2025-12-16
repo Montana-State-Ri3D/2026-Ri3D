@@ -24,6 +24,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -116,6 +117,25 @@ public final class Constants {
       config.smartCurrentLimit(40);
       config.encoder.positionConversionFactor(1.0 / INCHES_TO_MOTOR_ROT);
       config.encoder.velocityConversionFactor(1.0 / INCHES_TO_MOTOR_ROT);
+      config.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+      return config;
+    }
+  }
+
+  public class ArmConstants {
+    public static final String ROOT_TABLE = "Arm";
+    public static final Angle HOME_POSITION = Units.Degree.of(0); // TODO: determine
+    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
+    public static final boolean INVERT = false; // TODO: determine
+
+    public static final SparkFlexConfig MOTOR_CONFIG() {
+      SparkFlexConfig config = new SparkFlexConfig();
+      config.absoluteEncoder.inverted(INVERT);
+      config.inverted(INVERT);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(GEAR_RATIO);
+      config.encoder.velocityConversionFactor(GEAR_RATIO);
       config.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
       return config;
     }
