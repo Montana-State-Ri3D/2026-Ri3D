@@ -13,7 +13,9 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -22,6 +24,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -51,6 +54,8 @@ public final class Constants {
   public static final Voltage MAX_VOLTAGE = Units.Volts.of(12);
 
   public static class DriveConstants {
+    public static final String ROOT_TABLE = "Drive";
+
     public static final int NUM_MODULES = 4;
 
     public static final LinearVelocity MAX_LINEAR_SPEED =
@@ -67,8 +72,8 @@ public final class Constants {
 
     public static final SparkMaxConfig MOTOR_CONFIG(int id) {
       SparkMaxConfig config = new SparkMaxConfig();
-      config.absoluteEncoder.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
-      config.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
+      config.absoluteEncoder.inverted(MOTOR_INVERTS[id]);
+      config.inverted(MOTOR_INVERTS[id]);
       config.idleMode(IdleMode.kBrake);
       config.smartCurrentLimit(40);
       config.encoder.positionConversionFactor(GEAR_RATIO);
@@ -94,6 +99,65 @@ public final class Constants {
             DriveConstants.WHEEL_OFFSETS[3]);
 
     public static final boolean[] MOTOR_INVERTS = {true, false, true, false};
+  }
+
+  public class ElevatorConstants {
+    public static final String ROOT_TABLE = "Elevator";
+    public static final Distance HOME_POSITION = Units.Meter.of(0); // TODO: determine
+    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
+    public static final boolean INVERT = false; // TODO: determine
+    public static final boolean FOLLOWER_INVERT = false; // TODO: determine
+    public static final Distance PULLEY_RADIUS = Units.Inch.of(2); // TODO: determine
+    public static final double INCHES_TO_MOTOR_ROT =
+        1.0 / (PULLEY_RADIUS.in(Units.Inches) * 2 * Math.PI * GEAR_RATIO);
+
+    public static final SparkFlexConfig MOTOR_CONFIG() {
+      SparkFlexConfig config = new SparkFlexConfig();
+      config.absoluteEncoder.inverted(INVERT);
+      config.inverted(INVERT);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(1.0 / INCHES_TO_MOTOR_ROT);
+      config.encoder.velocityConversionFactor(1.0 / INCHES_TO_MOTOR_ROT);
+      config.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+      return config;
+    }
+  }
+
+  public class ArmConstants {
+    public static final String ROOT_TABLE = "Arm";
+    public static final Angle HOME_POSITION = Units.Degree.of(0); // TODO: determine
+    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
+    public static final boolean INVERT = false; // TODO: determine
+
+    public static final SparkFlexConfig MOTOR_CONFIG() {
+      SparkFlexConfig config = new SparkFlexConfig();
+      config.absoluteEncoder.inverted(INVERT);
+      config.inverted(INVERT);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(GEAR_RATIO);
+      config.encoder.velocityConversionFactor(GEAR_RATIO);
+      config.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+      return config;
+    }
+  }
+
+  public class IntakeConstants {
+    public static final String ROOT_TABLE = "Intake";
+    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
+    public static final boolean INVERT = false; // TODO: determine
+
+    public static final SparkFlexConfig MOTOR_CONFIG() {
+      SparkFlexConfig config = new SparkFlexConfig();
+      config.absoluteEncoder.inverted(INVERT);
+      config.inverted(INVERT);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(GEAR_RATIO);
+      config.encoder.velocityConversionFactor(GEAR_RATIO);
+      return config;
+    }
   }
 
   public class VisionConstants {
@@ -147,5 +211,9 @@ public final class Constants {
       BACK_RIGHT_DRIVE_CAN_ID
     };
     public static final int PIGEON_CAN_ID = 5;
+    public static final int ELEVATOR_LEAD_CAN_ID = 6;
+    public static final int ELEVATOR_FOLLOW_CAN_ID = 7;
+    public static final int ARM_CAN_ID = 8;
+    public static final int INTAKE_CAN_ID = 9;
   }
 }
