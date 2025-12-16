@@ -11,6 +11,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.drive.gyro.GyroIO;
@@ -33,11 +34,14 @@ public class Drive extends SubsystemBase {
           new MecanumDriveWheelPositions(),
           Pose2d.kZero);
 
+  private final TunableNumberGroup group = new TunableNumberGroup(DriveConstants.ROOT_TABLE);
+
   // TODO: tune PID
-  private LoggedTunableNumber tunableP = new LoggedTunableNumber("Drive/pidf/p", 0);
-  private LoggedTunableNumber tunableI = new LoggedTunableNumber("Drive/pidf/i", 0);
-  private LoggedTunableNumber tunableD = new LoggedTunableNumber("Drive/pidf/d", 0);
-  private LoggedTunableNumber tunableFF = new LoggedTunableNumber("Drive/pidf/ff", 0.009);
+
+  private LoggedTunableNumber tunableP = group.build("pidf/p", 0);
+  private LoggedTunableNumber tunableI = group.build("pidf/i", 0);
+  private LoggedTunableNumber tunableD = group.build("pidf/d", 0);
+  private LoggedTunableNumber tunableFF = group.build("pidf/ff", 0.009);
 
   public Drive(DriveIO io, GyroIO gyroIO) {
     this.io = io;
@@ -49,8 +53,8 @@ public class Drive extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     gyroIO.updateInputs(gyroInputs);
-    Logger.processInputs("Drive", inputs);
-    Logger.processInputs("Drive/Gyro", gyroInputs);
+    Logger.processInputs(DriveConstants.ROOT_TABLE, inputs);
+    Logger.processInputs(DriveConstants.ROOT_TABLE + "/Gyro", gyroInputs);
     poseEstimator.update(gyroInputs.yawPosition, inputs.positions);
 
     int hc = hashCode();

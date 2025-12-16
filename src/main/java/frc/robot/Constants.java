@@ -54,6 +54,8 @@ public final class Constants {
   public static final Voltage MAX_VOLTAGE = Units.Volts.of(12);
 
   public static class DriveConstants {
+    public static final String ROOT_TABLE = "Drive";
+
     public static final int NUM_MODULES = 4;
 
     public static final LinearVelocity MAX_LINEAR_SPEED =

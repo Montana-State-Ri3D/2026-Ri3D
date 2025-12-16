@@ -16,6 +16,7 @@ import frc.lib.team2930.LoggerGroup;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
@@ -44,6 +45,8 @@ public class Arm extends SubsystemBase {
       group.build("MaxAccelerationConfig");
 
   private final LoggedTunableNumber tolerance = group.build("toleranceDegrees", 0.1);
+
+  private final LoggedTunableNumber manualCoefficient = group.build("ManualControlCoefficient", 2.0);
 
   // Motion constants
   // TODO: tune constants
@@ -83,7 +86,7 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.processInputs("Arm", inputs);
+    Logger.processInputs(ArmConstants.ROOT_TABLE, inputs);
 
     logControlMode.info(controlMode);
 
@@ -132,7 +135,7 @@ public class Arm extends SubsystemBase {
   }
 
   public void setArmManualControl(double percent) {
-    setPercentOut(2 * percent + kG.get() * Math.cos(getAngle().in(Units.Radians)));
+    setPercentOut(manualCoefficient.get() * percent + kG.get() * Math.cos(getAngle().in(Units.Radians)));
   }
 
   // Getters

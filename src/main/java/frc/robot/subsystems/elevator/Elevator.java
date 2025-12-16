@@ -45,6 +45,8 @@ public class Elevator extends SubsystemBase {
 
   private final LoggedTunableNumber tolerance = group.build("toleranceInches", 0.1);
 
+  private final LoggedTunableNumber manualCoefficient = group.build("ManualControlCoefficient", 2.0);
+
   // Motion constants
   // TODO: tune constants
   static {
@@ -83,7 +85,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.processInputs("Elevator", inputs);
+    Logger.processInputs(ElevatorConstants.ROOT_TABLE, inputs);
 
     logControlMode.info(controlMode);
 
@@ -132,7 +134,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setElevatorManualControl(double percent) {
-    setPercentOut(2 * percent + kG.get());
+    setPercentOut(manualCoefficient.get() * percent + kG.get());
   }
 
   // Getters

@@ -17,6 +17,7 @@ import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
 
@@ -76,7 +77,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.processInputs("Intake", inputs);
+    Logger.processInputs(IntakeConstants.ROOT_TABLE, inputs);
 
     logControlMode.info(controlMode);
 
