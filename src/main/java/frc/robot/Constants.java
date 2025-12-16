@@ -13,7 +13,9 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.config.MAXMotionConfig.MAXMotionPositionMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -67,8 +69,8 @@ public final class Constants {
 
     public static final SparkMaxConfig MOTOR_CONFIG(int id) {
       SparkMaxConfig config = new SparkMaxConfig();
-      config.absoluteEncoder.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
-      config.inverted(Constants.DriveConstants.MOTOR_INVERTS[id]);
+      config.absoluteEncoder.inverted(MOTOR_INVERTS[id]);
+      config.inverted(MOTOR_INVERTS[id]);
       config.idleMode(IdleMode.kBrake);
       config.smartCurrentLimit(40);
       config.encoder.positionConversionFactor(GEAR_RATIO);
@@ -94,6 +96,29 @@ public final class Constants {
             DriveConstants.WHEEL_OFFSETS[3]);
 
     public static final boolean[] MOTOR_INVERTS = {true, false, true, false};
+  }
+
+  public class ElevatorConstants {
+    public static final String ROOT_TABLE = "Elevator";
+    public static final Distance HOME_POSITION = Units.Meter.of(0); // TODO: determine
+    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
+    public static final boolean INVERT = false; // TODO: determine
+    public static final boolean FOLLOWER_INVERT = false; // TODO: determine
+    public static final Distance PULLEY_RADIUS = Units.Inch.of(2); // TODO: determine
+    public static final double INCHES_TO_MOTOR_ROT =
+        1.0 / (PULLEY_RADIUS.in(Units.Inches) * 2 * Math.PI * GEAR_RATIO);
+
+    public static final SparkFlexConfig MOTOR_CONFIG() {
+      SparkFlexConfig config = new SparkFlexConfig();
+      config.absoluteEncoder.inverted(INVERT);
+      config.inverted(INVERT);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(1.0 / INCHES_TO_MOTOR_ROT);
+      config.encoder.velocityConversionFactor(1.0 / INCHES_TO_MOTOR_ROT);
+      config.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+      return config;
+    }
   }
 
   public class VisionConstants {
@@ -147,5 +172,7 @@ public final class Constants {
       BACK_RIGHT_DRIVE_CAN_ID
     };
     public static final int PIGEON_CAN_ID = 5;
+    public static final int ELEVATOR_LEAD_CAN_ID = 6;
+    public static final int ELEVATOR_FOLLOW_CAN_ID = 7;
   }
 }
