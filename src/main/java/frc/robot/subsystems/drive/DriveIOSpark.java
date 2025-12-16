@@ -82,9 +82,9 @@ public class DriveIOSpark implements DriveIO {
   }
 
   @Override
-  public void updateConstants(double p, double i, double d, double ff) {
+  public void updateConstants(double v, double p) {
     for (DriveModuleSpark module : modules) {
-      module.updateMotorConfig(p, i, d, ff);
+      module.updateMotorConfig(v, p);
     }
   }
 }

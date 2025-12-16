@@ -13,12 +13,15 @@
 
 package frc.robot;
 
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.team2930.commands.RunsWhenDisabledInstantCommand;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
@@ -42,7 +45,6 @@ import frc.robot.subsystems.intake.IntakeIOReal;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  
 
   private final Drive drive;
   private final Elevator elevator;
@@ -104,6 +106,32 @@ public class RobotContainer {
     drive.setDefaultCommand(new TeleopDrive(drive, controller));
     // Reset robot rotation
     controller.start().onTrue(Commands.runOnce(() -> drive.setRotation(new Rotation2d())));
+
+    SmartDashboard.putData(
+        "Brake Mode",
+        new RunsWhenDisabledInstantCommand(
+            () -> {
+              elevator.setIdleMode(IdleMode.kBrake);
+              arm.setIdleMode(IdleMode.kBrake);
+              intake.setIdleMode(IdleMode.kBrake);
+            }));
+
+    SmartDashboard.putData(
+        "Coast Mode",
+        new RunsWhenDisabledInstantCommand(
+            () -> {
+              elevator.setIdleMode(IdleMode.kCoast);
+              arm.setIdleMode(IdleMode.kCoast);
+              intake.setIdleMode(IdleMode.kCoast);
+            }));
+
+    SmartDashboard.putData(
+        "Zero Robot",
+        new RunsWhenDisabledInstantCommand(
+            () -> {
+              elevator.resetSensorToHomePosition();
+              arm.resetSensorToHomePosition();
+            }));
   }
 
   /**

@@ -26,5 +26,5 @@ public interface DriveIO {
   public default void setVoltage(Voltage[] volts) {}
 
   /** Set motor PIDFs. */
-  public default void updateConstants(double p, double i, double d, double ff) {}
+  public default void updateConstants(double v, double p) {}
 }

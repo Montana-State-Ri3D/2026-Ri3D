@@ -38,10 +38,8 @@ public class Drive extends SubsystemBase {
 
   // TODO: tune PID
 
-  private LoggedTunableNumber tunableP = group.build("pidf/p", 0);
-  private LoggedTunableNumber tunableI = group.build("pidf/i", 0);
-  private LoggedTunableNumber tunableD = group.build("pidf/d", 0);
-  private LoggedTunableNumber tunableFF = group.build("pidf/ff", 0.009);
+  private LoggedTunableNumber tunableV = group.build("kV", 0.009);
+  private LoggedTunableNumber tunableP = group.build("kP", 0);
 
   public Drive(DriveIO io, GyroIO gyroIO) {
     this.io = io;
@@ -59,13 +57,11 @@ public class Drive extends SubsystemBase {
 
     int hc = hashCode();
     if (tunableP.hasChanged(hc)
-        || tunableI.hasChanged(hc)
-        || tunableD.hasChanged(hc)
-        || tunableFF.hasChanged(hc)) updateConstants();
+        || tunableV.hasChanged(hc)) updateConstants();
   }
 
   private void updateConstants() {
-    io.updateConstants(tunableP.get(), tunableI.get(), tunableD.get(), tunableFF.get());
+    io.updateConstants(tunableV.get(), tunableP.get());
   }
 
   public void driveRobotCentric(ChassisSpeeds speeds) {

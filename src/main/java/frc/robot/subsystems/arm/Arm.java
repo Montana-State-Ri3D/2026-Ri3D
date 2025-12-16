@@ -17,14 +17,13 @@ import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
 
 public class Arm extends SubsystemBase {
   // Logging
 
-  private static final LoggerGroup logGroup = LoggerGroup.build(ElevatorConstants.ROOT_TABLE);
+  private static final LoggerGroup logGroup = LoggerGroup.build(ArmConstants.ROOT_TABLE);
 
   private static final LoggerEntry.Decimal logTargetAngle =
       logGroup.buildDecimal("targetAngleDegrees");
@@ -33,8 +32,7 @@ public class Arm extends SubsystemBase {
 
   // Tunable numbers
 
-  private static final TunableNumberGroup group =
-      new TunableNumberGroup(ElevatorConstants.ROOT_TABLE);
+  private static final TunableNumberGroup group = new TunableNumberGroup(ArmConstants.ROOT_TABLE);
 
   private static final LoggedTunableNumber kP = group.build("kP");
   private static final LoggedTunableNumber kD = group.build("kD");
@@ -46,7 +44,8 @@ public class Arm extends SubsystemBase {
 
   private final LoggedTunableNumber tolerance = group.build("toleranceDegrees", 0.1);
 
-  private final LoggedTunableNumber manualCoefficient = group.build("ManualControlCoefficient", 2.0);
+  private final LoggedTunableNumber manualCoefficient =
+      group.build("ManualControlCoefficient", 2.0);
 
   // Motion constants
   // TODO: tune constants
@@ -135,7 +134,8 @@ public class Arm extends SubsystemBase {
   }
 
   public void setArmManualControl(double percent) {
-    setPercentOut(manualCoefficient.get() * percent + kG.get() * Math.cos(getAngle().in(Units.Radians)));
+    setPercentOut(
+        manualCoefficient.get() * percent + kG.get() * Math.cos(getAngle().in(Units.Radians)));
   }
 
   // Getters

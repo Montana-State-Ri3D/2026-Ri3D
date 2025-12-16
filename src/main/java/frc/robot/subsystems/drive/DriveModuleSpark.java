@@ -85,9 +85,9 @@ public class DriveModuleSpark extends SubsystemBase {
             * DriveConstants.WHEEL_RAD.in(Units.Meter));
   }
 
-  public void updateMotorConfig(double p, double i, double d, double ff) {
+  public void updateMotorConfig(double v, double p) {
     SparkMaxConfig config = DriveConstants.MOTOR_CONFIG(id);
-    config.closedLoop.pidf(p, i, d, ff);
+    config.closedLoop.pidf(p, 0, 0, v);
     motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 }
