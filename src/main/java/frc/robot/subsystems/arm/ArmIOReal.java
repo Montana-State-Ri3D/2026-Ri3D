@@ -16,8 +16,7 @@ import frc.robot.Constants.ArmConstants;
 
 public class ArmIOReal implements ArmIO {
 
-  private final SparkFlex motor =
-      new SparkFlex(Constants.CanIDs.ARM_CAN_ID, MotorType.kBrushless);
+  private final SparkFlex motor = new SparkFlex(Constants.CanIDs.ARM_CAN_ID, MotorType.kBrushless);
   private SparkFlexConfig config = Constants.ElevatorConstants.MOTOR_CONFIG();
 
   private final RelativeEncoder encoder = motor.getEncoder();

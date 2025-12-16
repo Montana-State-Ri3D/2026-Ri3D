@@ -45,7 +45,8 @@ public class Elevator extends SubsystemBase {
 
   private final LoggedTunableNumber tolerance = group.build("toleranceInches", 0.1);
 
-  private final LoggedTunableNumber manualCoefficient = group.build("ManualControlCoefficient", 2.0);
+  private final LoggedTunableNumber manualCoefficient =
+      group.build("ManualControlCoefficient", 2.0);
 
   // Motion constants
   // TODO: tune constants

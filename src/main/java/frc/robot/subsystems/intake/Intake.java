@@ -16,7 +16,6 @@ import frc.lib.team2930.LoggerGroup;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.Mode;
 import org.littletonrobotics.junction.Logger;
@@ -24,7 +23,7 @@ import org.littletonrobotics.junction.Logger;
 public class Intake extends SubsystemBase {
   // Logging
 
-  private static final LoggerGroup logGroup = LoggerGroup.build(ElevatorConstants.ROOT_TABLE);
+  private static final LoggerGroup logGroup = LoggerGroup.build(IntakeConstants.ROOT_TABLE);
 
   private static final LoggerEntry.Decimal logTargetAngle = logGroup.buildDecimal("targetVelRPM");
   private static final LoggerEntry.EnumValue<ControlMode> logControlMode =
@@ -33,7 +32,7 @@ public class Intake extends SubsystemBase {
   // Tunable numbers
 
   private static final TunableNumberGroup group =
-      new TunableNumberGroup(ElevatorConstants.ROOT_TABLE);
+      new TunableNumberGroup(IntakeConstants.ROOT_TABLE);
 
   private static final LoggedTunableNumber kP = group.build("kP");
   private static final LoggedTunableNumber kV = group.build("kV");
