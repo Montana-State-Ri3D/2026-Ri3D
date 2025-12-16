@@ -20,11 +20,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.subsystems.arm.Arm;
+import frc.robot.subsystems.arm.ArmIO;
+import frc.robot.subsystems.arm.ArmIOReal;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
 import frc.robot.subsystems.drive.DriveIOSpark;
 import frc.robot.subsystems.drive.gyro.GyroIO;
 import frc.robot.subsystems.drive.gyro.GyroIOPigeon2;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO;
+import frc.robot.subsystems.elevator.ElevatorIOReal;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -33,18 +42,25 @@ import frc.robot.subsystems.drive.gyro.GyroIOPigeon2;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  
+
+  private final Drive drive;
+  private final Elevator elevator;
+  private final Arm arm;
+  private final Intake intake;
   // private final Vision vision;
 
-  private final Drive drive; // Demo drive subsystem, sim only
   private final CommandXboxController controller =
       new CommandXboxController(0); // Driver Controller
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
-      case REAL:
+      case REAL: // Real robot, instantiate hardware IO implementations
         drive = new Drive(new DriveIOSpark(), new GyroIOPigeon2());
-        // Real robot, instantiate hardware IO implementations
+        elevator = new Elevator(new ElevatorIOReal());
+        arm = new Arm(new ArmIOReal());
+        intake = new Intake(new IntakeIOReal());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -52,9 +68,11 @@ public class RobotContainer {
         //         new VisionIOLimelight(camera1Name, drive::getRotation));
         break;
 
-      case SIM:
+      case SIM: // Sim robot, instantiate physics sim IO implementations
         drive = new Drive(new DriveIO() {}, new GyroIO() {});
-        // Sim robot, instantiate physics sim IO implementations
+        elevator = new Elevator(new ElevatorIO() {});
+        arm = new Arm(new ArmIO() {});
+        intake = new Intake(new IntakeIO() {});
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -62,10 +80,12 @@ public class RobotContainer {
         //         new VisionIOPhotonVisionSim(camera1Name, robotToCamera1, drive::getPose));
         break;
 
-      default:
-        // Replayed robot, disable IO implementations
+      default: // Replayed robot, disable IO implementations
         // (Use same number of dummy implementations as the real robot)
         drive = new Drive(new DriveIO() {}, new GyroIO() {});
+        elevator = new Elevator(new ElevatorIO() {});
+        arm = new Arm(new ArmIO() {});
+        intake = new Intake(new IntakeIO() {});
         // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
