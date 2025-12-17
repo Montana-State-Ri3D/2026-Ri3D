@@ -10,8 +10,10 @@ import frc.lib.team2930.LoggerEntry;
 import frc.lib.team2930.LoggerGroup;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.Mode;
 import frc.robot.Constants.SuperStructureConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.elevator.Elevator;
@@ -56,6 +58,8 @@ public class SuperStructure extends SubsystemBase {
 
   private LoggerGroup group = LoggerGroup.build(SuperStructureConstants.ROOT_TABLE);
   private LoggerEntry.Text stateLogger = group.buildString("currentState");
+
+  private boolean hasSimCoral;
 
   /** Creates a new SuperStructure. */
   public SuperStructure(Elevator elevator, Arm arm, Intake intake) {
@@ -113,6 +117,11 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public boolean hasCoral() {
-    return false; // TODO: add
+    if (Constants.currentMode == Mode.SIM) return hasSimCoral;
+    return intake.hasCoral();
+  }
+
+  public void setSimulatedGamepieceState(boolean hasCoral) {
+    hasSimCoral = hasCoral;
   }
 }

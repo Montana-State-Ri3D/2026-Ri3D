@@ -120,17 +120,14 @@ public class RobotContainer {
     // Score
     controller
         .rightTrigger()
-        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Score)).onFalse(
-          SuperStateMachine.setStateCommand(
-              superStateMachine, SuperState.Default));
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Score))
+        .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Default));
 
     // Intake
     controller
         .rightBumper()
         .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Intake))
-        .onFalse(
-          SuperStateMachine.setStateCommand(
-            superStateMachine, SuperState.Default));
+        .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Default));
 
     // Climb
     controller
@@ -163,6 +160,13 @@ public class RobotContainer {
               elevator.resetSensorToHomePosition();
               arm.resetSensorToHomePosition();
             }));
+
+    SmartDashboard.putData(
+        "Give Sim Coral",
+        new RunsWhenDisabledInstantCommand(() -> superStructure.setSimulatedGamepieceState(true)));
+    SmartDashboard.putData(
+        "Remove Sim Coral",
+        new RunsWhenDisabledInstantCommand(() -> superStructure.setSimulatedGamepieceState(false)));
   }
 
   /**

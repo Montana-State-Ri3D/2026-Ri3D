@@ -46,10 +46,10 @@ public class SuperStateMachine {
     newState = state != prevState;
     switch (state) {
       case Default:
-        if(superStructure.hasCoral()) {
-            state = SuperState.Stow;
+        if (superStructure.hasCoral()) {
+          state = SuperState.Stow;
         } else {
-            state = SuperState.Idle;
+          state = SuperState.Idle;
         }
         break;
       case Idle:

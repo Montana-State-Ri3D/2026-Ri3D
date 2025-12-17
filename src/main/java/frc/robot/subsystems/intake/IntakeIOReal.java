@@ -11,6 +11,8 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.I2C.Port;
+import frc.lib.teamBSR.VL6180;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 
@@ -22,13 +24,15 @@ public class IntakeIOReal implements IntakeIO {
 
   private final RelativeEncoder encoder = motor.getEncoder();
 
+  private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
+
   @Override
   public void updateInputs(IntakeInputs inputs) {
     inputs.velocityRPM = encoder.getVelocity();
     inputs.appliedOutput = motor.getAppliedOutput();
     inputs.currentAmps = motor.getOutputCurrent();
     inputs.tempCelsius = motor.getMotorTemperature();
-    // TODO: coral detection
+    inputs.tofDistanceInches = timeOfFlight.getDistance().in(Units.Inches);
   }
 
   @Override

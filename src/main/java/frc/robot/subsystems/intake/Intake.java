@@ -42,6 +42,9 @@ public class Intake extends SubsystemBase {
 
   private final LoggedTunableNumber tolerance = group.build("toleranceRPM", 0.1);
 
+  private final LoggedTunableNumber gamepieceDetectionThreshold =
+      group.build("ToFDetectionThresholdMeters", 0.05);
+
   // Motion constants
   // TODO: tune constants
   static {
@@ -135,6 +138,6 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean hasCoral() {
-    return inputs.hasCoral;
+    return inputs.tofDistanceInches < gamepieceDetectionThreshold.get();
   }
 }
