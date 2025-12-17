@@ -24,64 +24,31 @@ public class SuperStructure extends SubsystemBase {
     Stow,
     Intake,
     ScorePrep,
-    Score
+    Score,
+    ClimbPrep,
+    Climb
   }
 
   private StructureState state = StructureState.Idle;
 
-  private Elevator elevator;
-  private Arm arm;
-  private Intake intake;
+  private final Elevator elevator;
+  private final Arm arm;
+  private final Intake intake;
 
   private TunableNumberGroup tunableGroup =
       new TunableNumberGroup(SuperStructureConstants.ROOT_TABLE);
 
-  private TunableNumberGroup tunableIdleState = tunableGroup.subgroup(StructureState.Idle.name());
-  private LoggedTunableNumber tunableIdleStateElevatorHeightInches =
-      tunableIdleState.build(
-          "ElevatorHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
-  private LoggedTunableNumber tunableIdleStateArmAngleDegrees =
-      tunableIdleState.build("ArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
-  private LoggedTunableNumber tunableIdleStateIntakeVelRPM =
-      tunableIdleState.build("IntakeVelRPM", 0);
-
-  private TunableNumberGroup tunableStowState = tunableGroup.subgroup(StructureState.Stow.name());
-  private LoggedTunableNumber tunableStowStateElevatorHeightInches =
-      tunableStowState.build(
-          "ElevatorHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
-  private LoggedTunableNumber tunableStowStateArmAngleDegrees =
-      tunableStowState.build("ArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
-  private LoggedTunableNumber tunableStowStateIntakeVelRPM =
-      tunableStowState.build("IntakeVelRPM", 0);
-
-  private TunableNumberGroup tunableIntakeState =
-      tunableGroup.subgroup(StructureState.Intake.name());
-  private LoggedTunableNumber tunableIntakeStateElevatorHeightInches =
-      tunableIntakeState.build(
-          "ElevatorHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
-  private LoggedTunableNumber tunableIntakeStateArmAngleDegrees =
-      tunableIntakeState.build("ArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
-  private LoggedTunableNumber tunableIntakeStateIntakeVelRPM =
-      tunableIntakeState.build("IntakeVelRPM", 1000);
-
-  private TunableNumberGroup tunableScorePrepState =
-      tunableGroup.subgroup(StructureState.ScorePrep.name());
-  private LoggedTunableNumber tunableScorePrepStateElevatorHeightInches =
-      tunableScorePrepState.build(
-          "ElevatorHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
-  private LoggedTunableNumber tunableScorePrepStateArmAngleDegrees =
-      tunableScorePrepState.build("ArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
-  private LoggedTunableNumber tunableScorePrepStateIntakeVelRPM =
-      tunableScorePrepState.build("IntakeVelRPM", 0);
-
-  private TunableNumberGroup tunableScoreState = tunableGroup.subgroup(StructureState.Score.name());
-  private LoggedTunableNumber tunableScoreStateElevatorHeightInches =
-      tunableScoreState.build(
-          "ElevatorHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
-  private LoggedTunableNumber tunableScoreStateArmAngleDegrees =
-      tunableScoreState.build("ArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
-  private LoggedTunableNumber tunableScoreStateIntakeVelRPM =
-      tunableScoreState.build("IntakeVelRPM", 0);
+  private LoggedTunableNumber stowElevatorHeightInches =
+  tunableGroup.build(
+          "StowElevatorHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
+  private LoggedTunableNumber stowArmAngleDegrees =
+  tunableGroup.build("StowArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
+  private LoggedTunableNumber intakeVelRPM =
+  tunableGroup.build("IntakeVelRPM", SuperStructureConstants.INTAKE_VEL.in(Units.RPM));
+  private LoggedTunableNumber climbPrepElevatorHeightInches =
+  tunableGroup.build("ClimbPrepElevatorHeightInches", SuperStructureConstants.ELEVATOR_CLIMB_PREP_HEIGHT.in(Units.Inches));
+  private LoggedTunableNumber climbElevatorHeightInches =
+  tunableGroup.build("ClimbElevatorHeightInches", SuperStructureConstants.ELEVATOR_CLIMB_HEIGHT.in(Units.Inches));
 
   private LoggerGroup group = LoggerGroup.build(SuperStructureConstants.ROOT_TABLE);
   private LoggerEntry.Text stateLogger = group.buildString("currentState");
@@ -97,29 +64,39 @@ public class SuperStructure extends SubsystemBase {
   public void periodic() {
     switch (state) {
       case Idle:
-        elevator.setHeight(Units.Inches.of(tunableIdleStateElevatorHeightInches.get()));
-        arm.setAngle(Units.Degrees.of(tunableIdleStateArmAngleDegrees.get()));
-        intake.setVel(Units.RPM.of(tunableIdleStateIntakeVelRPM.get()));
+        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
+        intake.setVel(Units.RPM.of(0));
         break;
       case Stow:
-        elevator.setHeight(Units.Inches.of(tunableStowStateElevatorHeightInches.get()));
-        arm.setAngle(Units.Degrees.of(tunableStowStateArmAngleDegrees.get()));
-        intake.setVel(Units.RPM.of(tunableStowStateIntakeVelRPM.get()));
+        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
+        intake.setVel(Units.RPM.of(0));
         break;
       case Intake:
-        elevator.setHeight(Units.Inches.of(tunableIntakeStateElevatorHeightInches.get()));
-        arm.setAngle(Units.Degrees.of(tunableIntakeStateArmAngleDegrees.get()));
-        intake.setVel(Units.RPM.of(tunableIntakeStateIntakeVelRPM.get()));
+        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
+        intake.setVel(Units.RPM.of(intakeVelRPM.get()));
         break;
       case ScorePrep:
-        elevator.setHeight(Units.Inches.of(tunableScorePrepStateElevatorHeightInches.get()));
-        arm.setAngle(Units.Degrees.of(tunableScorePrepStateArmAngleDegrees.get()));
-        intake.setVel(Units.RPM.of(tunableScorePrepStateIntakeVelRPM.get()));
+        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
+        intake.setVel(Units.RPM.of(0));
         break;
       case Score:
-        elevator.setHeight(Units.Inches.of(tunableScoreStateElevatorHeightInches.get()));
-        arm.setAngle(Units.Degrees.of(tunableScoreStateArmAngleDegrees.get()));
-        intake.setVel(Units.RPM.of(tunableScoreStateIntakeVelRPM.get()));
+        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
+        intake.setVel(Units.RPM.of(0));
+        break;
+      case ClimbPrep:
+        elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
+        arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
+        intake.setVel(Units.RPM.of(0));
+        break;
+      case Climb:
+        elevator.setHeight(Units.Inches.of(climbElevatorHeightInches.get()));
+        arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
+        intake.setVel(Units.RPM.of(0));
         break;
       default:
         break;

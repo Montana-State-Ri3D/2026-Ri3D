@@ -211,6 +211,10 @@ public final class Constants {
 
   public class SuperStructureConstants {
     public static final String ROOT_TABLE = "SuperStructure";
+
+    public static final AngularVelocity INTAKE_VEL = Units.RPM.of(1000);
+    public static final Distance ELEVATOR_CLIMB_PREP_HEIGHT = Units.Inches.of(30);
+    public static final Distance ELEVATOR_CLIMB_HEIGHT = Units.Inches.of(15);
   }
 
   public class CanIDs {
