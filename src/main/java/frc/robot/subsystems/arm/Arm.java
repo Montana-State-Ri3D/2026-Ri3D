@@ -5,6 +5,7 @@
 package frc.robot.subsystems.arm;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -115,6 +116,15 @@ public class Arm extends SubsystemBase {
    * @param accel
    */
   public void setAngle(Angle angle) {
+    if (angle.lt(ArmConstants.MIN_ANGLE) || angle.gt(ArmConstants.MAX_ANGLE)) {
+      System.out.println("\u001B[33mWARNING: Arm Angle Clamped\u001B[0m");
+      angle =
+          Units.Degrees.of(
+              MathUtil.clamp(
+                  angle.in(Units.Degree),
+                  ArmConstants.MIN_ANGLE.in(Units.Degree),
+                  ArmConstants.MAX_ANGLE.in(Units.Degree)));
+    }
     io.setAngle(angle);
     targetAngle = angle;
     logTargetAngle.info(targetAngle.in(Units.Degree));

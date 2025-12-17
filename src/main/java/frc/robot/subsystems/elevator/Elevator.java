@@ -5,6 +5,7 @@
 package frc.robot.subsystems.elevator;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -116,6 +117,13 @@ public class Elevator extends SubsystemBase {
    * @param accel
    */
   public void setHeight(Distance height) {
+    if (height.lt(Units.Inches.of(0)) || height.gt(ElevatorConstants.MAX_HEIGHT)) {
+      System.out.println("\u001B[33mWARNING: Elevator Height Clamped\u001B[0m");
+      height =
+          Units.Inches.of(
+              MathUtil.clamp(
+                  height.in(Units.Inches), 0, ElevatorConstants.MAX_HEIGHT.in(Units.Inches)));
+    }
     io.setHeight(height);
     targetHeight = height;
     logTargetHeight.info(targetHeight.in(Units.Inches));

@@ -21,6 +21,7 @@ public class IntakeIOSim implements IntakeIO {
     inputs.appliedOutput = motor.getVoltage();
     inputs.currentAmps = motor.getCurrent().in(Units.Amp);
     inputs.tempCelsius = 0;
+    // TODO: fake coral detection
   }
 
   @Override

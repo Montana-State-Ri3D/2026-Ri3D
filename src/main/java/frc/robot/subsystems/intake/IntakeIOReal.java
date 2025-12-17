@@ -28,6 +28,7 @@ public class IntakeIOReal implements IntakeIO {
     inputs.appliedOutput = motor.getAppliedOutput();
     inputs.currentAmps = motor.getOutputCurrent();
     inputs.tempCelsius = motor.getMotorTemperature();
+    // TODO: coral detection
   }
 
   @Override

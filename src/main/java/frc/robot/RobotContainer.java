@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,8 +22,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.team2930.commands.RunsWhenDisabledInstantCommand;
-import frc.lib.team6328.LoggedTunableNumber;
-import frc.robot.commands.TeleopDrive;
+import frc.robot.stateMachines.SuperStateMachine;
+import frc.robot.stateMachines.SuperStateMachine.SuperState;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOReal;
@@ -51,21 +51,22 @@ import frc.robot.subsystems.intake.IntakeIOSim;
 public class RobotContainer {
 
   private final Drive drive;
+  private final SuperStructure superStructure;
   private final Elevator elevator;
   private final Arm arm;
   private final Intake intake;
   // private final Vision vision;
 
+  private final SuperStateMachine superStateMachine;
+
   private final CommandXboxController controller =
       new CommandXboxController(0); // Driver Controller
-
-  private final LoggedTunableNumber tunable = new LoggedTunableNumber("Tunable", 0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL: // Real robot, instantiate hardware IO implementations
-        drive = new Drive(new DriveModules(true), new GyroIOPigeon2());
+        drive = new Drive(new DriveModules(true), new GyroIOPigeon2(), controller);
         elevator = new Elevator(new ElevatorIOReal());
         arm = new Arm(new ArmIOReal());
         intake = new Intake(new IntakeIOReal());
@@ -77,7 +78,7 @@ public class RobotContainer {
         break;
 
       case SIM: // Sim robot, instantiate physics sim IO implementations
-        drive = new Drive(new DriveModules(false), new GyroIO() {});
+        drive = new Drive(new DriveModules(false), new GyroIO() {}, controller);
         elevator = new Elevator(new ElevatorIOSim());
         arm = new Arm(new ArmIOSim());
         intake = new Intake(new IntakeIOSim());
@@ -90,13 +91,17 @@ public class RobotContainer {
 
       default: // Replayed robot, disable IO implementations
         // (Use same number of dummy implementations as the real robot)
-        drive = new Drive(new DriveModules(false), new GyroIO() {});
+        drive = new Drive(new DriveModules(false), new GyroIO() {}, controller);
         elevator = new Elevator(new ElevatorIO() {});
         arm = new Arm(new ArmIO() {});
         intake = new Intake(new IntakeIO() {});
         // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
+
+    superStructure = new SuperStructure(elevator, arm, intake);
+
+    superStateMachine = new SuperStateMachine(drive, superStructure);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -109,15 +114,29 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    drive.setDefaultCommand(new TeleopDrive(drive, controller));
     // Reset robot rotation
     controller.start().onTrue(Commands.runOnce(() -> drive.setRotation(new Rotation2d())));
 
+    // Score
     controller
-        .a()
-        .whileTrue(
-            Commands.run(() -> arm.setAngle(Units.Degree.of(tunable.get())))
-                .finallyDo(() -> arm.setAngle(Units.Degree.of(0))));
+        .rightTrigger()
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Score)).onFalse(
+          SuperStateMachine.setStateCommand(
+              superStateMachine, SuperState.Default));
+
+    // Intake
+    controller
+        .rightBumper()
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Intake))
+        .onFalse(
+          SuperStateMachine.setStateCommand(
+            superStateMachine, SuperState.Default));
+
+    // Climb
+    controller
+        .leftBumper()
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.ClimbPrep))
+        .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Climb));
 
     SmartDashboard.putData(
         "Brake Mode",
@@ -153,6 +172,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return Commands.none();
+  }
+
+  public void robotPeriodic() {
+    superStateMachine.periodic();
   }
 
   public void onDisabled() {
