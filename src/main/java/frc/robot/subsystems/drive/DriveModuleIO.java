@@ -31,5 +31,5 @@ public interface DriveModuleIO {
     return Units.MetersPerSecond.zero();
   }
 
-  public default void updateMotorConfig(double v, double p) {}
+  public default void updateMotorConfig(double kV, double kP) {}
 }

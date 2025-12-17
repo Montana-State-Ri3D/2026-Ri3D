@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,10 +23,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.team2930.commands.RunsWhenDisabledInstantCommand;
+import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOReal;
+import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveModules;
 import frc.robot.subsystems.drive.gyro.GyroIO;
@@ -33,9 +36,11 @@ import frc.robot.subsystems.drive.gyro.GyroIOPigeon2;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOReal;
+import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
+import frc.robot.subsystems.intake.IntakeIOSim;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -54,6 +59,8 @@ public class RobotContainer {
   private final CommandXboxController controller =
       new CommandXboxController(0); // Driver Controller
 
+  private final LoggedTunableNumber tunable = new LoggedTunableNumber("Tunable", 0);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     switch (Constants.currentMode) {
@@ -71,9 +78,9 @@ public class RobotContainer {
 
       case SIM: // Sim robot, instantiate physics sim IO implementations
         drive = new Drive(new DriveModules(false), new GyroIO() {});
-        elevator = new Elevator(new ElevatorIO() {});
-        arm = new Arm(new ArmIO() {});
-        intake = new Intake(new IntakeIO() {});
+        elevator = new Elevator(new ElevatorIOSim());
+        arm = new Arm(new ArmIOSim());
+        intake = new Intake(new IntakeIOSim());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -105,6 +112,12 @@ public class RobotContainer {
     drive.setDefaultCommand(new TeleopDrive(drive, controller));
     // Reset robot rotation
     controller.start().onTrue(Commands.runOnce(() -> drive.setRotation(new Rotation2d())));
+
+    controller
+        .a()
+        .whileTrue(
+            Commands.run(() -> arm.setAngle(Units.Degree.of(tunable.get())))
+                .finallyDo(() -> arm.setAngle(Units.Degree.of(0))));
 
     SmartDashboard.putData(
         "Brake Mode",

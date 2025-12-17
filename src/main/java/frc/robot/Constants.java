@@ -60,7 +60,7 @@ public final class Constants {
     public static final int NUM_MODULES = 4;
 
     public static final LinearVelocity MAX_LINEAR_SPEED =
-        Units.MetersPerSecond.of(2); // TODO: find actual value
+        Units.MetersPerSecond.of(4); // TODO: find actual value
 
     public static final AngularVelocity MAX_ANGULAR_SPEED =
         Units.RadiansPerSecond.of(7); // TODO: find actual value
@@ -113,6 +113,7 @@ public final class Constants {
     public static final Distance PULLEY_RADIUS = Units.Inch.of(2); // TODO: determine
     public static final double INCHES_TO_MOTOR_ROT =
         1.0 / (PULLEY_RADIUS.in(Units.Inches) * 2 * Math.PI * GEAR_RATIO);
+    public static final double MOI = 0.0001;
 
     public static final SparkFlexConfig MOTOR_CONFIG() {
       SparkFlexConfig config = new SparkFlexConfig();
@@ -132,6 +133,7 @@ public final class Constants {
     public static final Angle HOME_POSITION = Units.Degree.of(0); // TODO: determine
     public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
     public static final boolean INVERT = false; // TODO: determine
+    public static final double MOI = 0.0001;
 
     public static final SparkFlexConfig MOTOR_CONFIG() {
       SparkFlexConfig config = new SparkFlexConfig();
@@ -150,6 +152,7 @@ public final class Constants {
     public static final String ROOT_TABLE = "Intake";
     public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
     public static final boolean INVERT = false; // TODO: determine
+    public static final double MOI = 0.0001;
 
     public static final SparkFlexConfig MOTOR_CONFIG() {
       SparkFlexConfig config = new SparkFlexConfig();

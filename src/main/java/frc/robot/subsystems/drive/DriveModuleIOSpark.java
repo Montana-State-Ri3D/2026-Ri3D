@@ -73,9 +73,9 @@ public class DriveModuleIOSpark implements DriveModuleIO {
             * DriveConstants.WHEEL_RAD.in(Units.Meter));
   }
 
-  public void updateMotorConfig(double v, double p) {
+  public void updateMotorConfig(double kV, double kP) {
     SparkMaxConfig config = DriveConstants.MOTOR_CONFIG(id);
-    config.closedLoop.pidf(p, 0, 0, v);
+    config.closedLoop.pidf(kP, 0, 0, kV);
     motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 }

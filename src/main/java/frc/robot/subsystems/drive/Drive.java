@@ -16,6 +16,7 @@ import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.Mode;
 import frc.robot.subsystems.drive.gyro.GyroIO;
 import frc.robot.subsystems.drive.gyro.GyroIOInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -46,11 +47,11 @@ public class Drive extends SubsystemBase {
   private Rotation2d simYawAngle = Rotation2d.kZero;
 
   static {
-    if (RobotBase.isReal()) {
+    if (Constants.currentMode == Mode.REAL) {
       tunableV.initDefault(0.009);
       tunableP.initDefault(0);
     } else {
-      tunableV.initDefault(0.009);
+      tunableV.initDefault(0.082);
       tunableP.initDefault(0);
     }
   }

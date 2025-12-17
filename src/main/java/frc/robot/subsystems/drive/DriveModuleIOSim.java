@@ -31,7 +31,8 @@ public class DriveModuleIOSim implements DriveModuleIO {
     motor.update(Constants.defaultPeriod);
     inputs.voltage = motor.getVoltage();
     inputs.relativePosMeters = getRelativePosition().in(Units.Meter);
-    inputs.relativePosRotations = motor.getPosition().in(Units.Rotation);
+    inputs.relativePosRotations =
+        motor.getPosition().in(Units.Rotation) * DriveConstants.GEAR_RATIO;
     inputs.velMetersPerSecond = getVelocity().in(Units.MetersPerSecond);
 
     inputs.desiredVelMetersPerSecond = desiredVel.in(Units.MetersPerSecond);
@@ -56,17 +57,21 @@ public class DriveModuleIOSim implements DriveModuleIO {
   @Override
   public Distance getRelativePosition() {
     return Units.Meter.of(
-        motor.getPosition().in(Units.Radians) * DriveConstants.WHEEL_RAD.in(Units.Meter));
+        motor.getPosition().in(Units.Radians)
+            * DriveConstants.WHEEL_RAD.in(Units.Meter)
+            * DriveConstants.GEAR_RATIO);
   }
 
   @Override
   public LinearVelocity getVelocity() {
     return Units.MetersPerSecond.of(
-        motor.getVelocity().in(Units.RadiansPerSecond) * DriveConstants.WHEEL_RAD.in(Units.Meter));
+        motor.getVelocity().in(Units.RadiansPerSecond)
+            * DriveConstants.WHEEL_RAD.in(Units.Meter)
+            * DriveConstants.GEAR_RATIO);
   }
 
   @Override
-  public void updateMotorConfig(double v, double p) {
-    motor.setConfig(p, 0, 0, v, 0);
+  public void updateMotorConfig(double kV, double kP) {
+    motor.setConfig(kP, 0, 0, kV, 0);
   }
 }

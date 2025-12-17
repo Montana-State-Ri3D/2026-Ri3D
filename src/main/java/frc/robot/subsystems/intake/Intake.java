@@ -47,7 +47,7 @@ public class Intake extends SubsystemBase {
   static {
     if (Constants.currentMode == Mode.SIM) {
       kP.initDefault(0.0);
-      kV.initDefault(0.0);
+      kV.initDefault(0.00208);
 
       maxAccelerationConfig.initDefault(0.0);
 
@@ -76,6 +76,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
+    io.updateInputs(inputs);
     Logger.processInputs(IntakeConstants.ROOT_TABLE, inputs);
 
     logControlMode.info(controlMode);
@@ -100,7 +101,7 @@ public class Intake extends SubsystemBase {
    * @param height
    * @param accel
    */
-  public void setRPM(AngularVelocity vel) {
+  public void setVel(AngularVelocity vel) {
     io.setVel(vel);
     targetVel = vel;
     logTargetAngle.info(targetVel.in(Units.RPM));
@@ -111,7 +112,7 @@ public class Intake extends SubsystemBase {
     return io.setIdleMode(value);
   }
 
-  public void configMotor() {
+  private void configMotor() {
     io.configMotor(kV.get(), kP.get(), maxAccelerationConfig.get());
   }
 

@@ -52,7 +52,7 @@ public class Elevator extends SubsystemBase {
   // TODO: tune constants
   static {
     if (Constants.currentMode == Mode.SIM) {
-      kP.initDefault(0.0);
+      kP.initDefault(0.2);
       kD.initDefault(0.0);
       kG.initDefault(0.0);
 
@@ -86,6 +86,7 @@ public class Elevator extends SubsystemBase {
 
   @Override
   public void periodic() {
+    io.updateInputs(inputs);
     Logger.processInputs(ElevatorConstants.ROOT_TABLE, inputs);
 
     logControlMode.info(controlMode);
@@ -129,7 +130,7 @@ public class Elevator extends SubsystemBase {
     return io.setIdleMode(value);
   }
 
-  public void configMotor() {
+  private void configMotor() {
     io.configMotor(
         kP.get(), kD.get(), kG.get(), maxVelocityConfig.get(), maxAccelerationConfig.get());
   }
