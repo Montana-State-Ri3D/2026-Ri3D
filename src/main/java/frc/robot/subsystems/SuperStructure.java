@@ -39,16 +39,20 @@ public class SuperStructure extends SubsystemBase {
       new TunableNumberGroup(SuperStructureConstants.ROOT_TABLE);
 
   private LoggedTunableNumber stowElevatorHeightInches =
-  tunableGroup.build(
+      tunableGroup.build(
           "StowElevatorHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
   private LoggedTunableNumber stowArmAngleDegrees =
-  tunableGroup.build("StowArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
+      tunableGroup.build("StowArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
   private LoggedTunableNumber intakeVelRPM =
-  tunableGroup.build("IntakeVelRPM", SuperStructureConstants.INTAKE_VEL.in(Units.RPM));
+      tunableGroup.build("IntakeVelRPM", SuperStructureConstants.INTAKE_VEL.in(Units.RPM));
   private LoggedTunableNumber climbPrepElevatorHeightInches =
-  tunableGroup.build("ClimbPrepElevatorHeightInches", SuperStructureConstants.ELEVATOR_CLIMB_PREP_HEIGHT.in(Units.Inches));
+      tunableGroup.build(
+          "ClimbPrepElevatorHeightInches",
+          SuperStructureConstants.ELEVATOR_CLIMB_PREP_HEIGHT.in(Units.Inches));
   private LoggedTunableNumber climbElevatorHeightInches =
-  tunableGroup.build("ClimbElevatorHeightInches", SuperStructureConstants.ELEVATOR_CLIMB_HEIGHT.in(Units.Inches));
+      tunableGroup.build(
+          "ClimbElevatorHeightInches",
+          SuperStructureConstants.ELEVATOR_CLIMB_HEIGHT.in(Units.Inches));
 
   private LoggerGroup group = LoggerGroup.build(SuperStructureConstants.ROOT_TABLE);
   private LoggerEntry.Text stateLogger = group.buildString("currentState");
@@ -106,5 +110,9 @@ public class SuperStructure extends SubsystemBase {
 
   public void setState(StructureState state) {
     this.state = state;
+  }
+
+  public boolean hasCoral() {
+    return false; // TODO: add
   }
 }

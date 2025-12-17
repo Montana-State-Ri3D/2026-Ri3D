@@ -117,7 +117,7 @@ public class Elevator extends SubsystemBase {
    * @param accel
    */
   public void setHeight(Distance height) {
-    if (height.lte(Units.Inches.of(0)) || height.gte(ElevatorConstants.MAX_HEIGHT)) {
+    if (height.lt(Units.Inches.of(0)) || height.gt(ElevatorConstants.MAX_HEIGHT)) {
       System.out.println("\u001B[33mWARNING: Elevator Height Clamped\u001B[0m");
       height =
           Units.Inches.of(

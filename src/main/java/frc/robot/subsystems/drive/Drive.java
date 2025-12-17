@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -9,9 +10,13 @@ import edu.wpi.first.math.kinematics.MecanumDriveWheelPositions;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
@@ -24,11 +29,20 @@ import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
 
+  public enum DriveState {
+    Controller,
+    PathFollow
+  }
+
+  private DriveState state = DriveState.Controller;
+
   private final DriveModules modules;
   private final DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
 
   private final GyroIO gyroIO;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
+
+  private final CommandXboxController controller;
 
   private final MecanumDrivePoseEstimator poseEstimator =
       new MecanumDrivePoseEstimator(
@@ -46,6 +60,8 @@ public class Drive extends SubsystemBase {
 
   private Rotation2d simYawAngle = Rotation2d.kZero;
 
+  private final double DEADBAND = 0.1;
+
   static {
     if (Constants.currentMode == Mode.REAL) {
       tunableV.initDefault(0.009);
@@ -56,9 +72,10 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  public Drive(DriveModules modules, GyroIO gyroIO) {
+  public Drive(DriveModules modules, GyroIO gyroIO, CommandXboxController controller) {
     this.modules = modules;
     this.gyroIO = gyroIO;
+    this.controller = controller;
     updateConstants();
   }
 
@@ -78,6 +95,38 @@ public class Drive extends SubsystemBase {
 
     int hc = hashCode();
     if (tunableP.hasChanged(hc) || tunableV.hasChanged(hc)) updateConstants();
+
+    switch (state) {
+      case Controller:
+        driveController();
+        break;
+      case PathFollow:
+        // TODO: add path following
+        break;
+      default:
+        break;
+    }
+  }
+
+  private void driveController() {
+    double angMagnitude = MathUtil.applyDeadband(-controller.getRightX(), DEADBAND);
+    LinearVelocity speedX =
+        DriveConstants.MAX_LINEAR_SPEED.times(
+            MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND));
+    LinearVelocity speedY =
+        DriveConstants.MAX_LINEAR_SPEED.times(
+            MathUtil.applyDeadband(-controller.getLeftX(), DEADBAND));
+    if (DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red)) {
+      speedX = speedX.unaryMinus();
+      speedY = speedY.unaryMinus();
+    }
+    driveRobotCentric(
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            speedX,
+            speedY,
+            Constants.DriveConstants.MAX_ANGULAR_SPEED.times(
+                Math.copySign(angMagnitude * angMagnitude, angMagnitude)),
+            getRotation()));
   }
 
   private void updateConstants() {
@@ -121,5 +170,9 @@ public class Drive extends SubsystemBase {
 
   public void setModuleVoltages(Voltage[] volts) {
     modules.setVoltage(volts);
+  }
+
+  public void setState(DriveState state) {
+    this.state = state;
   }
 }

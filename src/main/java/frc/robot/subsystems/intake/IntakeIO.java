@@ -12,6 +12,7 @@ public interface IntakeIO {
     public double appliedOutput;
     public double currentAmps;
     public double tempCelsius;
+    public boolean hasCoral;
   }
 
   /** Updates the set of loggable inputs. */

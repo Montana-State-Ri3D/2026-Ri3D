@@ -22,7 +22,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.team2930.commands.RunsWhenDisabledInstantCommand;
-import frc.robot.commands.TeleopDrive;
+import frc.robot.stateMachines.SuperStateMachine;
+import frc.robot.stateMachines.SuperStateMachine.SuperState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
@@ -56,6 +57,8 @@ public class RobotContainer {
   private final Intake intake;
   // private final Vision vision;
 
+  private final SuperStateMachine superStateMachine;
+
   private final CommandXboxController controller =
       new CommandXboxController(0); // Driver Controller
 
@@ -63,7 +66,7 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL: // Real robot, instantiate hardware IO implementations
-        drive = new Drive(new DriveModules(true), new GyroIOPigeon2());
+        drive = new Drive(new DriveModules(true), new GyroIOPigeon2(), controller);
         elevator = new Elevator(new ElevatorIOReal());
         arm = new Arm(new ArmIOReal());
         intake = new Intake(new IntakeIOReal());
@@ -75,7 +78,7 @@ public class RobotContainer {
         break;
 
       case SIM: // Sim robot, instantiate physics sim IO implementations
-        drive = new Drive(new DriveModules(false), new GyroIO() {});
+        drive = new Drive(new DriveModules(false), new GyroIO() {}, controller);
         elevator = new Elevator(new ElevatorIOSim());
         arm = new Arm(new ArmIOSim());
         intake = new Intake(new IntakeIOSim());
@@ -88,7 +91,7 @@ public class RobotContainer {
 
       default: // Replayed robot, disable IO implementations
         // (Use same number of dummy implementations as the real robot)
-        drive = new Drive(new DriveModules(false), new GyroIO() {});
+        drive = new Drive(new DriveModules(false), new GyroIO() {}, controller);
         elevator = new Elevator(new ElevatorIO() {});
         arm = new Arm(new ArmIO() {});
         intake = new Intake(new IntakeIO() {});
@@ -97,6 +100,8 @@ public class RobotContainer {
     }
 
     superStructure = new SuperStructure(elevator, arm, intake);
+
+    superStateMachine = new SuperStateMachine(drive, superStructure);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -109,9 +114,29 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    drive.setDefaultCommand(new TeleopDrive(drive, controller));
     // Reset robot rotation
     controller.start().onTrue(Commands.runOnce(() -> drive.setRotation(new Rotation2d())));
+
+    // Score
+    controller
+        .rightTrigger()
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Score)).onFalse(
+          SuperStateMachine.setStateCommand(
+              superStateMachine, SuperState.Default));
+
+    // Intake
+    controller
+        .rightBumper()
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Intake))
+        .onFalse(
+          SuperStateMachine.setStateCommand(
+            superStateMachine, SuperState.Default));
+
+    // Climb
+    controller
+        .leftBumper()
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.ClimbPrep))
+        .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Climb));
 
     SmartDashboard.putData(
         "Brake Mode",
@@ -147,6 +172,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return Commands.none();
+  }
+
+  public void robotPeriodic() {
+    superStateMachine.periodic();
   }
 
   public void onDisabled() {

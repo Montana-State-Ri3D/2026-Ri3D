@@ -133,7 +133,7 @@ public class StateMachine {
     this.interruptedState = interruptedState;
   }
 
-  public void init(){
+  public void init() {
     StateMachine.this.startTime = Timer.getFPGATimestamp();
   }
 

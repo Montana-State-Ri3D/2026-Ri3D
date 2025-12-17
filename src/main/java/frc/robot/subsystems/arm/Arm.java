@@ -116,7 +116,7 @@ public class Arm extends SubsystemBase {
    * @param accel
    */
   public void setAngle(Angle angle) {
-    if (angle.lte(ArmConstants.MIN_ANGLE) || angle.gte(ArmConstants.MAX_ANGLE)) {
+    if (angle.lt(ArmConstants.MIN_ANGLE) || angle.gt(ArmConstants.MAX_ANGLE)) {
       System.out.println("\u001B[33mWARNING: Arm Angle Clamped\u001B[0m");
       angle =
           Units.Degrees.of(
