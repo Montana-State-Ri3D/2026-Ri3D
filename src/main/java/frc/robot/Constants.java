@@ -115,6 +115,8 @@ public final class Constants {
         1.0 / (PULLEY_RADIUS.in(Units.Inches) * 2 * Math.PI * GEAR_RATIO);
     public static final double MOI = 0.0001;
 
+    public static final Distance MAX_HEIGHT = Units.Inches.of(30); // TODO: determine
+
     public static final SparkFlexConfig MOTOR_CONFIG() {
       SparkFlexConfig config = new SparkFlexConfig();
       config.absoluteEncoder.inverted(INVERT);
@@ -134,6 +136,8 @@ public final class Constants {
     public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
     public static final boolean INVERT = false; // TODO: determine
     public static final double MOI = 0.0001;
+    public static final Angle MIN_ANGLE = Units.Degrees.of(0); // TODO: determine
+    public static final Angle MAX_ANGLE = Units.Degrees.of(180); // TODO: determine
 
     public static final SparkFlexConfig MOTOR_CONFIG() {
       SparkFlexConfig config = new SparkFlexConfig();
@@ -203,6 +207,10 @@ public final class Constants {
     public static double linearStdDevMegatag2Factor = 0.5; // More stable than full 3D solve
     public static double angularStdDevMegatag2Factor =
         Double.POSITIVE_INFINITY; // No rotation data available
+  }
+
+  public class SuperStructureConstants {
+    public static final String ROOT_TABLE = "SuperStructure";
   }
 
   public class CanIDs {

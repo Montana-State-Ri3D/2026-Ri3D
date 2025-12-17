@@ -15,7 +15,6 @@ package frc.robot;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,8 +22,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.team2930.commands.RunsWhenDisabledInstantCommand;
-import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOReal;
@@ -51,6 +50,7 @@ import frc.robot.subsystems.intake.IntakeIOSim;
 public class RobotContainer {
 
   private final Drive drive;
+  private final SuperStructure superStructure;
   private final Elevator elevator;
   private final Arm arm;
   private final Intake intake;
@@ -58,8 +58,6 @@ public class RobotContainer {
 
   private final CommandXboxController controller =
       new CommandXboxController(0); // Driver Controller
-
-  private final LoggedTunableNumber tunable = new LoggedTunableNumber("Tunable", 0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -98,6 +96,8 @@ public class RobotContainer {
         break;
     }
 
+    superStructure = new SuperStructure(elevator, arm, intake);
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -112,12 +112,6 @@ public class RobotContainer {
     drive.setDefaultCommand(new TeleopDrive(drive, controller));
     // Reset robot rotation
     controller.start().onTrue(Commands.runOnce(() -> drive.setRotation(new Rotation2d())));
-
-    controller
-        .a()
-        .whileTrue(
-            Commands.run(() -> arm.setAngle(Units.Degree.of(tunable.get())))
-                .finallyDo(() -> arm.setAngle(Units.Degree.of(0))));
 
     SmartDashboard.putData(
         "Brake Mode",
