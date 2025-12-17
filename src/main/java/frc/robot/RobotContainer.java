@@ -27,8 +27,7 @@ import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
 import frc.robot.subsystems.arm.ArmIOReal;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveIO;
-import frc.robot.subsystems.drive.DriveIOSpark;
+import frc.robot.subsystems.drive.DriveModules;
 import frc.robot.subsystems.drive.gyro.GyroIO;
 import frc.robot.subsystems.drive.gyro.GyroIOPigeon2;
 import frc.robot.subsystems.elevator.Elevator;
@@ -59,7 +58,7 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL: // Real robot, instantiate hardware IO implementations
-        drive = new Drive(new DriveIOSpark(), new GyroIOPigeon2());
+        drive = new Drive(new DriveModules(true), new GyroIOPigeon2());
         elevator = new Elevator(new ElevatorIOReal());
         arm = new Arm(new ArmIOReal());
         intake = new Intake(new IntakeIOReal());
@@ -71,7 +70,7 @@ public class RobotContainer {
         break;
 
       case SIM: // Sim robot, instantiate physics sim IO implementations
-        drive = new Drive(new DriveIO() {}, new GyroIO() {});
+        drive = new Drive(new DriveModules(false), new GyroIO() {});
         elevator = new Elevator(new ElevatorIO() {});
         arm = new Arm(new ArmIO() {});
         intake = new Intake(new IntakeIO() {});
@@ -84,7 +83,7 @@ public class RobotContainer {
 
       default: // Replayed robot, disable IO implementations
         // (Use same number of dummy implementations as the real robot)
-        drive = new Drive(new DriveIO() {}, new GyroIO() {});
+        drive = new Drive(new DriveModules(false), new GyroIO() {});
         elevator = new Elevator(new ElevatorIO() {});
         arm = new Arm(new ArmIO() {});
         intake = new Intake(new IntakeIO() {});

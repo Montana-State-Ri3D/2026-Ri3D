@@ -52,6 +52,7 @@ public final class Constants {
   }
 
   public static final Voltage MAX_VOLTAGE = Units.Volts.of(12);
+  public static final double defaultPeriod = 0.02;
 
   public static class DriveConstants {
     public static final String ROOT_TABLE = "Drive";
@@ -69,6 +70,8 @@ public final class Constants {
     public static final Distance WHEEL_RAD = Units.Inch.of(3);
 
     public static final Distance WHEEL_CIRC = WHEEL_RAD.times(Math.PI * 2);
+
+    public static final double MOI = 0.00001;
 
     public static final SparkMaxConfig MOTOR_CONFIG(int id) {
       SparkMaxConfig config = new SparkMaxConfig();
