@@ -29,6 +29,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -53,6 +55,10 @@ public final class Constants {
 
   public static final Voltage MAX_VOLTAGE = Units.Volts.of(12);
   public static final double defaultPeriod = 0.02;
+
+  public static boolean isRedAlliance() {
+    return DriverStation.getAlliance().orElse(Alliance.Blue).equals(Alliance.Red);
+  }
 
   public static class DriveConstants {
     public static final String ROOT_TABLE = "Drive";
@@ -233,5 +239,10 @@ public final class Constants {
     public static final int ELEVATOR_FOLLOW_CAN_ID = 7;
     public static final int ARM_CAN_ID = 8;
     public static final int INTAKE_CAN_ID = 9;
+  }
+
+  public class FieldConstants {
+    public static Distance FIELD_LENGTH = Units.Inches.of(690.875); // TODO: determine
+    public static Distance FIELD_WIDTH = Units.Inches.of(317.0); // TODO: determine
   }
 }

@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.MecanumDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +23,7 @@ import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
+import frc.robot.autonomous.ChoreoTrajectoryWithName;
 import frc.robot.subsystems.drive.gyro.GyroIO;
 import frc.robot.subsystems.drive.gyro.GyroIOInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -53,16 +55,10 @@ public class Drive extends SubsystemBase {
 
   private static final TunableNumberGroup group = new TunableNumberGroup(DriveConstants.ROOT_TABLE);
 
-  // TODO: tune PID
-
   private static LoggedTunableNumber tunableV = group.build("kV");
   private static LoggedTunableNumber tunableP = group.build("kP");
 
-  private Rotation2d simYawAngle = Rotation2d.kZero;
-
-  private final double DEADBAND = 0.1;
-
-  static {
+  static { // TODO: tune PID
     if (Constants.currentMode == Mode.REAL) {
       tunableV.initDefault(0.009);
       tunableP.initDefault(0);
@@ -71,6 +67,19 @@ public class Drive extends SubsystemBase {
       tunableP.initDefault(0);
     }
   }
+
+  private final TunableNumberGroup linear = group.subgroup("Linear");
+  private final LoggedTunableNumber linearKP = linear.build("P", 0.1);
+  private final LoggedTunableNumber linearKD = linear.build("D", 0.0);
+  private final TunableNumberGroup angular = group.subgroup("Angular");
+  private final LoggedTunableNumber angularKP = angular.build("P", 0.1);
+  private final LoggedTunableNumber angularKD = angular.build("D", 0.0);
+
+  private Rotation2d simYawAngle = Rotation2d.kZero;
+
+  private final double DEADBAND = 0.1;
+
+  private ChoreoHelper choreoHelper;
 
   public Drive(DriveModules modules, GyroIO gyroIO, CommandXboxController controller) {
     this.modules = modules;
@@ -101,11 +110,32 @@ public class Drive extends SubsystemBase {
         driveController();
         break;
       case PathFollow:
-        // TODO: add path following
+        if (choreoHelper != null) {
+          driveRobotCentric(
+              ChassisSpeeds.fromFieldRelativeSpeeds(
+                  choreoHelper
+                      .calculateChassisSpeeds(getPose(), System.currentTimeMillis() / 1000.0)
+                      .chassisSpeeds(),
+                  simYawAngle));
+        } else {
+          driveRobotCentric(new ChassisSpeeds());
+        }
         break;
       default:
         break;
     }
+  }
+
+  public void setTrajectory(ChoreoTrajectoryWithName traj) {
+    choreoHelper =
+        new ChoreoHelper(
+            System.currentTimeMillis() / 1000.0,
+            getPose(),
+            traj,
+            DriveConstants.WHEEL_OFFSETS[0].getX() / 2.0,
+            new PIDController(linearKP.get(), 0, linearKD.get()),
+            new PIDController(linearKP.get(), 0, linearKD.get()),
+            new PIDController(angularKP.get(), 0, angularKD.get()));
   }
 
   private void driveController() {

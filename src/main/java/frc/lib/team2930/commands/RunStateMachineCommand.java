@@ -1,0 +1,63 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.lib.team2930.commands;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.lib.team2930.StateMachine;
+import java.util.function.Supplier;
+
+public class RunStateMachineCommand extends Command {
+  private final Supplier<StateMachine> supplier;
+  private final boolean runsWhenDisabled;
+  private StateMachine stateMachine;
+  private Command command;
+
+  public RunStateMachineCommand(
+      Supplier<StateMachine> stateMachineSupplier, Subsystem... subsystems) {
+    this(stateMachineSupplier, false, subsystems);
+  }
+
+  public RunStateMachineCommand(
+      Supplier<StateMachine> stateMachineSupplier,
+      boolean runsWhenDiabled,
+      Subsystem... subsystems) {
+    this.supplier = stateMachineSupplier;
+    this.runsWhenDisabled = runsWhenDiabled;
+    stateMachine = supplier.get();
+
+    addRequirements(subsystems);
+    // Use addRequirements() here to declare subsystem dependencies.
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    stateMachine = supplier.get();
+    command = stateMachine.asCommand();
+    command.schedule();
+  }
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {}
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    command.cancel();
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return stateMachine == null || !stateMachine.isRunning();
+  }
+
+  @Override
+  public boolean runsWhenDisabled() {
+    return runsWhenDisabled;
+  }
+}
