@@ -9,7 +9,7 @@ public record AutoDescriptor(StartingLocation start, ArrayList<AutoAction> actio
     IB(SuperState.AutoIntake), // Intake Location B
     IC(SuperState.AutoIntake), // Intake Location C
     ID(SuperState.AutoIntake), // Intake Location D
-    S(SuperState.AutoIntake); // Score
+    S(SuperState.Score); // Score
     public final SuperState desiredState;
 
     AutoAction(SuperState desiredState) {

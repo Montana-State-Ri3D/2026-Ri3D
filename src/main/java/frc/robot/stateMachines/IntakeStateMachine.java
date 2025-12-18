@@ -42,6 +42,6 @@ public class IntakeStateMachine extends StateMachine {
 
   private StateHandler end() {
     superStateMachine.setState(SuperState.Stow);
-    return null;
+    return stateWithName("Done", setDone());
   }
 }

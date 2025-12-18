@@ -110,7 +110,7 @@ public class RobotContainer {
 
     superStateMachine = new SuperStateMachine(drive, superStructure);
 
-    autoManager = new AutoManager(superStateMachine, superStructure);
+    autoManager = new AutoManager(superStateMachine, drive, superStructure);
 
     // Configure the button bindings
     configureButtonBindings();

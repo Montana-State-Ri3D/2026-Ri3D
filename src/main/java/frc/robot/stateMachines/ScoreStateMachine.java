@@ -53,6 +53,6 @@ public class ScoreStateMachine extends StateMachine {
 
   private StateHandler end() {
     superStateMachine.setState(SuperState.Idle);
-    return null;
+    return stateWithName("Done", setDone());
   }
 }

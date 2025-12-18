@@ -9,6 +9,7 @@ import frc.robot.autonomous.AutoDescriptor.AutoAction;
 import frc.robot.autonomous.AutoDescriptor.StartingLocation;
 import frc.robot.stateMachines.SuperStateMachine;
 import frc.robot.subsystems.SuperStructure;
+import frc.robot.subsystems.drive.Drive;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
@@ -17,10 +18,12 @@ public class AutoManager {
   public record Auto(String name, Supplier<Command> command) {}
 
   private final SuperStateMachine stateMachine;
+  private final Drive drive;
   private final SuperStructure superStructure;
 
-  public AutoManager(SuperStateMachine stateMachine, SuperStructure superStructure) {
+  public AutoManager(SuperStateMachine stateMachine, Drive drive, SuperStructure superStructure) {
     this.stateMachine = stateMachine;
+    this.drive = drive;
     this.superStructure = superStructure;
   }
 
@@ -43,6 +46,6 @@ public class AutoManager {
     actions.add(AutoAction.ID);
     actions.add(AutoAction.S);
     AutoDescriptor descriptor = new AutoDescriptor(StartingLocation.S1, actions);
-    return new AutoStateMachine(descriptor, stateMachine, superStructure);
+    return new AutoStateMachine(descriptor, stateMachine, drive, superStructure);
   }
 }
