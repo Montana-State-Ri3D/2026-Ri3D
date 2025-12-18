@@ -81,6 +81,8 @@ public class SuperStateMachine {
         runStateMachine(() -> new ScoreStateMachine(this, drive, superStructure, true), newState);
         break;
       default:
+        superStructure.setState(StructureState.Idle);
+        drive.setState(DriveState.Controller);
         break;
     }
     stateLogger.info(state.name());
