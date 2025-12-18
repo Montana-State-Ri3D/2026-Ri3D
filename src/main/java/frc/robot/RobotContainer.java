@@ -184,6 +184,7 @@ public class RobotContainer {
     autoChooser = autoManager.getAutos();
     autoChooser.onChange((commandSupplier) -> autoCommand = commandSupplier.get());
     SmartDashboard.putData("AutoChooser", autoChooser);
+    autoCommand = autoChooser.getSelected().get();
   }
 
   /**
@@ -192,7 +193,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected().get();
+    return autoCommand;
   }
 
   public void robotPeriodic() {

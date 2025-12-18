@@ -18,7 +18,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.team2930.LoggerEntry;
+import frc.lib.team2930.LoggerGroup;
 import frc.lib.team2930.TunableNumberGroup;
+import frc.lib.team6328.DriveToPose;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -33,7 +36,8 @@ public class Drive extends SubsystemBase {
 
   public enum DriveState {
     Controller,
-    PathFollow
+    PathFollow,
+    DriveToPose
   }
 
   private DriveState state = DriveState.Controller;
@@ -52,6 +56,9 @@ public class Drive extends SubsystemBase {
           Rotation2d.kZero,
           new MecanumDriveWheelPositions(),
           Pose2d.kZero);
+
+  private static final LoggerGroup loggerGroup = LoggerGroup.build(DriveConstants.ROOT_TABLE);
+  private static final LoggerEntry.Text stateLogger = loggerGroup.buildString("currentState");
 
   private static final TunableNumberGroup group = new TunableNumberGroup(DriveConstants.ROOT_TABLE);
 
@@ -81,11 +88,19 @@ public class Drive extends SubsystemBase {
 
   private ChoreoHelper choreoHelper;
 
+  private Pose2d targetPose = Pose2d.kZero;
+
+  private DriveToPose driveToPose;
+
+  private boolean newState = false;
+  private DriveState prevState = DriveState.Controller;
+
   public Drive(DriveModules modules, GyroIO gyroIO, CommandXboxController controller) {
     this.modules = modules;
     this.gyroIO = gyroIO;
     this.controller = controller;
     updateConstants();
+    driveToPose = new DriveToPose(this, () -> targetPose);
   }
 
   @Override
@@ -105,6 +120,7 @@ public class Drive extends SubsystemBase {
     int hc = hashCode();
     if (tunableP.hasChanged(hc) || tunableV.hasChanged(hc)) updateConstants();
 
+    newState = !prevState.equals(state);
     switch (state) {
       case Controller:
         driveController();
@@ -121,9 +137,16 @@ public class Drive extends SubsystemBase {
           driveRobotCentric(new ChassisSpeeds());
         }
         break;
+      case DriveToPose:
+        if (newState) driveToPose.init();
+        driveToPose.run();
+        break;
       default:
         break;
     }
+    stateLogger.info(state.name());
+
+    prevState = state;
   }
 
   public void setTrajectory(ChoreoTrajectoryWithName traj) {
@@ -136,6 +159,10 @@ public class Drive extends SubsystemBase {
             new PIDController(linearKP.get(), 0, linearKD.get()),
             new PIDController(linearKP.get(), 0, linearKD.get()),
             new PIDController(angularKP.get(), 0, angularKD.get()));
+  }
+
+  public void setTargetPose(Pose2d target) {
+    targetPose = target;
   }
 
   private void driveController() {
@@ -179,6 +206,10 @@ public class Drive extends SubsystemBase {
   /** Returns the latest estimated rotation from the pose estimator. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
+  }
+
+  public ChassisSpeeds fieldVelocity() {
+    return inputs.realSpeeds;
   }
 
   @AutoLogOutput(key = "Drive/EstimatedPose")
