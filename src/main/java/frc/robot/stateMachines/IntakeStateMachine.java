@@ -15,7 +15,10 @@ public class IntakeStateMachine extends StateMachine {
   private final boolean auto;
 
   public IntakeStateMachine(
-      SuperStateMachine superStateMachine, Drive drive, SuperStructure superStructure, boolean auto) {
+      SuperStateMachine superStateMachine,
+      Drive drive,
+      SuperStructure superStructure,
+      boolean auto) {
     super("IntakeStateMachine");
 
     this.superStateMachine = superStateMachine;
@@ -23,17 +26,18 @@ public class IntakeStateMachine extends StateMachine {
     this.superStructure = superStructure;
     this.auto = auto;
 
-    setInitialState(() -> intake());
+    setInitialState(stateWithName("Intake", () -> intake()));
   }
 
   private StateHandler intake() {
-    if(auto) {
+    if (auto) {
       drive.setState(DriveState.PathFollow);
-    } else { 
+    } else {
       drive.setState(DriveState.Controller);
-    };
+    }
+    ;
     superStructure.setState(StructureState.Intake);
-    return superStructure.hasCoral() ? () -> end() : null;
+    return superStructure.hasGampiece() ? stateWithName("End", () -> end()) : null;
   }
 
   private StateHandler end() {

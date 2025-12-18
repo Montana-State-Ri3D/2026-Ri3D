@@ -15,7 +15,10 @@ public class ScoreStateMachine extends StateMachine {
   private final boolean auto;
 
   public ScoreStateMachine(
-      SuperStateMachine superStateMachine, Drive drive, SuperStructure superStructure, boolean auto) {
+      SuperStateMachine superStateMachine,
+      Drive drive,
+      SuperStructure superStructure,
+      boolean auto) {
     super("ScoreStateMachine");
 
     this.superStateMachine = superStateMachine;
@@ -23,27 +26,29 @@ public class ScoreStateMachine extends StateMachine {
     this.superStructure = superStructure;
     this.auto = auto;
 
-    setInitialState(() -> scorePrep());
+    setInitialState(stateWithName("ScorePrep", () -> scorePrep()));
   }
 
   private StateHandler scorePrep() {
-    if(auto) {
+    if (auto) {
       drive.setState(DriveState.PathFollow);
-    } else { 
+    } else {
       drive.setState(DriveState.Controller);
-    };
+    }
+    ;
     superStructure.setState(StructureState.ScorePrep);
-    return false ? () -> score() : null; // TODO: add condition for score
+    return false ? stateWithName("Score", () -> score()) : null; // TODO: add condition for score
   }
 
   private StateHandler score() {
-    if(auto) {
+    if (auto) {
       drive.setState(DriveState.PathFollow);
-    } else { 
+    } else {
       drive.setState(DriveState.Controller);
-    };
+    }
+    ;
     superStructure.setState(StructureState.Score);
-    return superStructure.hasCoral() ? null : () -> end();
+    return superStructure.hasGampiece() ? null : stateWithName("End", () -> end());
   }
 
   private StateHandler end() {

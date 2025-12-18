@@ -46,7 +46,7 @@ public class SuperStateMachine {
     newState = state != prevState;
     switch (state) {
       case Default:
-        if (superStructure.hasCoral()) {
+        if (superStructure.hasGampiece()) {
           state = SuperState.Stow;
         } else {
           state = SuperState.Idle;

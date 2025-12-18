@@ -7,7 +7,6 @@ package frc.lib.team2930.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.lib.team2930.StateMachine;
-
 import java.util.function.Supplier;
 
 public class RunStateMachineCommand extends Command {

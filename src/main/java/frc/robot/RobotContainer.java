@@ -17,11 +17,13 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.team2930.commands.RunsWhenDisabledInstantCommand;
+import frc.robot.autonomous.AutoManager;
 import frc.robot.stateMachines.SuperStateMachine;
 import frc.robot.stateMachines.SuperStateMachine.SuperState;
 import frc.robot.subsystems.SuperStructure;
@@ -41,6 +43,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import java.util.function.Supplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -61,6 +64,10 @@ public class RobotContainer {
 
   private final CommandXboxController controller =
       new CommandXboxController(0); // Driver Controller
+
+  private SendableChooser<Supplier<Command>> autoChooser = new SendableChooser<Supplier<Command>>();
+  private Command autoCommand = Commands.none();
+  private final AutoManager autoManager;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -103,8 +110,12 @@ public class RobotContainer {
 
     superStateMachine = new SuperStateMachine(drive, superStructure);
 
+    autoManager = new AutoManager(superStateMachine, superStructure);
+
     // Configure the button bindings
     configureButtonBindings();
+
+    configureAutoChooser();
   }
 
   /**
@@ -169,13 +180,19 @@ public class RobotContainer {
         new RunsWhenDisabledInstantCommand(() -> superStructure.setSimulatedGamepieceState(false)));
   }
 
+  private void configureAutoChooser() {
+    autoChooser = autoManager.getAutos();
+    autoChooser.onChange((commandSupplier) -> autoCommand = commandSupplier.get());
+    SmartDashboard.putData("AutoChooser", autoChooser);
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return Commands.none();
+    return autoChooser.getSelected().get();
   }
 
   public void robotPeriodic() {
