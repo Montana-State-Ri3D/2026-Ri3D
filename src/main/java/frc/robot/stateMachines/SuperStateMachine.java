@@ -61,10 +61,10 @@ public class SuperStateMachine {
         drive.setState(DriveState.Controller);
         break;
       case Intake:
-        runStateMachine(() -> new IntakeStateMachine(this, drive, superStructure), newState);
+        runStateMachine(() -> new IntakeStateMachine(this, drive, superStructure, false), newState);
         break;
       case Score:
-        runStateMachine(() -> new ScoreStateMachine(this, drive, superStructure), newState);
+        runStateMachine(() -> new ScoreStateMachine(this, drive, superStructure, false), newState);
         break;
       case ClimbPrep:
         superStructure.setState(StructureState.ClimbPrep);
@@ -75,10 +75,10 @@ public class SuperStateMachine {
         drive.setState(DriveState.Controller);
         break;
       case AutoIntake:
-        runStateMachine(() -> new AutoIntakeStateMachine(), newState);
+        runStateMachine(() -> new IntakeStateMachine(this, drive, superStructure, true), newState);
         break;
       case AutoScore:
-        runStateMachine(() -> new AutoScoreStateMachine(), newState);
+        runStateMachine(() -> new ScoreStateMachine(this, drive, superStructure, true), newState);
         break;
       default:
         break;
