@@ -177,7 +177,7 @@ public final class Constants {
   }
 
   public class ShooterConstants {
-    public static final String ROOT_TABLE = "Intake";
+    public static final String ROOT_TABLE = "Shooter";
     public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
     public static final boolean INVERT = false; // TODO: determine
     public static final double MOI = 0.0001;
