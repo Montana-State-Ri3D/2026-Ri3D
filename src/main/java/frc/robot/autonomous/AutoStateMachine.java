@@ -58,7 +58,6 @@ public class AutoStateMachine extends StateMachine {
               + "-"
               + descriptor.actions().get(progress).name();
     }
-    System.out.println(name);
     drive.setTrajectory(ChoreoTrajectoryWithName.getTrajectory(name));
     return stateWithName("Intake", () -> intake());
   }

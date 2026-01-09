@@ -13,9 +13,7 @@ import java.util.Optional;
 public record ChoreoTrajectoryWithName(String name, Trajectory<SwerveSample> states) {
   public static ChoreoTrajectoryWithName getTrajectory(String name) {
     if (name == null) return null;
-    System.out.println(name);
     Optional<Trajectory<SwerveSample>> traj = Choreo.loadTrajectory(name);
-    System.out.println(traj.isEmpty());
     if (traj.isEmpty()) return null;
     return new ChoreoTrajectoryWithName(name, traj.orElseThrow());
   }
