@@ -49,7 +49,7 @@ public class SuperStructure extends SubsystemBase {
       tunableGroup.build("StowArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
   private LoggedTunableNumber intakeVelRPM =
       tunableGroup.build("IntakeVelRPM", SuperStructureConstants.INTAKE_VEL.in(Units.RPM));
-      private LoggedTunableNumber shooterVelRPM =
+  private LoggedTunableNumber shooterVelRPM =
       tunableGroup.build("ShooterVelRPM", SuperStructureConstants.SHOOTER_VEL.in(Units.RPM));
   private LoggedTunableNumber climbPrepElevatorHeightInches =
       tunableGroup.build(
