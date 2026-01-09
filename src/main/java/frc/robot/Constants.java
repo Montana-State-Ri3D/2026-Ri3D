@@ -237,6 +237,7 @@ public final class Constants {
     public static final String ROOT_TABLE = "SuperStructure";
 
     public static final AngularVelocity INTAKE_VEL = Units.RPM.of(1000);
+    public static final AngularVelocity SHOOTER_VEL = Units.RPM.of(1000);
     public static final Distance ELEVATOR_CLIMB_PREP_HEIGHT = Units.Inches.of(30);
     public static final Distance ELEVATOR_CLIMB_HEIGHT = Units.Inches.of(15);
   }
@@ -257,6 +258,7 @@ public final class Constants {
     public static final int ELEVATOR_FOLLOW_CAN_ID = 7;
     public static final int ARM_CAN_ID = 8;
     public static final int INTAKE_CAN_ID = 9;
+    public static final int SHOOTER_CAN_ID = 10;
   }
 
   public class FieldConstants {
