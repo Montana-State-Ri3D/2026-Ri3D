@@ -37,7 +37,8 @@ public class Drive extends SubsystemBase {
   public enum DriveState {
     Controller,
     PathFollow,
-    DriveToPose
+    DriveToPose,
+    RotateToAngle
   }
 
   private DriveState state = DriveState.Controller;
@@ -95,12 +96,20 @@ public class Drive extends SubsystemBase {
   private boolean newState = false;
   private DriveState prevState = DriveState.Controller;
 
+  
+  private final TunableNumberGroup rotateToAngleGroup = group.subgroup("RotateToAngle");
+  private final LoggedTunableNumber rotToAngKP = rotateToAngleGroup.build("P", 0.1);
+  private final LoggedTunableNumber rotToAngKD = rotateToAngleGroup.build("D", 0.0);
+  private final PIDController rotateToAngleController = new PIDController(rotToAngKP.get(), 0, rotToAngKD.get());
+  private Rotation2d targetAngle = Rotation2d.kZero;
+
   public Drive(DriveModules modules, GyroIO gyroIO, CommandXboxController controller) {
     this.modules = modules;
     this.gyroIO = gyroIO;
     this.controller = controller;
     updateConstants();
     driveToPose = new DriveToPose(this, () -> targetPose);
+    rotateToAngleController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   @Override
@@ -109,6 +118,8 @@ public class Drive extends SubsystemBase {
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs(DriveConstants.ROOT_TABLE, inputs);
     Logger.processInputs(DriveConstants.ROOT_TABLE + "/Gyro", gyroInputs);
+    Logger.recordOutput(DriveConstants.ROOT_TABLE + "/TargetPose", targetPose);
+    Logger.recordOutput(DriveConstants.ROOT_TABLE + "/TargetAngleDegrees", targetAngle.getDegrees());
     if (RobotBase.isSimulation())
       simYawAngle =
           simYawAngle.plus(
@@ -123,7 +134,7 @@ public class Drive extends SubsystemBase {
     newState = !prevState.equals(state);
     switch (state) {
       case Controller:
-        driveController();
+        driveController(null);
         break;
       case PathFollow:
         if (choreoHelper != null) {
@@ -140,6 +151,10 @@ public class Drive extends SubsystemBase {
       case DriveToPose:
         if (newState) driveToPose.init();
         driveToPose.run();
+        break;
+      case RotateToAngle:
+        if(rotToAngKP.hasChanged(hc) || rotToAngKD.hasChanged(hc)) rotateToAngleController.setPID(rotToAngKP.get(), 0, rotToAngKD.get());
+        driveController(rotateToAngleController.calculate(getRotation().getRadians(), targetAngle.getRadians()));
         break;
       default:
         break;
@@ -165,8 +180,12 @@ public class Drive extends SubsystemBase {
     targetPose = target;
   }
 
-  private void driveController() {
-    double angMagnitude = MathUtil.applyDeadband(-controller.getRightX(), DEADBAND);
+  public void setTargetAngle(Rotation2d target){
+    targetAngle = target;
+  }
+
+  private void driveController(Double omegaOverride) {
+    double angMagnitude = omegaOverride==null ? MathUtil.applyDeadband(-controller.getRightX(), DEADBAND) : omegaOverride;
     LinearVelocity speedX =
         DriveConstants.MAX_LINEAR_SPEED.times(
             MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND));
@@ -212,7 +231,7 @@ public class Drive extends SubsystemBase {
     return inputs.realSpeeds;
   }
 
-  @AutoLogOutput(key = "Drive/EstimatedPose")
+  @AutoLogOutput(key = DriveConstants.ROOT_TABLE + "/EstimatedPose")
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
