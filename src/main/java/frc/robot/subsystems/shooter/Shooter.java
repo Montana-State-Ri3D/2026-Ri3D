@@ -42,8 +42,9 @@ public class Shooter extends SubsystemBase {
 
   private final LoggedTunableNumber tolerance = group.build("toleranceRPM", 200);
 
-  private final LoggedTunableNumber gamepieceDetectionThreshold =
-      group.build("ToFDetectionThresholdMeters", 0.05);
+  // Commenting out for now unless we add game piece detection to shooter
+  // private final LoggedTunableNumber gamepieceDetectionThreshold =
+  //     group.build("ToFDetectionThresholdMeters", 0.05);
 
   // Motion constants
   // TODO: tune constants
@@ -131,7 +132,7 @@ public class Shooter extends SubsystemBase {
     return Units.RPM.of(inputs.velocityRPM);
   }
 
-  public boolean hasCoral() {
-    return inputs.tofDistanceInches < gamepieceDetectionThreshold.get();
-  }
+  // public boolean hasGamePiece() {
+  //   return inputs.tofDistanceInches < gamepieceDetectionThreshold.get();
+  // }
 }
