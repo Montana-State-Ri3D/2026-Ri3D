@@ -43,6 +43,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.shooter.*;
 import java.util.function.Supplier;
 
 /**
@@ -58,6 +59,7 @@ public class RobotContainer {
   private final Elevator elevator;
   private final Arm arm;
   private final Intake intake;
+  private final Shooter shooter;
   // private final Vision vision;
 
   private final SuperStateMachine superStateMachine;
@@ -77,6 +79,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOReal());
         arm = new Arm(new ArmIOReal());
         intake = new Intake(new IntakeIOReal());
+        shooter = new Shooter(new ShooterIOReal());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -89,6 +92,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         arm = new Arm(new ArmIOSim());
         intake = new Intake(new IntakeIOSim());
+        shooter = new Shooter(new ShooterIOSim());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -102,11 +106,12 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIO() {});
         arm = new Arm(new ArmIO() {});
         intake = new Intake(new IntakeIO() {});
+        shooter = new Shooter(new ShooterIO() {});
         // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
-    superStructure = new SuperStructure(elevator, arm, intake);
+    superStructure = new SuperStructure(elevator, arm, intake, shooter);
 
     superStateMachine = new SuperStateMachine(drive, superStructure);
 
@@ -153,6 +158,7 @@ public class RobotContainer {
               elevator.setIdleMode(IdleMode.kBrake);
               arm.setIdleMode(IdleMode.kBrake);
               intake.setIdleMode(IdleMode.kBrake);
+              shooter.setIdleMode(IdleMode.kBrake);
             }));
 
     SmartDashboard.putData(
@@ -162,6 +168,7 @@ public class RobotContainer {
               elevator.setIdleMode(IdleMode.kCoast);
               arm.setIdleMode(IdleMode.kCoast);
               intake.setIdleMode(IdleMode.kCoast);
+              shooter.setIdleMode(IdleMode.kCoast);
             }));
 
     SmartDashboard.putData(
