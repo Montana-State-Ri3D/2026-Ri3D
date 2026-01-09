@@ -40,7 +40,7 @@ public class Shooter extends SubsystemBase {
   private static final LoggedTunableNumber maxAccelerationConfig =
       group.build("MaxAccelerationConfig");
 
-  private final LoggedTunableNumber tolerance = group.build("toleranceRPM", 0.1);
+  private final LoggedTunableNumber tolerance = group.build("toleranceRPM", 200);
 
   private final LoggedTunableNumber gamepieceDetectionThreshold =
       group.build("ToFDetectionThresholdMeters", 0.05);
@@ -98,12 +98,6 @@ public class Shooter extends SubsystemBase {
     controlMode = ControlMode.OPEN_LOOP;
   }
 
-  /**
-   * Sets height and elevator acceleration
-   *
-   * @param height
-   * @param accel
-   */
   public void setVel(AngularVelocity vel) {
     io.setVel(vel);
     targetVel = vel;

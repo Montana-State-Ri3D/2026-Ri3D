@@ -98,12 +98,6 @@ public class Intake extends SubsystemBase {
     controlMode = ControlMode.OPEN_LOOP;
   }
 
-  /**
-   * Sets height and elevator acceleration
-   *
-   * @param height
-   * @param accel
-   */
   public void setVel(AngularVelocity vel) {
     io.setVel(vel);
     targetVel = vel;
