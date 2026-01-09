@@ -127,8 +127,8 @@ public class Shooter extends SubsystemBase {
     return Units.Volts.of(inputs.appliedOutput);
   }
 
-  public LinearVelocity getVelocity() {
-    return Units.InchesPerSecond.of(inputs.velocityRPM);
+  public AngularVelocity getVelocity() {
+    return Units.RPM.of(inputs.velocityRPM);
   }
 
   public boolean hasCoral() {
