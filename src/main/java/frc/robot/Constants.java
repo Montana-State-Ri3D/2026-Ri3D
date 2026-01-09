@@ -176,6 +176,24 @@ public final class Constants {
     }
   }
 
+  public class ShooterConstants {
+    public static final String ROOT_TABLE = "Shooter";
+    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
+    public static final boolean INVERT = false; // TODO: determine
+    public static final double MOI = 0.0001;
+
+    public static final SparkFlexConfig MOTOR_CONFIG() {
+      SparkFlexConfig config = new SparkFlexConfig();
+      config.absoluteEncoder.inverted(INVERT);
+      config.inverted(INVERT);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(GEAR_RATIO);
+      config.encoder.velocityConversionFactor(GEAR_RATIO);
+      return config;
+    }
+  }
+
   public class VisionConstants {
     // AprilTag layout
     public static AprilTagFieldLayout aprilTagLayout =
@@ -219,6 +237,7 @@ public final class Constants {
     public static final String ROOT_TABLE = "SuperStructure";
 
     public static final AngularVelocity INTAKE_VEL = Units.RPM.of(1000);
+    public static final AngularVelocity SHOOTER_VEL = Units.RPM.of(1000);
     public static final Distance ELEVATOR_CLIMB_PREP_HEIGHT = Units.Inches.of(30);
     public static final Distance ELEVATOR_CLIMB_HEIGHT = Units.Inches.of(15);
   }
@@ -239,6 +258,7 @@ public final class Constants {
     public static final int ELEVATOR_FOLLOW_CAN_ID = 7;
     public static final int ARM_CAN_ID = 8;
     public static final int INTAKE_CAN_ID = 9;
+    public static final int SHOOTER_CAN_ID = 10;
   }
 
   public class FieldConstants {

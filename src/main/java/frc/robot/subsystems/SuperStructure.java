@@ -18,6 +18,7 @@ import frc.robot.Constants.SuperStructureConstants;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooter.Shooter;
 
 public class SuperStructure extends SubsystemBase {
 
@@ -36,6 +37,7 @@ public class SuperStructure extends SubsystemBase {
   private final Elevator elevator;
   private final Arm arm;
   private final Intake intake;
+  private final Shooter shooter;
 
   private TunableNumberGroup tunableGroup =
       new TunableNumberGroup(SuperStructureConstants.ROOT_TABLE);
@@ -47,6 +49,8 @@ public class SuperStructure extends SubsystemBase {
       tunableGroup.build("StowArmAngleDegrees", ArmConstants.HOME_POSITION.in(Units.Degree));
   private LoggedTunableNumber intakeVelRPM =
       tunableGroup.build("IntakeVelRPM", SuperStructureConstants.INTAKE_VEL.in(Units.RPM));
+  private LoggedTunableNumber shooterVelRPM =
+      tunableGroup.build("ShooterVelRPM", SuperStructureConstants.SHOOTER_VEL.in(Units.RPM));
   private LoggedTunableNumber climbPrepElevatorHeightInches =
       tunableGroup.build(
           "ClimbPrepElevatorHeightInches",
@@ -62,10 +66,11 @@ public class SuperStructure extends SubsystemBase {
   private boolean hasSimCoral;
 
   /** Creates a new SuperStructure. */
-  public SuperStructure(Elevator elevator, Arm arm, Intake intake) {
+  public SuperStructure(Elevator elevator, Arm arm, Intake intake, Shooter shooter) {
     this.elevator = elevator;
     this.arm = arm;
     this.intake = intake;
+    this.shooter = shooter;
   }
 
   @Override
@@ -75,36 +80,43 @@ public class SuperStructure extends SubsystemBase {
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
         arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
         intake.setVel(Units.RPM.of(0));
+        shooter.setVel(Units.RPM.of(0));
         break;
       case Stow:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
         arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
         intake.setVel(Units.RPM.of(0));
+        shooter.setVel(Units.RPM.of(0));
         break;
       case Intake:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
         arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
         intake.setVel(Units.RPM.of(intakeVelRPM.get()));
+        shooter.setVel(Units.RPM.of(0));
         break;
       case ScorePrep:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
         arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
         intake.setVel(Units.RPM.of(0));
+        shooter.setVel(Units.RPM.of(shooterVelRPM.get()));
         break;
       case Score:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
         arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
         intake.setVel(Units.RPM.of(0));
+        shooter.setVel(Units.RPM.of(shooterVelRPM.get()));
         break;
       case ClimbPrep:
         elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
         arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
         intake.setVel(Units.RPM.of(0));
+        shooter.setVel(Units.RPM.of(0));
         break;
       case Climb:
         elevator.setHeight(Units.Inches.of(climbElevatorHeightInches.get()));
         arm.setAngle(Units.Degrees.of(stowArmAngleDegrees.get()));
         intake.setVel(Units.RPM.of(0));
+        shooter.setVel(Units.RPM.of(0));
         break;
       default:
         break;

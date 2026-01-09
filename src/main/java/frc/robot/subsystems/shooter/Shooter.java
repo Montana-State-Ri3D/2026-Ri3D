@@ -2,12 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.shooter;
 
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team2930.ControlMode;
@@ -16,14 +15,14 @@ import frc.lib.team2930.LoggerGroup;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.Mode;
+import frc.robot.Constants.ShooterConstants;
 import org.littletonrobotics.junction.Logger;
 
-public class Intake extends SubsystemBase {
+public class Shooter extends SubsystemBase {
   // Logging
 
-  private static final LoggerGroup logGroup = LoggerGroup.build(IntakeConstants.ROOT_TABLE);
+  private static final LoggerGroup logGroup = LoggerGroup.build(ShooterConstants.ROOT_TABLE);
 
   private static final LoggerEntry.Decimal logTargetAngle = logGroup.buildDecimal("targetVelRPM");
   private static final LoggerEntry.EnumValue<ControlMode> logControlMode =
@@ -32,7 +31,7 @@ public class Intake extends SubsystemBase {
   // Tunable numbers
 
   private static final TunableNumberGroup group =
-      new TunableNumberGroup(IntakeConstants.ROOT_TABLE);
+      new TunableNumberGroup(ShooterConstants.ROOT_TABLE);
 
   private static final LoggedTunableNumber kP = group.build("kP");
   private static final LoggedTunableNumber kV = group.build("kV");
@@ -40,10 +39,11 @@ public class Intake extends SubsystemBase {
   private static final LoggedTunableNumber maxAccelerationConfig =
       group.build("MaxAccelerationConfig");
 
-  private final LoggedTunableNumber tolerance = group.build("toleranceRPM", 0.1);
+  private final LoggedTunableNumber tolerance = group.build("toleranceRPM", 200);
 
-  private final LoggedTunableNumber gamepieceDetectionThreshold =
-      group.build("ToFDetectionThresholdMeters", 0.05);
+  // Commenting out for now unless we add game piece detection to shooter
+  // private final LoggedTunableNumber gamepieceDetectionThreshold =
+  //     group.build("ToFDetectionThresholdMeters", 0.05);
 
   // Motion constants
   // TODO: tune constants
@@ -62,14 +62,14 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  private final IntakeIO io;
-  private final IntakeInputsAutoLogged inputs = new IntakeInputsAutoLogged();
+  private final ShooterIO io;
+  private final ShooterInputsAutoLogged inputs = new ShooterInputsAutoLogged();
 
   private AngularVelocity targetVel = Units.RPM.zero();
   private ControlMode controlMode = ControlMode.OPEN_LOOP;
 
-  /** Creates a new IntakeSubsystem. */
-  public Intake(IntakeIO io) {
+  /** Creates a new ShooterSubsystem. */
+  public Shooter(ShooterIO io) {
     this.io = io;
 
     configMotor();
@@ -80,7 +80,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
-    Logger.processInputs(IntakeConstants.ROOT_TABLE, inputs);
+    Logger.processInputs(ShooterConstants.ROOT_TABLE, inputs);
 
     logControlMode.info(controlMode);
 
@@ -127,11 +127,11 @@ public class Intake extends SubsystemBase {
     return Units.Volts.of(inputs.appliedOutput);
   }
 
-  public LinearVelocity getVelocity() {
-    return Units.InchesPerSecond.of(inputs.velocityRPM);
+  public AngularVelocity getVelocity() {
+    return Units.RPM.of(inputs.velocityRPM);
   }
 
-  public boolean hasCoral() {
-    return inputs.tofDistanceInches < gamepieceDetectionThreshold.get();
-  }
+  // public boolean hasGamePiece() {
+  //   return inputs.tofDistanceInches < gamepieceDetectionThreshold.get();
+  // }
 }
