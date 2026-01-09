@@ -96,11 +96,11 @@ public class Drive extends SubsystemBase {
   private boolean newState = false;
   private DriveState prevState = DriveState.Controller;
 
-  
   private final TunableNumberGroup rotateToAngleGroup = group.subgroup("RotateToAngle");
   private final LoggedTunableNumber rotToAngKP = rotateToAngleGroup.build("P", 0.1);
   private final LoggedTunableNumber rotToAngKD = rotateToAngleGroup.build("D", 0.0);
-  private final PIDController rotateToAngleController = new PIDController(rotToAngKP.get(), 0, rotToAngKD.get());
+  private final PIDController rotateToAngleController =
+      new PIDController(rotToAngKP.get(), 0, rotToAngKD.get());
   private Rotation2d targetAngle = Rotation2d.kZero;
 
   public Drive(DriveModules modules, GyroIO gyroIO, CommandXboxController controller) {
@@ -119,7 +119,8 @@ public class Drive extends SubsystemBase {
     Logger.processInputs(DriveConstants.ROOT_TABLE, inputs);
     Logger.processInputs(DriveConstants.ROOT_TABLE + "/Gyro", gyroInputs);
     Logger.recordOutput(DriveConstants.ROOT_TABLE + "/TargetPose", targetPose);
-    Logger.recordOutput(DriveConstants.ROOT_TABLE + "/TargetAngleDegrees", targetAngle.getDegrees());
+    Logger.recordOutput(
+        DriveConstants.ROOT_TABLE + "/TargetAngleDegrees", targetAngle.getDegrees());
     if (RobotBase.isSimulation())
       simYawAngle =
           simYawAngle.plus(
@@ -153,8 +154,11 @@ public class Drive extends SubsystemBase {
         driveToPose.run();
         break;
       case RotateToAngle:
-        if(rotToAngKP.hasChanged(hc) || rotToAngKD.hasChanged(hc)) rotateToAngleController.setPID(rotToAngKP.get(), 0, rotToAngKD.get());
-        driveController(rotateToAngleController.calculate(getRotation().getRadians(), targetAngle.getRadians()));
+        if (rotToAngKP.hasChanged(hc) || rotToAngKD.hasChanged(hc))
+          rotateToAngleController.setPID(rotToAngKP.get(), 0, rotToAngKD.get());
+        driveController(
+            rotateToAngleController.calculate(
+                getRotation().getRadians(), targetAngle.getRadians()));
         break;
       default:
         break;
@@ -180,12 +184,15 @@ public class Drive extends SubsystemBase {
     targetPose = target;
   }
 
-  public void setTargetAngle(Rotation2d target){
+  public void setTargetAngle(Rotation2d target) {
     targetAngle = target;
   }
 
   private void driveController(Double omegaOverride) {
-    double angMagnitude = omegaOverride==null ? MathUtil.applyDeadband(-controller.getRightX(), DEADBAND) : omegaOverride;
+    double angMagnitude =
+        omegaOverride == null
+            ? MathUtil.applyDeadband(-controller.getRightX(), DEADBAND)
+            : omegaOverride;
     LinearVelocity speedX =
         DriveConstants.MAX_LINEAR_SPEED.times(
             MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND));
