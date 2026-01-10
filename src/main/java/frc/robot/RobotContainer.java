@@ -29,7 +29,6 @@ import frc.robot.stateMachines.SuperStateMachine.SuperState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmIO;
-import frc.robot.subsystems.arm.ArmIOReal;
 import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveModules;
@@ -37,11 +36,9 @@ import frc.robot.subsystems.drive.gyro.GyroIO;
 import frc.robot.subsystems.drive.gyro.GyroIOPigeon2;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
-import frc.robot.subsystems.elevator.ElevatorIOReal;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.*;
 import java.util.function.Supplier;
@@ -76,10 +73,10 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL: // Real robot, instantiate hardware IO implementations
         drive = new Drive(new DriveModules(true), new GyroIOPigeon2(), controller);
-        elevator = new Elevator(new ElevatorIOReal());
-        arm = new Arm(new ArmIOReal());
-        intake = new Intake(new IntakeIOReal());
-        shooter = new Shooter(new ShooterIOReal());
+        elevator = new Elevator(new ElevatorIO() {});
+        arm = new Arm(new ArmIO() {});
+        intake = new Intake(new IntakeIO() {});
+        shooter = new Shooter(new ShooterIO() {});
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,

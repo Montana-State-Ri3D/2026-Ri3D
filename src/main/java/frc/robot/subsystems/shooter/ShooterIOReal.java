@@ -11,20 +11,18 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.I2C.Port;
-import frc.lib.teamBSR.VL6180;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 
 public class ShooterIOReal implements ShooterIO {
 
   private final SparkFlex motor =
-      new SparkFlex(Constants.CanIDs.INTAKE_CAN_ID, MotorType.kBrushless);
+      new SparkFlex(Constants.CanIDs.SHOOTER_CAN_ID, MotorType.kBrushless);
   private SparkFlexConfig config = Constants.ElevatorConstants.MOTOR_CONFIG();
 
   private final RelativeEncoder encoder = motor.getEncoder();
 
-  private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
+  // private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
 
   @Override
   public void updateInputs(ShooterInputs inputs) {
@@ -32,7 +30,7 @@ public class ShooterIOReal implements ShooterIO {
     inputs.appliedOutput = motor.getAppliedOutput();
     inputs.currentAmps = motor.getOutputCurrent();
     inputs.tempCelsius = motor.getMotorTemperature();
-    inputs.tofDistanceInches = timeOfFlight.getDistance().in(Units.Inches);
+    // inputs.tofDistanceInches = timeOfFlight.getDistance().in(Units.Inches);
   }
 
   @Override
