@@ -25,6 +25,10 @@ public class IntakeIOReal implements IntakeIO {
   private final RelativeEncoder encoder = motor.getEncoder();
 
   private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
+  
+  public IntakeIOReal(){
+    timeOfFlight.startContinuous((int)(Constants.defaultPeriod * 1000));
+  }
 
   @Override
   public void updateInputs(IntakeInputs inputs) {
@@ -32,7 +36,7 @@ public class IntakeIOReal implements IntakeIO {
     inputs.appliedOutput = motor.getAppliedOutput();
     inputs.currentAmps = motor.getOutputCurrent();
     inputs.tempCelsius = motor.getMotorTemperature();
-    inputs.tofDistanceInches = timeOfFlight.getDistance().in(Units.Inches);
+    inputs.tofDistanceInches = timeOfFlight.getRange().in(Units.Inches);
   }
 
   @Override
