@@ -202,6 +202,7 @@ public final class Constants {
     public static final boolean INVERT = false; // TODO: determine
     public static final double MOI = 0.0001;
     public static final Distance HORIZONTAL_OFFSET = Units.Inches.of(5); // TODO: determine
+    public static final boolean FOLLOW_INVERT = false; // TODO: determine
 
     public static final SparkFlexConfig MOTOR_CONFIG() {
       SparkFlexConfig config = new SparkFlexConfig();
@@ -214,7 +215,7 @@ public final class Constants {
       return config;
     }
 
-    public static final InterpolatingDoubleTreeMap SHOOTING_INTERPOLATOR(){
+    public static final InterpolatingDoubleTreeMap SHOOTING_INTERPOLATOR() {
       InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
       map.put(1.0, 1000.0);
       return map;
@@ -309,7 +310,9 @@ public final class Constants {
     public static final int INTAKE_FRONT_ROLLERS_CAN_ID = 8;
     public static final int INTAKE_BACK_ROLLERS_CAN_ID = 9;
     public static final int INTAKE_EXTENDER_CAN_ID = 10;
-    public static final int SHOOTER_CAN_ID = 11;
+    public static final int HOPPER_CAN_ID = 11;
+    public static final int SHOOTER_LEAD_CAN_ID = 12;
+    public static final int SHOOTER_FOLLOW_CAN_ID = 13;
   }
 
   public class FieldConstants {
