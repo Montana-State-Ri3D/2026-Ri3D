@@ -27,9 +27,6 @@ import frc.robot.autonomous.AutoManager;
 import frc.robot.stateMachines.SuperStateMachine;
 import frc.robot.stateMachines.SuperStateMachine.SuperState;
 import frc.robot.subsystems.SuperStructure;
-import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.arm.ArmIO;
-import frc.robot.subsystems.arm.ArmIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveModules;
 import frc.robot.subsystems.drive.gyro.GyroIO;
@@ -54,7 +51,6 @@ public class RobotContainer {
   private final Drive drive;
   private final SuperStructure superStructure;
   private final Elevator elevator;
-  private final Arm arm;
   private final Intake intake;
   private final Shooter shooter;
   // private final Vision vision;
@@ -74,7 +70,6 @@ public class RobotContainer {
       case REAL: // Real robot, instantiate hardware IO implementations
         drive = new Drive(new DriveModules(true), new GyroIOPigeon2(), controller);
         elevator = new Elevator(new ElevatorIO() {});
-        arm = new Arm(new ArmIO() {});
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         // vision =
@@ -87,7 +82,6 @@ public class RobotContainer {
       case SIM: // Sim robot, instantiate physics sim IO implementations
         drive = new Drive(new DriveModules(false), new GyroIO() {}, controller);
         elevator = new Elevator(new ElevatorIOSim());
-        arm = new Arm(new ArmIOSim());
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         // vision =
@@ -101,14 +95,13 @@ public class RobotContainer {
         // (Use same number of dummy implementations as the real robot)
         drive = new Drive(new DriveModules(false), new GyroIO() {}, controller);
         elevator = new Elevator(new ElevatorIO() {});
-        arm = new Arm(new ArmIO() {});
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
-    superStructure = new SuperStructure(elevator, arm, intake, shooter);
+    superStructure = new SuperStructure(elevator, intake, shooter);
 
     superStateMachine = new SuperStateMachine(drive, superStructure);
 
@@ -153,7 +146,6 @@ public class RobotContainer {
         new RunsWhenDisabledInstantCommand(
             () -> {
               elevator.setIdleMode(IdleMode.kBrake);
-              arm.setIdleMode(IdleMode.kBrake);
               intake.setIdleMode(IdleMode.kBrake);
               shooter.setIdleMode(IdleMode.kBrake);
             }));
@@ -163,7 +155,6 @@ public class RobotContainer {
         new RunsWhenDisabledInstantCommand(
             () -> {
               elevator.setIdleMode(IdleMode.kCoast);
-              arm.setIdleMode(IdleMode.kCoast);
               intake.setIdleMode(IdleMode.kCoast);
               shooter.setIdleMode(IdleMode.kCoast);
             }));
@@ -173,7 +164,6 @@ public class RobotContainer {
         new RunsWhenDisabledInstantCommand(
             () -> {
               elevator.resetSensorToHomePosition();
-              arm.resetSensorToHomePosition();
             }));
 
     SmartDashboard.putData(
