@@ -22,6 +22,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -200,6 +201,7 @@ public final class Constants {
     public static final double GEAR_RATIO = 1; // TODO: determine (mech / motor)
     public static final boolean INVERT = false; // TODO: determine
     public static final double MOI = 0.0001;
+    public static final Distance HORIZONTAL_OFFSET = Units.Inches.of(5); // TODO: determine
 
     public static final SparkFlexConfig MOTOR_CONFIG() {
       SparkFlexConfig config = new SparkFlexConfig();
@@ -210,6 +212,12 @@ public final class Constants {
       config.encoder.positionConversionFactor(GEAR_RATIO);
       config.encoder.velocityConversionFactor(GEAR_RATIO);
       return config;
+    }
+
+    public static final InterpolatingDoubleTreeMap SHOOTING_INTERPOLATOR(){
+      InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
+      map.put(1.0, 1000.0);
+      return map;
     }
   }
 
@@ -305,7 +313,8 @@ public final class Constants {
   }
 
   public class FieldConstants {
-    public static Distance FIELD_LENGTH = Units.Inches.of(690.875); // TODO: determine
-    public static Distance FIELD_WIDTH = Units.Inches.of(317.0); // TODO: determine
+    public static Distance FIELD_LENGTH = Units.Inches.of(651.2); // TODO: determine
+    public static Distance FIELD_WIDTH = Units.Inches.of(317.7); // TODO: determine
+    public static final Translation2d HUB_TRANSLATION_BLUE = new Translation2d(4.625, 4.03);
   }
 }

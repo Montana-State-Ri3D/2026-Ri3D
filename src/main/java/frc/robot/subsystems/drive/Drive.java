@@ -100,11 +100,13 @@ public class Drive extends SubsystemBase {
   private final TunableNumberGroup rotateToAngleGroup = group.subgroup("RotateToAngle");
   private final LoggedTunableNumber rotToAngKP = rotateToAngleGroup.build("P", 0.1);
   private final LoggedTunableNumber rotToAngKD = rotateToAngleGroup.build("D", 0.0);
+  private final LoggedTunableNumber rotToAngTolerance = rotateToAngleGroup.build("toleranceDeg", 4);
   private final PIDController rotateToAngleController =
       new PIDController(rotToAngKP.get(), 0, rotToAngKD.get());
   private Rotation2d targetAngle = Rotation2d.kZero;
 
   private boolean atTargetPose;
+  private boolean atTargetAngle;
 
   public Drive(DriveModules modules, GyroIO gyroIO, CommandXboxController controller) {
     this.modules = modules;
@@ -113,6 +115,8 @@ public class Drive extends SubsystemBase {
     updateConstants();
     driveToPose = new DriveToPose(this, () -> targetPose);
     rotateToAngleController.enableContinuousInput(-Math.PI, Math.PI);
+    rotateToAngleController.setPID(rotToAngKP.get(), 0, rotToAngKD.get());
+    rotateToAngleController.setTolerance(Math.toRadians(rotToAngTolerance.get()));
   }
 
   @Override
@@ -158,9 +162,11 @@ public class Drive extends SubsystemBase {
       case RotateToAngle:
         if (rotToAngKP.hasChanged(hc) || rotToAngKD.hasChanged(hc))
           rotateToAngleController.setPID(rotToAngKP.get(), 0, rotToAngKD.get());
+        if(rotToAngTolerance.hasChanged(hc)) rotateToAngleController.setTolerance(Math.toRadians(rotToAngTolerance.get()));
         driveController(
             rotateToAngleController.calculate(
                 getRotation().getRadians(), targetAngle.getRadians()));
+        atTargetAngle = rotateToAngleController.atSetpoint();
         break;
       default:
         break;
@@ -267,5 +273,9 @@ public class Drive extends SubsystemBase {
 
   public boolean isAtTargetPose() {
     return atTargetPose;
+  }
+
+  public boolean isAtTargetAngle(){
+    return atTargetAngle;
   }
 }

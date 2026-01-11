@@ -108,7 +108,7 @@ public class RobotContainer {
         break;
     }
 
-    superStructure = new SuperStructure(elevator, intake, shooter, hopper);
+    superStructure = new SuperStructure(elevator, intake, shooter, hopper, drive::getPose);
 
     superStateMachine = new SuperStateMachine(drive, superStructure);
 
