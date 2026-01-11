@@ -13,6 +13,8 @@ public interface ElevatorIO {
     public double appliedOutput;
     public double currentAmps;
     public double tempCelsius;
+    public double servoAPos;
+    public double servoBPos;
   }
 
   /** Updates the set of loggable inputs. */
@@ -30,4 +32,6 @@ public interface ElevatorIO {
   public default boolean setIdleMode(IdleMode value) {
     return false;
   }
+
+  public default void setServoPositions(double pos){}
 }

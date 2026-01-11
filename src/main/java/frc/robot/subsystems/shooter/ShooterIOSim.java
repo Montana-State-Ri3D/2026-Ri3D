@@ -6,7 +6,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.lib.teamBSR.GenericMotorSim;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterIOSim implements ShooterIO {
@@ -17,7 +16,7 @@ public class ShooterIOSim implements ShooterIO {
   @Override
   public void updateInputs(ShooterInputs inputs) {
     motor.update(Constants.defaultPeriod);
-    inputs.velocityRPM = motor.getVelocity().in(Units.RPM) * ArmConstants.GEAR_RATIO;
+    inputs.velocityRPM = motor.getVelocity().in(Units.RPM) * ShooterConstants.GEAR_RATIO;
     inputs.appliedOutput = motor.getVoltage();
     inputs.currentAmps = motor.getCurrent().in(Units.Amp);
     inputs.tempCelsius = 0;
@@ -30,7 +29,7 @@ public class ShooterIOSim implements ShooterIO {
 
   @Override
   public void setVel(AngularVelocity vel) {
-    motor.setVelocity(vel.div(ArmConstants.GEAR_RATIO));
+    motor.setVelocity(vel.div(ShooterConstants.GEAR_RATIO));
   }
 
   @Override

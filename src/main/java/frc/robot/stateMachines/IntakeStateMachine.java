@@ -1,7 +1,6 @@
 package frc.robot.stateMachines;
 
 import frc.lib.team2930.StateMachine;
-import frc.robot.stateMachines.SuperStateMachine.SuperState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.SuperStructure.StructureState;
 import frc.robot.subsystems.drive.Drive;
@@ -37,11 +36,6 @@ public class IntakeStateMachine extends StateMachine {
     }
     ;
     superStructure.setState(StructureState.Intake);
-    return superStructure.hasGampiece() ? stateWithName("End", () -> end()) : null;
-  }
-
-  private StateHandler end() {
-    superStateMachine.setState(SuperState.Stow);
-    return stateWithName("Done", setDone());
+    return null;
   }
 }

@@ -12,7 +12,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class ShooterIOReal implements ShooterIO {
 
@@ -43,7 +43,8 @@ public class ShooterIOReal implements ShooterIO {
     motor
         .getClosedLoopController()
         .setReference(
-            angle.in(Units.RPM) / ArmConstants.GEAR_RATIO, ControlType.kMAXMotionVelocityControl);
+            angle.in(Units.RPM) / ShooterConstants.GEAR_RATIO,
+            ControlType.kMAXMotionVelocityControl);
   }
 
   @Override
