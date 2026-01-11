@@ -36,7 +36,6 @@ public class IntakeIOReal implements IntakeIO {
     inputs.appliedOutput = motor.getAppliedOutput();
     inputs.currentAmps = motor.getOutputCurrent();
     inputs.tempCelsius = motor.getMotorTemperature();
-    inputs.tofDistanceInches = timeOfFlight.getRange().in(Units.Inches);
   }
 
   @Override

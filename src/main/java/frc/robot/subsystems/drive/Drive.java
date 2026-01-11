@@ -27,6 +27,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.Mode;
 import frc.robot.autonomous.ChoreoTrajectoryWithName;
+import frc.robot.subsystems.drive.ChoreoHelper.ChassisSpeedsWithPathEnd;
 import frc.robot.subsystems.drive.gyro.GyroIO;
 import frc.robot.subsystems.drive.gyro.GyroIOInputsAutoLogged;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -103,6 +104,8 @@ public class Drive extends SubsystemBase {
       new PIDController(rotToAngKP.get(), 0, rotToAngKD.get());
   private Rotation2d targetAngle = Rotation2d.kZero;
 
+  private boolean atTargetPose;
+
   public Drive(DriveModules modules, GyroIO gyroIO, CommandXboxController controller) {
     this.modules = modules;
     this.gyroIO = gyroIO;
@@ -139,10 +142,12 @@ public class Drive extends SubsystemBase {
         break;
       case PathFollow:
         if (choreoHelper != null) {
+          ChassisSpeedsWithPathEnd result = choreoHelper
+          .calculateChassisSpeeds(getPose(), System.currentTimeMillis() / 1000.0);
+          atTargetPose = result.atEndOfPath();
           driveRobotCentric(
               ChassisSpeeds.fromFieldRelativeSpeeds(
-                  choreoHelper
-                      .calculateChassisSpeeds(getPose(), System.currentTimeMillis() / 1000.0)
+                    result
                       .chassisSpeeds(),
                   simYawAngle));
         } else {
@@ -261,5 +266,9 @@ public class Drive extends SubsystemBase {
 
   public void setState(DriveState state) {
     this.state = state;
+  }
+
+  public boolean isAtTargetPose(){
+    return atTargetPose;
   }
 }

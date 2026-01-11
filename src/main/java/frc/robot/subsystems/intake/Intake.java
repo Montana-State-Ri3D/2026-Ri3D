@@ -130,8 +130,4 @@ public class Intake extends SubsystemBase {
   public LinearVelocity getVelocity() {
     return Units.InchesPerSecond.of(inputs.velocityRPM);
   }
-
-  public boolean hasCoral() {
-    return inputs.tofDistanceInches < gamepieceDetectionThreshold.get();
-  }
 }

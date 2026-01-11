@@ -34,14 +34,8 @@ public class IntakeStateMachine extends StateMachine {
       drive.setState(DriveState.PathFollow);
     } else {
       drive.setState(DriveState.Controller);
-    }
-    ;
+    };
     superStructure.setState(StructureState.Intake);
-    return superStructure.hasGampiece() ? stateWithName("End", () -> end()) : null;
-  }
-
-  private StateHandler end() {
-    superStateMachine.setState(SuperState.Stow);
-    return stateWithName("Done", setDone());
+    return null;
   }
 }

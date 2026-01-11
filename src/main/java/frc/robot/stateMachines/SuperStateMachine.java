@@ -9,12 +9,10 @@ import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.SuperStructure.StructureState;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Drive.DriveState;
-import frc.robot.subsystems.intake.Intake;
 import java.util.function.Supplier;
 
 public class SuperStateMachine {
   public enum SuperState {
-    Default,
     Idle,
     Stow,
     Intake,
@@ -45,13 +43,6 @@ public class SuperStateMachine {
   public void periodic() {
     newState = state != prevState;
     switch (state) {
-      case Default:
-        if (superStructure.hasGampiece()) {
-          state = SuperState.Stow;
-        } else {
-          state = SuperState.Idle;
-        }
-        break;
       case Idle:
         superStructure.setState(StructureState.Idle);
         drive.setState(DriveState.Controller);

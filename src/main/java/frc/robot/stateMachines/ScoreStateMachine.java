@@ -48,11 +48,6 @@ public class ScoreStateMachine extends StateMachine {
     }
     ;
     superStructure.setState(StructureState.Score);
-    return superStructure.hasGampiece() ? null : stateWithName("End", () -> end());
-  }
-
-  private StateHandler end() {
-    superStateMachine.setState(SuperState.Idle);
-    return stateWithName("Done", setDone());
+    return null;
   }
 }

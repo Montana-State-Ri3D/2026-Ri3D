@@ -1,6 +1,9 @@
 package frc.robot.autonomous;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.team2930.StateMachine;
+import frc.lib.team2930.TunableNumberGroup;
+import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.autonomous.AutoDescriptor.AutoAction;
 import frc.robot.stateMachines.SuperStateMachine;
 import frc.robot.stateMachines.SuperStateMachine.SuperState;
@@ -15,6 +18,10 @@ public class AutoStateMachine extends StateMachine {
   private final SuperStructure superStructure;
 
   private int progress = 0;
+
+  private Timer autoScoreTimer = new Timer();
+  private TunableNumberGroup group = new TunableNumberGroup("AutoStateMachine");
+  private LoggedTunableNumber tunableAutoScoreTime = group.build("autoScoreTime", 5);
 
   public AutoStateMachine(
       AutoDescriptor descriptor,
@@ -40,8 +47,9 @@ public class AutoStateMachine extends StateMachine {
   }
 
   private StateHandler score() {
+    if(!autoScoreTimer.isRunning()) autoScoreTimer.start();
     stateMachine.setState(SuperState.Score);
-    if (!superStructure.hasGampiece()) {
+    if (autoScoreTimer.hasElapsed(tunableAutoScoreTime.get())) {
       progress++;
       return stateWithName("ChooseNextState", () -> chooseNextState());
     }
@@ -64,7 +72,7 @@ public class AutoStateMachine extends StateMachine {
 
   private StateHandler intake() {
     stateMachine.setState(SuperState.AutoIntake);
-    if (superStructure.hasGampiece()) {
+    if (drive.isAtTargetPose()) {
       progress++;
       return stateWithName("ChooseNextState", () -> chooseNextState());
     }

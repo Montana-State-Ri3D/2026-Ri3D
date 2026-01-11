@@ -118,11 +118,6 @@ public class SuperStructure extends SubsystemBase {
     this.state = state;
   }
 
-  public boolean hasGampiece() {
-    if (Constants.currentMode == Mode.SIM) return hasSimCoral;
-    return intake.hasCoral();
-  }
-
   public void setSimulatedGamepieceState(boolean hasCoral) {
     hasSimCoral = hasCoral;
   }
