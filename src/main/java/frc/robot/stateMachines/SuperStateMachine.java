@@ -18,6 +18,7 @@ public class SuperStateMachine {
     Score,
     ClimbPrep,
     Climb,
+    ClimbL1,
     AutoIntake
   }
 
@@ -57,6 +58,9 @@ public class SuperStateMachine {
         break;
       case Climb:
         runStateMachine(() -> new ClimbStateMachine(this, drive, superStructure), newState);
+        break;
+      case ClimbL1:
+        superStructure.setState(StructureState.Climb);
         break;
       case AutoIntake:
         runStateMachine(() -> new IntakeStateMachine(this, drive, superStructure, true), newState);
