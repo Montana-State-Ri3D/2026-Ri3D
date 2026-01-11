@@ -183,6 +183,10 @@ public class SuperStructure extends SubsystemBase {
     return shooter;
   }
 
+  public Intake getIntake(){
+    return intake;
+  }
+
   private AngularVelocity getOptimalShooterVel(){
     return Units.RPM.of(shootingInterpolator.get(GeometryUtil.getDist(robotPose.get().getTranslation(), FieldConstants.HUB_TRANSLATION_BLUE)));
   }
