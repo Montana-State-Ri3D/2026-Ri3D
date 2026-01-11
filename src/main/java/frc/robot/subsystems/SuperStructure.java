@@ -136,4 +136,8 @@ public class SuperStructure extends SubsystemBase {
   public void setState(StructureState state) {
     this.state = state;
   }
+
+  public Elevator getElevator(){
+    return elevator;
+  }
 }
