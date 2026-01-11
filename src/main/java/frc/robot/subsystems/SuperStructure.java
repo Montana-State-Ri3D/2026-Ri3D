@@ -78,7 +78,6 @@ public class SuperStructure extends SubsystemBase {
       case Idle:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
         elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        elevator.setServoPositions(0.0);
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
@@ -110,7 +109,11 @@ public class SuperStructure extends SubsystemBase {
         break;
       case ClimbPrep:
         elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoActuatedPos.get());
+        if(intake.isExtenderAtTarget()){
+          elevator.setServoPositions(elevatorServoActuatedPos.get());
+        } else {
+          elevator.setServoPositions(elevatorServoUnactuatedPos.get());
+        }
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
