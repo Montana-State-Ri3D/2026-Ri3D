@@ -213,6 +213,24 @@ public final class Constants {
     }
   }
 
+  public class HopperConstants {
+    public static final String ROOT_TABLE = "Hopper";
+    public static final double GEAR_RATIO = 1; // TODO: determine (mech / motor)
+    public static final boolean INVERT = false; // TODO: determine
+    public static final double MOI = 0.0001;
+
+    public static final SparkFlexConfig MOTOR_CONFIG() {
+      SparkFlexConfig config = new SparkFlexConfig();
+      config.absoluteEncoder.inverted(INVERT);
+      config.inverted(INVERT);
+      config.idleMode(IdleMode.kBrake);
+      config.smartCurrentLimit(40);
+      config.encoder.positionConversionFactor(GEAR_RATIO);
+      config.encoder.velocityConversionFactor(GEAR_RATIO);
+      return config;
+    }
+  }
+
   public class VisionConstants {
     // AprilTag layout
     public static AprilTagFieldLayout aprilTagLayout =
@@ -257,6 +275,7 @@ public final class Constants {
 
     public static final AngularVelocity INTAKE_FRONT_VEL = Units.RPM.of(1000);
     public static final AngularVelocity INTAKE_BACK_VEL = Units.RPM.of(1000);
+    public static final AngularVelocity HOPPER_VEL = Units.RPM.of(1000);
     public static final AngularVelocity SHOOTER_VEL = Units.RPM.of(1000);
     public static final Distance ELEVATOR_CLIMB_PREP_HEIGHT = ElevatorConstants.MAX_HEIGHT;
     public static final Distance ELEVATOR_CLIMB_HEIGHT = Units.Inches.of(0);

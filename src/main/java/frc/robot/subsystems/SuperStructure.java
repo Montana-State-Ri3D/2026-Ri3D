@@ -14,6 +14,7 @@ import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SuperStructureConstants;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -34,6 +35,7 @@ public class SuperStructure extends SubsystemBase {
   private final Elevator elevator;
   private final Intake intake;
   private final Shooter shooter;
+  private final Hopper hopper;
 
   private TunableNumberGroup tunableGroup =
       new TunableNumberGroup(SuperStructureConstants.ROOT_TABLE);
@@ -42,15 +44,15 @@ public class SuperStructure extends SubsystemBase {
       tunableGroup.build(
           "Elevator/StowHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
   private LoggedTunableNumber elevatorServoActuatedPos =
-  tunableGroup.build(
-      "Elevator/Servo/ActuatedPos", SuperStructureConstants.ELEVATOR_SERVO_ACTUATED_POS);
+      tunableGroup.build(
+          "Elevator/Servo/ActuatedPos", SuperStructureConstants.ELEVATOR_SERVO_ACTUATED_POS);
   private LoggedTunableNumber elevatorServoUnactuatedPos =
-  tunableGroup.build(
-      "Elevator/Servo/UnActuatedPos", SuperStructureConstants.ELEVATOR_SERVO_UNACTUATED_POS);
+      tunableGroup.build(
+          "Elevator/Servo/UnActuatedPos", SuperStructureConstants.ELEVATOR_SERVO_UNACTUATED_POS);
   private LoggedTunableNumber climbPrepElevatorHeightInches =
-  tunableGroup.build(
-      "Elevator/ClimbPrepHeightInches",
-      SuperStructureConstants.ELEVATOR_CLIMB_PREP_HEIGHT.in(Units.Inches));
+      tunableGroup.build(
+          "Elevator/ClimbPrepHeightInches",
+          SuperStructureConstants.ELEVATOR_CLIMB_PREP_HEIGHT.in(Units.Inches));
   private LoggedTunableNumber climbElevatorHeightInches =
       tunableGroup.build(
           "Elevator/ClimbHeightInches",
@@ -63,18 +65,22 @@ public class SuperStructure extends SubsystemBase {
       tunableGroup.build(
           "Intake/FrontVelRPM", SuperStructureConstants.INTAKE_FRONT_VEL.in(Units.RPM));
   private LoggedTunableNumber intakeBackVelRPM =
-      tunableGroup.build("Intake/BackVelRPM", SuperStructureConstants.INTAKE_BACK_VEL.in(Units.RPM));
+      tunableGroup.build(
+          "Intake/BackVelRPM", SuperStructureConstants.INTAKE_BACK_VEL.in(Units.RPM));
   private LoggedTunableNumber shooterVelRPM =
       tunableGroup.build("Shooter/VelRPM", SuperStructureConstants.SHOOTER_VEL.in(Units.RPM));
+  private LoggedTunableNumber hopperVelRPM =
+      tunableGroup.build("Hopper/VelRPM", SuperStructureConstants.SHOOTER_VEL.in(Units.RPM));
 
   private LoggerGroup group = LoggerGroup.build(SuperStructureConstants.ROOT_TABLE);
   private LoggerEntry.Text stateLogger = group.buildString("currentState");
 
   /** Creates a new SuperStructure. */
-  public SuperStructure(Elevator elevator, Intake intake, Shooter shooter) {
+  public SuperStructure(Elevator elevator, Intake intake, Shooter shooter, Hopper hopper) {
     this.elevator = elevator;
     this.intake = intake;
     this.shooter = shooter;
+    this.hopper = hopper;
   }
 
   @Override
@@ -86,6 +92,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        hopper.setVel(Units.RPM.of(0));
         shooter.setVel(Units.RPM.of(0));
         break;
       case Intake:
@@ -94,6 +101,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(intakeFrontVelRPM.get()));
         intake.setBackVel(Units.RPM.of(intakeBackVelRPM.get()));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        hopper.setVel(Units.RPM.of(0));
         shooter.setVel(Units.RPM.of(0));
         break;
       case ScorePrep:
@@ -102,6 +110,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        hopper.setVel(Units.RPM.of(0));
         shooter.setVel(Units.RPM.of(shooterVelRPM.get()));
         break;
       case Score:
@@ -110,6 +119,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        hopper.setVel(Units.RPM.of(hopperVelRPM.get()));
         shooter.setVel(Units.RPM.of(shooterVelRPM.get()));
         break;
       case ClimbPrep:
@@ -117,11 +127,12 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
-        if(intake.isExtenderAtTarget()){
+        if (intake.isExtenderAtTarget()) {
           elevator.setServoPositions(elevatorServoActuatedPos.get());
         } else {
           elevator.setServoPositions(elevatorServoUnactuatedPos.get());
         }
+        hopper.setVel(Units.RPM.of(0));
         shooter.setVel(Units.RPM.of(0));
         break;
       case Climb:
@@ -130,6 +141,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
+        hopper.setVel(Units.RPM.of(0));
         shooter.setVel(Units.RPM.of(0));
         break;
       case ClimbIntermediate:
@@ -138,6 +150,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
+        hopper.setVel(Units.RPM.of(0));
         shooter.setVel(Units.RPM.of(0));
         break;
       default:
@@ -150,7 +163,7 @@ public class SuperStructure extends SubsystemBase {
     this.state = state;
   }
 
-  public Elevator getElevator(){
+  public Elevator getElevator() {
     return elevator;
   }
 }

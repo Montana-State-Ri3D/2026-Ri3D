@@ -10,7 +10,6 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.PWM;
 import frc.robot.Constants;
@@ -83,7 +82,7 @@ public class ElevatorIOReal implements ElevatorIO {
   }
 
   @Override
-  public void setServoPositions(double pos){
+  public void setServoPositions(double pos) {
     servoA.setPosition(pos);
     servoB.setPosition(pos);
   }

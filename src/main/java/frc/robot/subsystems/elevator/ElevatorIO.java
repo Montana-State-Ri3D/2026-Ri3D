@@ -33,5 +33,5 @@ public interface ElevatorIO {
     return false;
   }
 
-  public default void setServoPositions(double pos){}
+  public default void setServoPositions(double pos) {}
 }
