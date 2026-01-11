@@ -33,10 +33,9 @@ public class ScoreStateMachine extends StateMachine {
       drive.setState(DriveState.PathFollow);
     } else {
       drive.setState(DriveState.Controller);
-    }
-    ;
+    };
     superStructure.setState(StructureState.ScorePrep);
-    return false ? stateWithName("Score", () -> score()) : null; // TODO: add condition for score
+    return superStructure.getShooter().isAtTarget() ? stateWithName("Score", () -> score()) : null;
   }
 
   private StateHandler score() {

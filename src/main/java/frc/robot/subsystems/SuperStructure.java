@@ -166,4 +166,8 @@ public class SuperStructure extends SubsystemBase {
   public Elevator getElevator() {
     return elevator;
   }
+
+  public Shooter getShooter(){
+    return shooter;
+  }
 }
