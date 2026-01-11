@@ -24,7 +24,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.MecanumDriveKinematics;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -136,49 +135,69 @@ public final class Constants {
     }
   }
 
-  public class ArmConstants {
-    public static final String ROOT_TABLE = "Arm";
-    public static final Angle HOME_POSITION = Units.Degree.of(0); // TODO: determine
-    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
-    public static final boolean INVERT = false; // TODO: determine
-    public static final double MOI = 0.0001;
-    public static final Angle MIN_ANGLE = Units.Degrees.of(0); // TODO: determine
-    public static final Angle MAX_ANGLE = Units.Degrees.of(180); // TODO: determine
-
-    public static final SparkFlexConfig MOTOR_CONFIG() {
-      SparkFlexConfig config = new SparkFlexConfig();
-      config.absoluteEncoder.inverted(INVERT);
-      config.inverted(INVERT);
-      config.idleMode(IdleMode.kBrake);
-      config.smartCurrentLimit(40);
-      config.encoder.positionConversionFactor(GEAR_RATIO);
-      config.encoder.velocityConversionFactor(GEAR_RATIO);
-      config.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
-      return config;
-    }
-  }
-
   public class IntakeConstants {
     public static final String ROOT_TABLE = "Intake";
-    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
-    public static final boolean INVERT = false; // TODO: determine
-    public static final double MOI = 0.0001;
 
-    public static final SparkFlexConfig MOTOR_CONFIG() {
-      SparkFlexConfig config = new SparkFlexConfig();
-      config.absoluteEncoder.inverted(INVERT);
-      config.inverted(INVERT);
-      config.idleMode(IdleMode.kBrake);
-      config.smartCurrentLimit(40);
-      config.encoder.positionConversionFactor(GEAR_RATIO);
-      config.encoder.velocityConversionFactor(GEAR_RATIO);
-      return config;
+    public class FrontRollers {
+      public static final double GEAR_RATIO = 1; // TODO: determine (mech / motor)
+      public static final boolean INVERT = false; // TODO: determine
+      public static final double MOI = 0.0001;
+
+      public static final SparkFlexConfig MOTOR_CONFIG() {
+        SparkFlexConfig config = new SparkFlexConfig();
+        config.absoluteEncoder.inverted(INVERT);
+        config.inverted(INVERT);
+        config.idleMode(IdleMode.kBrake);
+        config.smartCurrentLimit(40);
+        config.encoder.positionConversionFactor(GEAR_RATIO);
+        config.encoder.velocityConversionFactor(GEAR_RATIO);
+        return config;
+      }
+    }
+
+    public class BackRollers {
+      public static final double GEAR_RATIO = 1; // TODO: determine (mech / motor)
+      public static final boolean INVERT = false; // TODO: determine
+      public static final double MOI = 0.0001;
+
+      public static final SparkFlexConfig MOTOR_CONFIG() {
+        SparkFlexConfig config = new SparkFlexConfig();
+        config.absoluteEncoder.inverted(INVERT);
+        config.inverted(INVERT);
+        config.idleMode(IdleMode.kBrake);
+        config.smartCurrentLimit(40);
+        config.encoder.positionConversionFactor(GEAR_RATIO);
+        config.encoder.velocityConversionFactor(GEAR_RATIO);
+        return config;
+      }
+    }
+
+    public class Extender {
+      public static final boolean INVERT = false; // TODO: determine
+      public static final Distance HOME_POSITION = Units.Meter.of(0); // TODO: determine
+      public static final double GEAR_RATIO = 1; // TODO: determine (critical gear / motor)
+      public static final Distance PULLEY_RADIUS = Units.Inch.of(2); // TODO: determine
+      public static final double INCHES_TO_MOTOR_ROT =
+          1.0 / (PULLEY_RADIUS.in(Units.Inches) * 2 * Math.PI * GEAR_RATIO);
+      public static final Distance MAX_LENGTH = Units.Inches.of(30); // TODO: determine
+
+      public static final SparkMaxConfig MOTOR_CONFIG() {
+        SparkMaxConfig config = new SparkMaxConfig();
+        config.absoluteEncoder.inverted(INVERT);
+        config.inverted(INVERT);
+        config.idleMode(IdleMode.kBrake);
+        config.smartCurrentLimit(40);
+        config.encoder.positionConversionFactor(1.0 / INCHES_TO_MOTOR_ROT);
+        config.encoder.velocityConversionFactor(1.0 / INCHES_TO_MOTOR_ROT);
+        config.closedLoop.maxMotion.positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal);
+        return config;
+      }
     }
   }
 
   public class ShooterConstants {
     public static final String ROOT_TABLE = "Shooter";
-    public static final double GEAR_RATIO = 1; // TODO: determine (pulley / motor)
+    public static final double GEAR_RATIO = 1; // TODO: determine (mech / motor)
     public static final boolean INVERT = false; // TODO: determine
     public static final double MOI = 0.0001;
 
@@ -236,7 +255,8 @@ public final class Constants {
   public class SuperStructureConstants {
     public static final String ROOT_TABLE = "SuperStructure";
 
-    public static final AngularVelocity INTAKE_VEL = Units.RPM.of(1000);
+    public static final AngularVelocity INTAKE_FRONT_VEL = Units.RPM.of(1000);
+    public static final AngularVelocity INTAKE_BACK_VEL = Units.RPM.of(1000);
     public static final AngularVelocity SHOOTER_VEL = Units.RPM.of(1000);
     public static final Distance ELEVATOR_CLIMB_PREP_HEIGHT = Units.Inches.of(30);
     public static final Distance ELEVATOR_CLIMB_HEIGHT = Units.Inches.of(15);
@@ -256,9 +276,10 @@ public final class Constants {
     public static final int PIGEON_CAN_ID = 5;
     public static final int ELEVATOR_LEAD_CAN_ID = 6;
     public static final int ELEVATOR_FOLLOW_CAN_ID = 7;
-    public static final int ARM_CAN_ID = 8;
-    public static final int INTAKE_CAN_ID = 9;
-    public static final int SHOOTER_CAN_ID = 10;
+    public static final int INTAKE_FRONT_ROLLERS_CAN_ID = 8;
+    public static final int INTAKE_BACK_ROLLERS_CAN_ID = 9;
+    public static final int INTAKE_EXTENDER_CAN_ID = 10;
+    public static final int SHOOTER_CAN_ID = 11;
   }
 
   public class FieldConstants {

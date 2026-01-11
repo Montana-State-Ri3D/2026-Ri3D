@@ -142,14 +142,11 @@ public class Drive extends SubsystemBase {
         break;
       case PathFollow:
         if (choreoHelper != null) {
-          ChassisSpeedsWithPathEnd result = choreoHelper
-          .calculateChassisSpeeds(getPose(), System.currentTimeMillis() / 1000.0);
+          ChassisSpeedsWithPathEnd result =
+              choreoHelper.calculateChassisSpeeds(getPose(), System.currentTimeMillis() / 1000.0);
           atTargetPose = result.atEndOfPath();
           driveRobotCentric(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                    result
-                      .chassisSpeeds(),
-                  simYawAngle));
+              ChassisSpeeds.fromFieldRelativeSpeeds(result.chassisSpeeds(), simYawAngle));
         } else {
           driveRobotCentric(new ChassisSpeeds());
         }
@@ -268,7 +265,7 @@ public class Drive extends SubsystemBase {
     this.state = state;
   }
 
-  public boolean isAtTargetPose(){
+  public boolean isAtTargetPose() {
     return atTargetPose;
   }
 }

@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 public class SuperStateMachine {
   public enum SuperState {
     Idle,
-    Stow,
     Intake,
     Score,
     ClimbPrep,
@@ -45,10 +44,6 @@ public class SuperStateMachine {
     switch (state) {
       case Idle:
         superStructure.setState(StructureState.Idle);
-        drive.setState(DriveState.Controller);
-        break;
-      case Stow:
-        superStructure.setState(StructureState.Stow);
         drive.setState(DriveState.Controller);
         break;
       case Intake:

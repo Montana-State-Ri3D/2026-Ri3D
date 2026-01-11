@@ -47,7 +47,7 @@ public class AutoStateMachine extends StateMachine {
   }
 
   private StateHandler score() {
-    if(!autoScoreTimer.isRunning()) autoScoreTimer.start();
+    if (!autoScoreTimer.isRunning()) autoScoreTimer.start();
     stateMachine.setState(SuperState.Score);
     if (autoScoreTimer.hasElapsed(tunableAutoScoreTime.get())) {
       progress++;

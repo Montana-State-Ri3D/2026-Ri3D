@@ -111,10 +111,9 @@ public class Elevator extends SubsystemBase {
   }
 
   /**
-   * Sets height and elevator acceleration
+   * Sets height
    *
    * @param height
-   * @param accel
    */
   public void setHeight(Distance height) {
     if (height.lt(Units.Inches.of(0)) || height.gt(ElevatorConstants.MAX_HEIGHT)) {

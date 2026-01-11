@@ -1,7 +1,6 @@
 package frc.robot.stateMachines;
 
 import frc.lib.team2930.StateMachine;
-import frc.robot.stateMachines.SuperStateMachine.SuperState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.SuperStructure.StructureState;
 import frc.robot.subsystems.drive.Drive;
@@ -34,7 +33,8 @@ public class IntakeStateMachine extends StateMachine {
       drive.setState(DriveState.PathFollow);
     } else {
       drive.setState(DriveState.Controller);
-    };
+    }
+    ;
     superStructure.setState(StructureState.Intake);
     return null;
   }

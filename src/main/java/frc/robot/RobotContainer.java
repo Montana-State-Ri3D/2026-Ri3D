@@ -165,13 +165,6 @@ public class RobotContainer {
             () -> {
               elevator.resetSensorToHomePosition();
             }));
-
-    SmartDashboard.putData(
-        "Give Sim Coral",
-        new RunsWhenDisabledInstantCommand(() -> superStructure.setSimulatedGamepieceState(true)));
-    SmartDashboard.putData(
-        "Remove Sim Coral",
-        new RunsWhenDisabledInstantCommand(() -> superStructure.setSimulatedGamepieceState(false)));
   }
 
   private void configureAutoChooser() {
