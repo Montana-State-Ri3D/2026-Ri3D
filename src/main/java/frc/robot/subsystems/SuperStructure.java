@@ -25,7 +25,8 @@ public class SuperStructure extends SubsystemBase {
     ScorePrep,
     Score,
     ClimbPrep,
-    Climb
+    Climb,
+    ClimbIntermediate
   }
 
   private StructureState state = StructureState.Idle;
@@ -54,6 +55,10 @@ public class SuperStructure extends SubsystemBase {
       tunableGroup.build(
           "Elevator/ClimbHeightInches",
           SuperStructureConstants.ELEVATOR_CLIMB_HEIGHT.in(Units.Inches));
+  private LoggedTunableNumber climbIntermediateElevatorHeightInches =
+      tunableGroup.build(
+          "Elevator/IntermediateClimbHeightInches",
+          SuperStructureConstants.ELEVATOR_INTERMEDIATE_CLIMB_HEIGHT.in(Units.Inches));
   private LoggedTunableNumber intakeFrontVelRPM =
       tunableGroup.build(
           "Intake/FrontVelRPM", SuperStructureConstants.INTAKE_FRONT_VEL.in(Units.RPM));
@@ -121,6 +126,14 @@ public class SuperStructure extends SubsystemBase {
         break;
       case Climb:
         elevator.setHeight(Units.Inches.of(climbElevatorHeightInches.get()));
+        elevator.setServoPositions(elevatorServoActuatedPos.get());
+        intake.setFrontVel(Units.RPM.of(0));
+        intake.setBackVel(Units.RPM.of(0));
+        intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
+        shooter.setVel(Units.RPM.of(0));
+        break;
+      case ClimbIntermediate:
+        elevator.setHeight(Units.Inches.of(climbIntermediateElevatorHeightInches.get()));
         elevator.setServoPositions(elevatorServoActuatedPos.get());
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
