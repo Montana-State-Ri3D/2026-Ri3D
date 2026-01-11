@@ -17,7 +17,7 @@ import frc.robot.Constants.HopperConstants;
 public class HopperIOReal implements HopperIO {
 
   private final SparkFlex motor =
-      new SparkFlex(Constants.CanIDs.SHOOTER_CAN_ID, MotorType.kBrushless);
+      new SparkFlex(Constants.CanIDs.HOPPER_CAN_ID, MotorType.kBrushless);
   private SparkFlexConfig config = Constants.ElevatorConstants.MOTOR_CONFIG();
 
   private final RelativeEncoder encoder = motor.getEncoder();

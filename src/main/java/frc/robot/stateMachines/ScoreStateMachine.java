@@ -18,9 +18,7 @@ public class ScoreStateMachine extends StateMachine {
   private final Drive drive;
   private final SuperStructure superStructure;
 
-  public ScoreStateMachine(
-      Drive drive,
-      SuperStructure superStructure) {
+  public ScoreStateMachine(Drive drive, SuperStructure superStructure) {
     super("ScoreStateMachine");
 
     this.drive = drive;
@@ -33,7 +31,9 @@ public class ScoreStateMachine extends StateMachine {
     drive.setRotation(calcDesiredRobotAngle());
     drive.setState(DriveState.RotateToAngle);
     superStructure.setState(StructureState.ScorePrep);
-    return superStructure.getShooter().isAtTarget() && drive.isAtTargetPose() ? stateWithName("Score", () -> score()) : null;
+    return superStructure.getShooter().isAtTarget() && drive.isAtTargetPose()
+        ? stateWithName("Score", () -> score())
+        : null;
   }
 
   private StateHandler score() {
@@ -42,8 +42,14 @@ public class ScoreStateMachine extends StateMachine {
     return null;
   }
 
-  private Rotation2d calcDesiredRobotAngle(){
-    Pose2d shooterPose = drive.getPose().plus(new Transform2d(ShooterConstants.HORIZONTAL_OFFSET, Units.Inches.of(0), Rotation2d.kZero));
-    return GeometryUtil.getHeading(shooterPose.getTranslation(), FieldConstants.HUB_TRANSLATION_BLUE);
+  private Rotation2d calcDesiredRobotAngle() {
+    Pose2d shooterPose =
+        drive
+            .getPose()
+            .plus(
+                new Transform2d(
+                    ShooterConstants.HORIZONTAL_OFFSET, Units.Inches.of(0), Rotation2d.kZero));
+    return GeometryUtil.getHeading(
+        shooterPose.getTranslation(), FieldConstants.HUB_TRANSLATION_BLUE);
   }
 }

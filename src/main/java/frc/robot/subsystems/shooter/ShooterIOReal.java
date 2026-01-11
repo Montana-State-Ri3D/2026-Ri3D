@@ -28,9 +28,10 @@ public class ShooterIOReal implements ShooterIO {
 
   // private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
 
-  public ShooterIOReal(){
+  public ShooterIOReal() {
     followConfig.follow(leadMotor, ShooterConstants.FOLLOW_INVERT);
-    followMotor.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    followMotor.configure(
+        followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
@@ -69,7 +70,11 @@ public class ShooterIOReal implements ShooterIO {
   public boolean setIdleMode(IdleMode value) {
     config.idleMode(value);
     followConfig.idleMode(value);
-    return leadMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-        == REVLibError.kOk && followMotor.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) == REVLibError.kOk;
+    return leadMotor.configure(
+                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+            == REVLibError.kOk
+        && followMotor.configure(
+                followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+            == REVLibError.kOk;
   }
 }

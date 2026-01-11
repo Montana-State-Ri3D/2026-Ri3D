@@ -21,15 +21,14 @@ public class AutoStateMachine extends StateMachine {
   private ChoreoTrajectoryWithName[] trajectories = new ChoreoTrajectoryWithName[3];
 
   public AutoStateMachine(
-      SuperStructure superStructure,
-      SuperStateMachine stateMachine,
-      Drive drive) {
+      SuperStructure superStructure, SuperStateMachine stateMachine, Drive drive) {
     super("AutoStateMachine");
     this.superStructure = superStructure;
     this.stateMachine = stateMachine;
     this.drive = drive;
     setInitialState(stateWithName("IntakePrep", () -> intakePrep()));
-    for(int i = 0; i < 3; i++) trajectories[i] = ChoreoTrajectoryWithName.getTrajectory("Path" + (i+1));
+    for (int i = 0; i < 3; i++)
+      trajectories[i] = ChoreoTrajectoryWithName.getTrajectory("Path" + (i + 1));
   }
 
   private StateHandler intakePrep() {
@@ -57,7 +56,8 @@ public class AutoStateMachine extends StateMachine {
 
   private StateHandler climbPrep() {
     stateMachine.setState(SuperState.ClimbPrep);
-    if (superStructure.getElevator().isAtTarget() && superStructure.getIntake().isExtenderAtTarget()) {
+    if (superStructure.getElevator().isAtTarget()
+        && superStructure.getIntake().isExtenderAtTarget()) {
       drive.setTrajectory(trajectories[3]);
       return stateWithName("Climb", () -> climb());
     }
@@ -65,7 +65,7 @@ public class AutoStateMachine extends StateMachine {
   }
 
   private StateHandler climb() {
-    if(drive.isAtTargetPose()) stateMachine.setState(SuperState.ClimbL1);
+    if (drive.isAtTargetPose()) stateMachine.setState(SuperState.ClimbL1);
     return null;
   }
 }

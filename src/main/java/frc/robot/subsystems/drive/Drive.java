@@ -162,7 +162,8 @@ public class Drive extends SubsystemBase {
       case RotateToAngle:
         if (rotToAngKP.hasChanged(hc) || rotToAngKD.hasChanged(hc))
           rotateToAngleController.setPID(rotToAngKP.get(), 0, rotToAngKD.get());
-        if(rotToAngTolerance.hasChanged(hc)) rotateToAngleController.setTolerance(Math.toRadians(rotToAngTolerance.get()));
+        if (rotToAngTolerance.hasChanged(hc))
+          rotateToAngleController.setTolerance(Math.toRadians(rotToAngTolerance.get()));
         driveController(
             rotateToAngleController.calculate(
                 getRotation().getRadians(), targetAngle.getRadians()));
@@ -275,7 +276,7 @@ public class Drive extends SubsystemBase {
     return atTargetPose;
   }
 
-  public boolean isAtTargetAngle(){
+  public boolean isAtTargetAngle() {
     return atTargetAngle;
   }
 }

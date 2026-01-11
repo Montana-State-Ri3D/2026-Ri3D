@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.Units;
@@ -25,6 +23,7 @@ import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
+import java.util.function.Supplier;
 
 public class SuperStructure extends SubsystemBase {
 
@@ -84,10 +83,16 @@ public class SuperStructure extends SubsystemBase {
   private LoggerGroup group = LoggerGroup.build(SuperStructureConstants.ROOT_TABLE);
   private LoggerEntry.Text stateLogger = group.buildString("currentState");
 
-  private InterpolatingDoubleTreeMap shootingInterpolator = ShooterConstants.SHOOTING_INTERPOLATOR();
+  private InterpolatingDoubleTreeMap shootingInterpolator =
+      ShooterConstants.SHOOTING_INTERPOLATOR();
 
   /** Creates a new SuperStructure. */
-  public SuperStructure(Elevator elevator, Intake intake, Shooter shooter, Hopper hopper, Supplier<Pose2d> robotPose) {
+  public SuperStructure(
+      Elevator elevator,
+      Intake intake,
+      Shooter shooter,
+      Hopper hopper,
+      Supplier<Pose2d> robotPose) {
     this.elevator = elevator;
     this.intake = intake;
     this.shooter = shooter;
@@ -123,7 +128,9 @@ public class SuperStructure extends SubsystemBase {
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
         hopper.setVel(Units.RPM.of(0));
-        shooter.setVel(Units.RPM.of(shooterVelRPM.get())); // TODO: replace with interpolating tree after filling tree
+        shooter.setVel(
+            Units.RPM.of(
+                shooterVelRPM.get())); // TODO: replace with interpolating tree after filling tree
         break;
       case Score:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
@@ -132,7 +139,9 @@ public class SuperStructure extends SubsystemBase {
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
         hopper.setVel(Units.RPM.of(hopperVelRPM.get()));
-        shooter.setVel(Units.RPM.of(shooterVelRPM.get())); // TODO: replace with interpolating tree after filling tree
+        shooter.setVel(
+            Units.RPM.of(
+                shooterVelRPM.get())); // TODO: replace with interpolating tree after filling tree
         break;
       case ClimbPrep:
         elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
@@ -179,15 +188,18 @@ public class SuperStructure extends SubsystemBase {
     return elevator;
   }
 
-  public Shooter getShooter(){
+  public Shooter getShooter() {
     return shooter;
   }
 
-  public Intake getIntake(){
+  public Intake getIntake() {
     return intake;
   }
 
-  private AngularVelocity getOptimalShooterVel(){
-    return Units.RPM.of(shootingInterpolator.get(GeometryUtil.getDist(robotPose.get().getTranslation(), FieldConstants.HUB_TRANSLATION_BLUE)));
+  private AngularVelocity getOptimalShooterVel() {
+    return Units.RPM.of(
+        shootingInterpolator.get(
+            GeometryUtil.getDist(
+                robotPose.get().getTranslation(), FieldConstants.HUB_TRANSLATION_BLUE)));
   }
 }
