@@ -42,15 +42,15 @@ public class SuperStructure extends SubsystemBase {
       tunableGroup.build(
           "Elevator/StowHeightInches", ElevatorConstants.HOME_POSITION.in(Units.Inches));
   private LoggedTunableNumber elevatorServoActuatedPos =
-  tunableGroup.build(
-      "Elevator/Servo/ActuatedPos", SuperStructureConstants.ELEVATOR_SERVO_ACTUATED_POS);
+      tunableGroup.build(
+          "Elevator/Servo/ActuatedPos", SuperStructureConstants.ELEVATOR_SERVO_ACTUATED_POS);
   private LoggedTunableNumber elevatorServoUnactuatedPos =
-  tunableGroup.build(
-      "Elevator/Servo/UnActuatedPos", SuperStructureConstants.ELEVATOR_SERVO_UNACTUATED_POS);
+      tunableGroup.build(
+          "Elevator/Servo/UnActuatedPos", SuperStructureConstants.ELEVATOR_SERVO_UNACTUATED_POS);
   private LoggedTunableNumber climbPrepElevatorHeightInches =
-  tunableGroup.build(
-      "Elevator/ClimbPrepHeightInches",
-      SuperStructureConstants.ELEVATOR_CLIMB_PREP_HEIGHT.in(Units.Inches));
+      tunableGroup.build(
+          "Elevator/ClimbPrepHeightInches",
+          SuperStructureConstants.ELEVATOR_CLIMB_PREP_HEIGHT.in(Units.Inches));
   private LoggedTunableNumber climbElevatorHeightInches =
       tunableGroup.build(
           "Elevator/ClimbHeightInches",
@@ -63,7 +63,8 @@ public class SuperStructure extends SubsystemBase {
       tunableGroup.build(
           "Intake/FrontVelRPM", SuperStructureConstants.INTAKE_FRONT_VEL.in(Units.RPM));
   private LoggedTunableNumber intakeBackVelRPM =
-      tunableGroup.build("Intake/BackVelRPM", SuperStructureConstants.INTAKE_BACK_VEL.in(Units.RPM));
+      tunableGroup.build(
+          "Intake/BackVelRPM", SuperStructureConstants.INTAKE_BACK_VEL.in(Units.RPM));
   private LoggedTunableNumber shooterVelRPM =
       tunableGroup.build("Shooter/VelRPM", SuperStructureConstants.SHOOTER_VEL.in(Units.RPM));
 
@@ -117,7 +118,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
-        if(intake.isExtenderAtTarget()){
+        if (intake.isExtenderAtTarget()) {
           elevator.setServoPositions(elevatorServoActuatedPos.get());
         } else {
           elevator.setServoPositions(elevatorServoUnactuatedPos.get());
@@ -150,7 +151,7 @@ public class SuperStructure extends SubsystemBase {
     this.state = state;
   }
 
-  public Elevator getElevator(){
+  public Elevator getElevator() {
     return elevator;
   }
 }

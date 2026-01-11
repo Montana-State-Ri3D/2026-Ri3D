@@ -16,9 +16,7 @@ public class ClimbStateMachine extends StateMachine {
   private int currentBar = 1;
 
   public ClimbStateMachine(
-      SuperStateMachine superStateMachine,
-      Drive drive,
-      SuperStructure superStructure) {
+      SuperStateMachine superStateMachine, Drive drive, SuperStructure superStructure) {
     super("ClimbStateMachine");
 
     this.superStateMachine = superStateMachine;
@@ -31,10 +29,10 @@ public class ClimbStateMachine extends StateMachine {
   private StateHandler down() {
     drive.setState(DriveState.Controller);
     superStructure.setState(StructureState.Climb);
-    if(superStructure.getElevator().isAtTarget()) {
+    if (superStructure.getElevator().isAtTarget()) {
       currentBar++;
-      if(currentBar > totalBars) return stateWithName("End", () -> end());
-      return stateWithName("Up", () -> up()); 
+      if (currentBar > totalBars) return stateWithName("End", () -> end());
+      return stateWithName("Up", () -> up());
     } else return null;
   }
 
