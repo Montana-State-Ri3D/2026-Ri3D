@@ -16,31 +16,40 @@ import frc.robot.Constants.ShooterConstants;
 
 public class ShooterIOReal implements ShooterIO {
 
-  private final SparkFlex motor =
+  private final SparkFlex leadMotor =
+      new SparkFlex(Constants.CanIDs.SHOOTER_CAN_ID, MotorType.kBrushless);
+  private final SparkFlex followMotor =
       new SparkFlex(Constants.CanIDs.SHOOTER_CAN_ID, MotorType.kBrushless);
   private SparkFlexConfig config = Constants.ElevatorConstants.MOTOR_CONFIG();
 
-  private final RelativeEncoder encoder = motor.getEncoder();
+  private final RelativeEncoder encoder = leadMotor.getEncoder();
+
+  private final SparkFlexConfig followConfig = new SparkFlexConfig();
 
   // private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
+
+  public ShooterIOReal(){
+    followConfig.follow(leadMotor, ShooterConstants.FOLLOW_INVERT);
+    followMotor.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
 
   @Override
   public void updateInputs(ShooterInputs inputs) {
     inputs.velocityRPM = encoder.getVelocity();
-    inputs.appliedOutput = motor.getAppliedOutput();
-    inputs.currentAmps = motor.getOutputCurrent();
-    inputs.tempCelsius = motor.getMotorTemperature();
+    inputs.appliedOutput = leadMotor.getAppliedOutput();
+    inputs.currentAmps = leadMotor.getOutputCurrent();
+    inputs.tempCelsius = leadMotor.getMotorTemperature();
     // inputs.tofDistanceInches = timeOfFlight.getDistance().in(Units.Inches);
   }
 
   @Override
   public void setVoltage(double volts) {
-    motor.setVoltage(volts);
+    leadMotor.setVoltage(volts);
   }
 
   @Override
   public void setVel(AngularVelocity angle) {
-    motor
+    leadMotor
         .getClosedLoopController()
         .setReference(
             angle.in(Units.RPM) / ShooterConstants.GEAR_RATIO,
@@ -51,13 +60,14 @@ public class ShooterIOReal implements ShooterIO {
   public void configMotor(double kV, double kP, double maxAcceleration) {
     config.closedLoop.pidf(kP, 0, 0, kV);
     config.closedLoop.maxMotion.maxAcceleration(maxAcceleration);
-    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    leadMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public boolean setIdleMode(IdleMode value) {
     config.idleMode(value);
-    return motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-        == REVLibError.kOk;
+    followConfig.idleMode(value);
+    return leadMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+        == REVLibError.kOk && followMotor.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters) == REVLibError.kOk;
   }
 }

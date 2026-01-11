@@ -202,6 +202,7 @@ public final class Constants {
     public static final boolean INVERT = false; // TODO: determine
     public static final double MOI = 0.0001;
     public static final Distance HORIZONTAL_OFFSET = Units.Inches.of(5); // TODO: determine
+    public static final boolean FOLLOW_INVERT = false; // TODO: determine
 
     public static final SparkFlexConfig MOTOR_CONFIG() {
       SparkFlexConfig config = new SparkFlexConfig();
