@@ -10,9 +10,11 @@ public interface ShooterIO {
   class ShooterInputs {
     public double velocityRPM;
     public double appliedOutput;
-    public double currentAmps;
-    public double tempCelsius;
+    public double leadCurrentAmps;
+    public double leadTempCelsius;
     public double tofDistanceInches;
+    public double followCurrentAmps;
+    public double followTempCelsius;
   }
 
   /** Updates the set of loggable inputs. */

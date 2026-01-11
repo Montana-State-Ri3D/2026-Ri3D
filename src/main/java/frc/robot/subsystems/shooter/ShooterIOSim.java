@@ -18,8 +18,8 @@ public class ShooterIOSim implements ShooterIO {
     motor.update(Constants.defaultPeriod);
     inputs.velocityRPM = motor.getVelocity().in(Units.RPM) * ShooterConstants.GEAR_RATIO;
     inputs.appliedOutput = motor.getVoltage();
-    inputs.currentAmps = motor.getCurrent().in(Units.Amp);
-    inputs.tempCelsius = 0;
+    inputs.leadCurrentAmps = motor.getCurrent().in(Units.Amp);
+    inputs.leadTempCelsius = 0;
   }
 
   @Override

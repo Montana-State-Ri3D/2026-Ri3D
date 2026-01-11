@@ -37,8 +37,10 @@ public class ShooterIOReal implements ShooterIO {
   public void updateInputs(ShooterInputs inputs) {
     inputs.velocityRPM = encoder.getVelocity();
     inputs.appliedOutput = leadMotor.getAppliedOutput();
-    inputs.currentAmps = leadMotor.getOutputCurrent();
-    inputs.tempCelsius = leadMotor.getMotorTemperature();
+    inputs.leadCurrentAmps = leadMotor.getOutputCurrent();
+    inputs.leadTempCelsius = leadMotor.getMotorTemperature();
+    inputs.followCurrentAmps = followMotor.getOutputCurrent();
+    inputs.followTempCelsius = followMotor.getMotorTemperature();
     // inputs.tofDistanceInches = timeOfFlight.getDistance().in(Units.Inches);
   }
 
