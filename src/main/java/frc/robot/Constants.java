@@ -260,6 +260,8 @@ public final class Constants {
     public static final AngularVelocity SHOOTER_VEL = Units.RPM.of(1000);
     public static final Distance ELEVATOR_CLIMB_PREP_HEIGHT = Units.Inches.of(30);
     public static final Distance ELEVATOR_CLIMB_HEIGHT = Units.Inches.of(15);
+    public static final double ELEVATOR_SERVO_UNACTUATED_POS = 0.0;
+    public static final double ELEVATOR_SERVO_ACTUATED_POS = 1.0;
   }
 
   public class CanIDs {
