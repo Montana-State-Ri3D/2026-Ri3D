@@ -275,6 +275,7 @@ public final class Constants {
 
     public static final AngularVelocity INTAKE_FRONT_VEL = Units.RPM.of(1000);
     public static final AngularVelocity INTAKE_BACK_VEL = Units.RPM.of(1000);
+    public static final AngularVelocity HOPPER_VEL = Units.RPM.of(1000);
     public static final AngularVelocity SHOOTER_VEL = Units.RPM.of(1000);
     public static final Distance ELEVATOR_CLIMB_PREP_HEIGHT = ElevatorConstants.MAX_HEIGHT;
     public static final Distance ELEVATOR_CLIMB_HEIGHT = Units.Inches.of(0);

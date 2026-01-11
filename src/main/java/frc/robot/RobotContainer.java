@@ -34,6 +34,9 @@ import frc.robot.subsystems.drive.gyro.GyroIOPigeon2;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.HopperIO;
+import frc.robot.subsystems.hopper.HopperIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
@@ -52,6 +55,7 @@ public class RobotContainer {
   private final SuperStructure superStructure;
   private final Elevator elevator;
   private final Intake intake;
+  private final Hopper hopper;
   private final Shooter shooter;
   // private final Vision vision;
 
@@ -71,6 +75,7 @@ public class RobotContainer {
         drive = new Drive(new DriveModules(true), new GyroIOPigeon2(), controller);
         elevator = new Elevator(new ElevatorIO() {});
         intake = new Intake(new IntakeIO() {});
+        hopper = new Hopper(new HopperIO() {});
         shooter = new Shooter(new ShooterIO() {});
         // vision =
         //     new Vision(
@@ -84,6 +89,7 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIOSim());
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
+        hopper = new Hopper(new HopperIOSim());
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -97,11 +103,12 @@ public class RobotContainer {
         elevator = new Elevator(new ElevatorIO() {});
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
+        hopper = new Hopper(new HopperIO() {});
         // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }
 
-    superStructure = new SuperStructure(elevator, intake, shooter);
+    superStructure = new SuperStructure(elevator, intake, shooter, hopper);
 
     superStateMachine = new SuperStateMachine(drive, superStructure);
 
