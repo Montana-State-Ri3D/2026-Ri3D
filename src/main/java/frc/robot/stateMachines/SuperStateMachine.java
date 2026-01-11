@@ -57,8 +57,7 @@ public class SuperStateMachine {
         drive.setState(DriveState.Controller);
         break;
       case Climb:
-        superStructure.setState(StructureState.Climb);
-        drive.setState(DriveState.Controller);
+        runStateMachine(() -> new ClimbStateMachine(this, drive, superStructure), newState);
         break;
       case AutoIntake:
         runStateMachine(() -> new IntakeStateMachine(this, drive, superStructure, true), newState);
