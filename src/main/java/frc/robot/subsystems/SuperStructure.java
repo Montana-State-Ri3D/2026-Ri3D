@@ -109,14 +109,14 @@ public class SuperStructure extends SubsystemBase {
         break;
       case ClimbPrep:
         elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
+        intake.setFrontVel(Units.RPM.of(0));
+        intake.setBackVel(Units.RPM.of(0));
+        intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
         if(intake.isExtenderAtTarget()){
           elevator.setServoPositions(elevatorServoActuatedPos.get());
         } else {
           elevator.setServoPositions(elevatorServoUnactuatedPos.get());
         }
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
-        intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
         shooter.setVel(Units.RPM.of(0));
         break;
       case Climb:
