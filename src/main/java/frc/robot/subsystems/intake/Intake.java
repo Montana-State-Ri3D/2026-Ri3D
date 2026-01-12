@@ -79,7 +79,7 @@ public class Intake extends SubsystemBase {
       backRollerkV.initDefault(0.00208);
       backRollerMaxAccelerationConfig.initDefault(0.0);
 
-      extenderkP.initDefault(0);
+      extenderkP.initDefault(0.1);
       extenderkD.initDefault(0);
     } else if (Constants.currentMode == Mode.REAL) {
       frontRollerkP.initDefault(0.0);
