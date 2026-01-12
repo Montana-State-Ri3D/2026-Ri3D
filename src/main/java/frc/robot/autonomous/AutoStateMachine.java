@@ -65,7 +65,7 @@ public class AutoStateMachine extends StateMachine {
   }
 
   private StateHandler climb() {
-    if (drive.isAtTargetPose()) stateMachine.setState(SuperState.ClimbL1);
+    if (drive.isAtTargetPose()) stateMachine.setState(SuperState.Climb);
     return null;
   }
 }
