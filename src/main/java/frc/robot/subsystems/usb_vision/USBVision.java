@@ -7,8 +7,6 @@ package frc.robot.subsystems.usb_vision;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.team2930.LoggerEntry;
-import frc.lib.team2930.LoggerGroup;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.VisionConstants;
@@ -17,17 +15,8 @@ import org.littletonrobotics.junction.Logger;
 public class USBVision extends SubsystemBase {
   // Logging
 
-  private static final LoggerGroup logGroup = LoggerGroup.build(VisionConstants.ROOT_TABLE);
+  // private static final LoggerGroup logGroup = LoggerGroup.build(VisionConstants.ROOT_TABLE);
 
-  private static final LoggerEntry.DecimalArray logToTarget =
-      logGroup.buildDecimalArray("OffsetFromTarget");
-  private static final LoggerEntry.Decimal logDistX = logGroup.buildDecimal("DistX");
-  private static final LoggerEntry.Decimal logDistY = logGroup.buildDecimal("DistY");
-  private static final LoggerEntry.Decimal logDistZ = logGroup.buildDecimal("DistZ");
-
-  private static final LoggerEntry.Decimal logRotX = logGroup.buildDecimal("RotX");
-  private static final LoggerEntry.Decimal logRotY = logGroup.buildDecimal("RotY");
-  private static final LoggerEntry.Decimal logRotZ = logGroup.buildDecimal("RotZ");
   // private static final LoggerEntry.Bool logOnTarget = logGroup.buildBoolean("onTarget");
 
   // Tunable numbers
@@ -39,9 +28,6 @@ public class USBVision extends SubsystemBase {
 
   private final USBVisionIO io;
   private final USBVisionInputsAutoLogged inputs = new USBVisionInputsAutoLogged();
-
-  // private boolean onTarget = false;
-  // private Angle angleToTarget = Units.Radians.zero();
 
   /** Creates a new Vision Subsystem. */
   public USBVision(USBVisionIO io) {
