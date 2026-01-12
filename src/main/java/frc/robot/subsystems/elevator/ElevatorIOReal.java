@@ -11,7 +11,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.PWM;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -24,9 +23,6 @@ public class ElevatorIOReal implements ElevatorIO {
   private SparkFlexConfig config = Constants.ElevatorConstants.MOTOR_CONFIG();
 
   private final RelativeEncoder encoder = leadMotor.getEncoder();
-
-  private final PWM servoA = new PWM(0);
-  private final PWM servoB = new PWM(1);
 
   public ElevatorIOReal() {
     SparkFlexConfig config = new SparkFlexConfig();
@@ -41,8 +37,6 @@ public class ElevatorIOReal implements ElevatorIO {
     inputs.appliedOutput = leadMotor.getAppliedOutput();
     inputs.currentAmps = leadMotor.getOutputCurrent();
     inputs.tempCelsius = leadMotor.getMotorTemperature();
-    inputs.servoAPos = servoA.getPosition();
-    inputs.servoBPos = servoB.getPosition();
   }
 
   @Override
@@ -79,11 +73,5 @@ public class ElevatorIOReal implements ElevatorIO {
     return leadMotor.configure(
             config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
         == REVLibError.kOk;
-  }
-
-  @Override
-  public void setServoPositions(double pos) {
-    servoA.setPosition(pos);
-    servoB.setPosition(pos);
   }
 }

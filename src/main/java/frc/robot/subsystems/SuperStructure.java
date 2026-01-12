@@ -105,7 +105,6 @@ public class SuperStructure extends SubsystemBase {
     switch (state) {
       case Idle:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
@@ -114,7 +113,6 @@ public class SuperStructure extends SubsystemBase {
         break;
       case Intake:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
         intake.setFrontVel(Units.RPM.of(intakeFrontVelRPM.get()));
         intake.setBackVel(Units.RPM.of(intakeBackVelRPM.get()));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
@@ -123,7 +121,6 @@ public class SuperStructure extends SubsystemBase {
         break;
       case ScorePrep:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
@@ -134,7 +131,6 @@ public class SuperStructure extends SubsystemBase {
         break;
       case Score:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
@@ -148,26 +144,11 @@ public class SuperStructure extends SubsystemBase {
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
-        if (intake.isExtenderAtTarget()) {
-          elevator.setServoPositions(elevatorServoActuatedPos.get());
-        } else {
-          elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        }
         hopper.setVel(Units.RPM.of(0));
         shooter.setVel(Units.RPM.of(0));
         break;
       case Climb:
         elevator.setHeight(Units.Inches.of(climbElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoActuatedPos.get());
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
-        intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
-        hopper.setVel(Units.RPM.of(0));
-        shooter.setVel(Units.RPM.of(0));
-        break;
-      case ClimbIntermediate:
-        elevator.setHeight(Units.Inches.of(climbIntermediateElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoActuatedPos.get());
         intake.setFrontVel(Units.RPM.of(0));
         intake.setBackVel(Units.RPM.of(0));
         intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);

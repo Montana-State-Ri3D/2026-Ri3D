@@ -146,10 +146,6 @@ public class Elevator extends SubsystemBase {
     setPercentOut(manualCoefficient.get() * percent + kG.get());
   }
 
-  public void setServoPositions(double pos) {
-    io.setServoPositions(pos);
-  }
-
   // Getters
 
   public boolean isAtTarget() {
