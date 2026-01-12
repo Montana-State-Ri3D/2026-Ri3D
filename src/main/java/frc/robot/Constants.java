@@ -309,9 +309,10 @@ public final class Constants {
     public static final int INTAKE_FRONT_ROLLERS_CAN_ID = 8;
     public static final int INTAKE_BACK_ROLLERS_CAN_ID = 9;
     public static final int INTAKE_EXTENDER_CAN_ID = 10;
-    public static final int HOPPER_CAN_ID = 11;
-    public static final int SHOOTER_LEAD_CAN_ID = 12;
-    public static final int SHOOTER_FOLLOW_CAN_ID = 13;
+    public static final int HOPPER_LEAD_CAN_ID = 11;
+    public static final int HOPPER_FOLLOW_CAN_ID = 12;
+    public static final int SHOOTER_LEAD_CAN_ID = 13;
+    public static final int SHOOTER_FOLLOW_CAN_ID = 14;
   }
 
   public class FieldConstants {
