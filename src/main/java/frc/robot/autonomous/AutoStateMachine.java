@@ -56,7 +56,8 @@ public class AutoStateMachine extends StateMachine {
 
   private StateHandler climbPrep() {
     stateMachine.setState(SuperState.ClimbPrep);
-    if (superStructure.getElevator().isAtTarget()) {
+    if (superStructure.getElevator().isAtTarget()
+        && superStructure.getIntake().isExtenderAtTarget()) {
       drive.setTrajectory(trajectories[3]);
       return stateWithName("Climb", () -> climb());
     }
