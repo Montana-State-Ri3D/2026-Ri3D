@@ -195,6 +195,10 @@ public class Intake extends SubsystemBase {
     io.configExtender(extenderkP.get(), extenderkD.get());
   }
 
+  public void resetExtenderSensorToHomePosition() {
+    io.setExtenderSensorPosition(IntakeConstants.Extender.HOME_POSITION);
+  }
+
   // Getters
 
   public boolean isFrontAtTarget() {
