@@ -8,6 +8,7 @@ import frc.robot.stateMachines.SuperStateMachine;
 import frc.robot.stateMachines.SuperStateMachine.SuperState;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.Drive.DriveState;
 
 public class AutoStateMachine extends StateMachine {
 
@@ -27,12 +28,12 @@ public class AutoStateMachine extends StateMachine {
     this.stateMachine = stateMachine;
     this.drive = drive;
     setInitialState(stateWithName("IntakePrep", () -> intakePrep()));
-    for (int i = 0; i < 3; i++)
-      trajectories[i] = ChoreoTrajectoryWithName.getTrajectory("Path" + (i + 1));
+    // for (int i = 0; i < 3; i++)
+    //   trajectories[i] = ;
   }
 
   private StateHandler intakePrep() {
-    drive.setTrajectory(trajectories[0]);
+    drive.setTrajectory(ChoreoTrajectoryWithName.getTrajectory("Path1"));
     return stateWithName("Intake", () -> intake());
   }
 
@@ -48,24 +49,28 @@ public class AutoStateMachine extends StateMachine {
     if (!autoScoreTimer.isRunning()) autoScoreTimer.start();
     stateMachine.setState(SuperState.Score);
     if (autoScoreTimer.hasElapsed(tunableAutoScoreTime.get())) {
-      drive.setTrajectory(trajectories[2]);
+      drive.setTrajectory(ChoreoTrajectoryWithName.getTrajectory("Path2"));
+      drive.setState(DriveState.PathFollow);
       return stateWithName("ClimbPrep", () -> climbPrep());
     }
     return null;
   }
 
   private StateHandler climbPrep() {
-    stateMachine.setState(SuperState.ClimbPrep);
+    stateMachine.setState(SuperState.ClimbPrepAuto);
     if (superStructure.getElevator().isAtTarget()
-        && superStructure.getIntake().isExtenderAtTarget()) {
-      drive.setTrajectory(trajectories[3]);
+        && superStructure.getIntake().isExtenderAtTarget()
+        && drive.isAtTargetPose()) {
+      drive.setTrajectory(ChoreoTrajectoryWithName.getTrajectory("Path3"));
       return stateWithName("Climb", () -> climb());
     }
     return null;
   }
 
   private StateHandler climb() {
-    if (drive.isAtTargetPose()) stateMachine.setState(SuperState.Climb);
+    if (drive.isAtTargetPose()) {
+      stateMachine.setState(SuperState.Climb);
+    }
     return null;
   }
 }

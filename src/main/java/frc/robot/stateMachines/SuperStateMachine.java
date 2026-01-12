@@ -18,7 +18,8 @@ public class SuperStateMachine {
     Score,
     ClimbPrep,
     Climb,
-    AutoIntake
+    AutoIntake,
+    ClimbPrepAuto
   }
 
   private SuperState prevState = SuperState.Idle;
@@ -61,6 +62,10 @@ public class SuperStateMachine {
         break;
       case AutoIntake:
         runStateMachine(() -> new IntakeStateMachine(this, drive, superStructure, true), newState);
+        break;
+      case ClimbPrepAuto:
+        superStructure.setState(StructureState.ClimbPrep);
+        drive.setState(DriveState.PathFollow);
         break;
       default:
         superStructure.setState(StructureState.Idle);
