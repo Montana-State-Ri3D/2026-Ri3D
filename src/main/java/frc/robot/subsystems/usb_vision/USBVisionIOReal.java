@@ -33,13 +33,17 @@ public class USBVisionIOReal implements USBVisionIO {
     Transform3d pose = DataSync.getPose();
     Rotation3d rot = DataSync.getRot();
     inputs.targetPose = pose;
-    inputs.targetX = pose.getX();
-    inputs.targetY = pose.getY();
-    inputs.targetZ = pose.getZ();
+    if (pose != null) {
+      inputs.targetX = pose.getX();
+      inputs.targetY = pose.getY();
+      inputs.targetZ = pose.getZ();
+    }
     inputs.rotatePose = rot;
-    inputs.rotateX = rot.getX();
-    inputs.rotateY = rot.getY();
-    inputs.rotateZ = rot.getZ();
+    if (rot != null) {
+      inputs.rotateX = rot.getX();
+      inputs.rotateY = rot.getY();
+      inputs.rotateZ = rot.getZ();
+    }
   }
 
   @Override
