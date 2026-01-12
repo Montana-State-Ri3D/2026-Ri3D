@@ -61,6 +61,11 @@ public class Drive extends SubsystemBase {
 
   private static final LoggerGroup loggerGroup = LoggerGroup.build(DriveConstants.ROOT_TABLE);
   private static final LoggerEntry.Text stateLogger = loggerGroup.buildString("currentState");
+  private static final LoggerGroup rotateToAngleLoggerGroup = loggerGroup.subgroup("RotateToAngle");
+  private static final LoggerEntry.Decimal rotationLogger =
+      rotateToAngleLoggerGroup.buildDecimal("CurrentRotation");
+  private static final LoggerEntry.Decimal targetRotationLogger =
+      rotateToAngleLoggerGroup.buildDecimal("TargetRotation");
 
   private static final TunableNumberGroup group = new TunableNumberGroup(DriveConstants.ROOT_TABLE);
 
@@ -98,7 +103,7 @@ public class Drive extends SubsystemBase {
   private DriveState prevState = DriveState.Controller;
 
   private final TunableNumberGroup rotateToAngleGroup = group.subgroup("RotateToAngle");
-  private final LoggedTunableNumber rotToAngKP = rotateToAngleGroup.build("P", 0.1);
+  private final LoggedTunableNumber rotToAngKP = rotateToAngleGroup.build("P", 0.3);
   private final LoggedTunableNumber rotToAngKD = rotateToAngleGroup.build("D", 0.0);
   private final LoggedTunableNumber rotToAngTolerance = rotateToAngleGroup.build("toleranceDeg", 4);
   private final PIDController rotateToAngleController =
@@ -115,7 +120,6 @@ public class Drive extends SubsystemBase {
     updateConstants();
     driveToPose = new DriveToPose(this, () -> targetPose);
     rotateToAngleController.enableContinuousInput(-Math.PI, Math.PI);
-    rotateToAngleController.setPID(rotToAngKP.get(), 0, rotToAngKD.get());
     rotateToAngleController.setTolerance(Math.toRadians(rotToAngTolerance.get()));
   }
 
@@ -142,31 +146,36 @@ public class Drive extends SubsystemBase {
     newState = !prevState.equals(state);
     switch (state) {
       case Controller:
+        atTargetAngle = false;
         driveController(null);
         break;
       case PathFollow:
+        atTargetAngle = false;
         if (choreoHelper != null) {
           ChassisSpeedsWithPathEnd result =
               choreoHelper.calculateChassisSpeeds(getPose(), System.currentTimeMillis() / 1000.0);
           atTargetPose = result.atEndOfPath();
-          driveRobotCentric(
-              ChassisSpeeds.fromFieldRelativeSpeeds(result.chassisSpeeds(), simYawAngle));
+          driveRobotCentric(result.chassisSpeeds());
         } else {
+          atTargetPose = false;
           driveRobotCentric(new ChassisSpeeds());
         }
         break;
       case DriveToPose:
+        atTargetAngle = false;
         if (newState) driveToPose.init();
         driveToPose.run();
         break;
       case RotateToAngle:
-        if (rotToAngKP.hasChanged(hc) || rotToAngKD.hasChanged(hc))
+        if (rotToAngKP.hasChanged(hashCode()) || rotToAngKD.hasChanged(hashCode()))
           rotateToAngleController.setPID(rotToAngKP.get(), 0, rotToAngKD.get());
         if (rotToAngTolerance.hasChanged(hc))
           rotateToAngleController.setTolerance(Math.toRadians(rotToAngTolerance.get()));
-        driveController(
-            rotateToAngleController.calculate(
-                getRotation().getRadians(), targetAngle.getRadians()));
+        double currentRot = getRotation().getRadians();
+        double targetRot = targetAngle.getRadians();
+        rotationLogger.info(currentRot);
+        targetRotationLogger.info(targetRot);
+        driveController(rotateToAngleController.calculate(currentRot, targetRot));
         atTargetAngle = rotateToAngleController.atSetpoint();
         break;
       default:
@@ -178,6 +187,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void setTrajectory(ChoreoTrajectoryWithName traj) {
+    atTargetPose = false;
     choreoHelper =
         new ChoreoHelper(
             System.currentTimeMillis() / 1000.0,
@@ -187,6 +197,9 @@ public class Drive extends SubsystemBase {
             new PIDController(linearKP.get(), 0, linearKD.get()),
             new PIDController(linearKP.get(), 0, linearKD.get()),
             new PIDController(angularKP.get(), 0, angularKD.get()));
+    choreoHelper.setFinalTargetError(0.06);
+    choreoHelper.setFinalOffsetError(0.05);
+    choreoHelper.setFinalHeadingError(0.05);
   }
 
   public void setTargetPose(Pose2d target) {
@@ -198,10 +211,7 @@ public class Drive extends SubsystemBase {
   }
 
   private void driveController(Double omegaOverride) {
-    double angMagnitude =
-        omegaOverride == null
-            ? MathUtil.applyDeadband(-controller.getRightX(), DEADBAND)
-            : omegaOverride;
+    double angMagnitude = MathUtil.applyDeadband(-controller.getRightX(), DEADBAND);
     LinearVelocity speedX =
         DriveConstants.MAX_LINEAR_SPEED.times(
             MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND));
@@ -216,8 +226,10 @@ public class Drive extends SubsystemBase {
         ChassisSpeeds.fromFieldRelativeSpeeds(
             speedX,
             speedY,
-            Constants.DriveConstants.MAX_ANGULAR_SPEED.times(
-                Math.copySign(angMagnitude * angMagnitude, angMagnitude)),
+            omegaOverride == null
+                ? Constants.DriveConstants.MAX_ANGULAR_SPEED.times(
+                    Math.copySign(angMagnitude * angMagnitude, angMagnitude))
+                : Constants.DriveConstants.MAX_ANGULAR_SPEED.times(omegaOverride),
             getRotation()));
   }
 

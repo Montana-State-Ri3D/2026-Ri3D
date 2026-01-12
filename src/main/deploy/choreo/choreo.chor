@@ -1,6 +1,6 @@
 {
  "name":"choreo",
- "version":2,
+ "version":1,
  "type":"Swerve",
  "variables":{
   "expressions":{},
@@ -9,22 +9,22 @@
  "config":{
   "frontLeft":{
    "x":{
-    "exp":"0.321 m",
-    "val":0.321
+    "exp":"11 in",
+    "val":0.2794
    },
    "y":{
-    "exp":"0.2921 m",
-    "val":0.2921
+    "exp":"11 in",
+    "val":0.2794
    }
   },
   "backLeft":{
    "x":{
-    "exp":"-0.321 m",
-    "val":-0.321
+    "exp":"-11 in",
+    "val":-0.2794
    },
    "y":{
-    "exp":"-0.2921 m",
-    "val":-0.2921
+    "exp":"11 in",
+    "val":0.2794
    }
   },
   "mass":{
@@ -48,8 +48,8 @@
    "val":628.3185307179587
   },
   "tmax":{
-   "exp":"0.3 N * m",
-   "val":0.3
+   "exp":"1.2 N * m",
+   "val":1.2
   },
   "cof":{
    "exp":"1.5",
@@ -74,11 +74,5 @@
    "val":0.5588
   }
  },
- "generationFeatures":[],
- "codegen":{
-  "root":null,
-  "genVars":true,
-  "genTrajData":true,
-  "useChoreoLib":true
- }
+ "generationFeatures":[]
 }

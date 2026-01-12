@@ -5,6 +5,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.Units;
 import frc.lib.team2930.GeometryUtil;
+import frc.lib.team2930.LoggerEntry;
+import frc.lib.team2930.LoggerGroup;
 import frc.lib.team2930.StateMachine;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -18,6 +20,10 @@ public class ScoreStateMachine extends StateMachine {
   private final Drive drive;
   private final SuperStructure superStructure;
 
+  private final LoggerGroup conditions = LoggerGroup.build("ScoreStateMachine/ShootConditions");
+  private final LoggerEntry.Bool shooterAtRPM = conditions.buildBoolean("ShooterAtRPM");
+  private final LoggerEntry.Bool robotAtAngle = conditions.buildBoolean("RobotAtAngle");
+
   public ScoreStateMachine(Drive drive, SuperStructure superStructure) {
     super("ScoreStateMachine");
 
@@ -28,16 +34,18 @@ public class ScoreStateMachine extends StateMachine {
   }
 
   private StateHandler scorePrep() {
-    drive.setRotation(calcDesiredRobotAngle());
+    drive.setTargetAngle(calcDesiredRobotAngle());
     drive.setState(DriveState.RotateToAngle);
     superStructure.setState(StructureState.ScorePrep);
-    return superStructure.getShooter().isAtTarget() && drive.isAtTargetPose()
-        ? stateWithName("Score", () -> score())
-        : null;
+    boolean atRPM = superStructure.getShooter().isAtTarget();
+    boolean atAngle = drive.isAtTargetAngle();
+    shooterAtRPM.info(atRPM);
+    robotAtAngle.info(atAngle);
+    return atRPM && atAngle ? stateWithName("Score", () -> score()) : null;
   }
 
   private StateHandler score() {
-    drive.setState(DriveState.RotateToAngle);
+    drive.setTargetAngle(calcDesiredRobotAngle());
     superStructure.setState(StructureState.Score);
     return null;
   }
