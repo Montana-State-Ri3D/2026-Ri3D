@@ -171,6 +171,7 @@ public class RobotContainer {
         new RunsWhenDisabledInstantCommand(
             () -> {
               elevator.resetSensorToHomePosition();
+              intake.resetExtenderSensorToHomePosition();
             }));
   }
 
