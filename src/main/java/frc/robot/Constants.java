@@ -241,6 +241,8 @@ public final class Constants {
   }
 
   public class VisionConstants {
+    public static final String ROOT_TABLE = "Vision";
+
     // AprilTag layout
     public static AprilTagFieldLayout aprilTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
