@@ -13,7 +13,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants;
 import frc.robot.Constants.HopperConstants;
-import frc.robot.Constants.ShooterConstants;
 
 public class HopperIOReal implements HopperIO {
 
@@ -30,7 +29,7 @@ public class HopperIOReal implements HopperIO {
   // private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
 
   public HopperIOReal() {
-    followConfig.follow(leadMotor, ShooterConstants.FOLLOW_INVERT);
+    followConfig.follow(leadMotor, HopperConstants.FOLLOW_INVERT);
     followMotor.configure(
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }

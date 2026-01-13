@@ -13,7 +13,6 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.SuperStructure.StructureState;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.Drive.DriveState;
 
 public class ScoreStateMachine extends StateMachine {
 
@@ -35,13 +34,16 @@ public class ScoreStateMachine extends StateMachine {
 
   private StateHandler scorePrep() {
     drive.setTargetAngle(calcDesiredRobotAngle());
-    drive.setState(DriveState.RotateToAngle);
+    // drive.setState(DriveState.RotateToAngle);
     superStructure.setState(StructureState.ScorePrep);
     boolean atRPM = superStructure.getShooter().isAtTarget();
     boolean atAngle = drive.isAtTargetAngle();
     shooterAtRPM.info(atRPM);
     robotAtAngle.info(atAngle);
-    return atRPM && atAngle ? stateWithName("Score", () -> score()) : null;
+    return atRPM
+        // && atAngle
+        ? stateWithName("Score", () -> score())
+        : null;
   }
 
   private StateHandler score() {

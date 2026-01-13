@@ -90,7 +90,7 @@ public class Intake extends SubsystemBase {
       backRollerkV.initDefault(0.0002);
       backRollerMaxAccelerationConfig.initDefault(1000);
 
-      extenderkP.initDefault(0);
+      extenderkP.initDefault(0.5);
       extenderkD.initDefault(0);
     }
   }
@@ -140,12 +140,12 @@ public class Intake extends SubsystemBase {
   }
 
   public void setBackPercentOut(double percent) {
-    io.setBackVoltage(percent);
+    io.setBackVoltage(percent * Constants.MAX_VOLTAGE.in(Units.Volts));
     // controlMode = ControlMode.OPEN_LOOP;
   }
 
   public void setExtenderPercentOut(double percent) {
-    io.setExtenderVoltage(percent);
+    io.setExtenderVoltage(percent * Constants.MAX_VOLTAGE.in(Units.Volts));
     // controlMode = ControlMode.OPEN_LOOP;
   }
 

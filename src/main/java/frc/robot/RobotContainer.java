@@ -67,6 +67,8 @@ public class RobotContainer {
   private final TunableNumberGroup tempTunables = new TunableNumberGroup("TempTunables");
   private final LoggedTunableNumber tempTunableNumber =
       tempTunables.build("TempTunableNumber", 300);
+  private final LoggedTunableNumber tempTunableNumber2 =
+      tempTunables.build("TempTunableNumber2", 0.1);
 
   private final SuperStateMachine superStateMachine;
 
@@ -160,18 +162,35 @@ public class RobotContainer {
         .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.ClimbPrep))
         .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Climb));
 
-    controller
-        .a()
-        .onTrue(
-            Commands.run(
-                () -> {
-                  intake.setExtenderPercentOut(tempTunableNumber.get());
-                }))
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  intake.setExtenderPercentOut(0);
-                }));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         Commands.run(
+    //             () -> {
+    //               System.out.println("RAN");
+    //               intake.setExtenderPos(Units.Inches.of(tempTunableNumber.get()));
+    //             }))
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               System.out.println("RAN B");
+    //               intake.setExtenderPercentOut(0);
+    //             }));
+
+    // controller
+    //     .b()
+    //     .whileTrue(
+    //         Commands.run(
+    //             () -> {
+    //               System.out.println("RAN");
+    //               intake.setExtenderPercentOut(tempTunableNumber2.get());
+    //             }))
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               System.out.println("RAN B");
+    //               intake.setExtenderPercentOut(0);
+    //             }));
 
     SmartDashboard.putData(
         "Brake Mode",
@@ -217,7 +236,7 @@ public class RobotContainer {
   }
 
   public void robotPeriodic() {
-    // superStateMachine.periodic();
+    superStateMachine.periodic();
   }
 
   public void onDisabled() {

@@ -93,10 +93,7 @@ public class IntakeIOReal implements IntakeIO {
 
   @Override
   public void setExtenderPos(Distance length) {
-    extender
-        .getClosedLoopController()
-        .setReference(
-            length.in(Units.Inches) * ElevatorConstants.INCHES_TO_MOTOR_ROT, ControlType.kPosition);
+    extender.getClosedLoopController().setReference(length.in(Units.Inches), ControlType.kPosition);
   }
 
   @Override
@@ -131,7 +128,7 @@ public class IntakeIOReal implements IntakeIO {
   public boolean setIdleMode(IdleMode value) {
     frontConfig.idleMode(value);
     backConfig.idleMode(value);
-    extenderConfig.idleMode(value);
+    extenderConfig.idleMode(IdleMode.kCoast);
     return frontRollers.configure(
                 frontConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
             == REVLibError.kOk
