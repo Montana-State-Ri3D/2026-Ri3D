@@ -79,7 +79,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         hopper = new Hopper(new HopperIO() {});
-        vision = new USBVision(new USBVisionIOReal() {});
+        vision = new USBVision(new USBVisionIOReal() {}, drive::addVisionMeasurement);
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -93,7 +93,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         hopper = new Hopper(new HopperIOSim());
-        vision = new USBVision(new USBVisionIO() {});
+        vision = new USBVision(new USBVisionIO() {}, drive::addVisionMeasurement);
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -108,7 +108,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         hopper = new Hopper(new HopperIO() {});
-        vision = new USBVision(new USBVisionIO() {});
+        vision = new USBVision(new USBVisionIO() {}, drive::addVisionMeasurement);
         // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.usb_vision;
 
+import static frc.robot.Constants.VisionConstants.*;
+
 import edu.wpi.first.apriltag.AprilTagDetection;
 import edu.wpi.first.apriltag.AprilTagDetector;
 import edu.wpi.first.apriltag.AprilTagPoseEstimator;
@@ -7,11 +9,15 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -30,20 +36,29 @@ public class USBVisionIOReal implements USBVisionIO {
 
   @Override
   public void updateInputs(USBVisionInputs inputs) {
-    Transform3d pose = DataSync.getPose();
-    Rotation3d rot = DataSync.getRot();
-    inputs.targetPose = pose;
-    if (pose != null) {
-      inputs.targetX = pose.getX();
-      inputs.targetY = pose.getY();
-      inputs.targetZ = pose.getZ();
+    // Save pose observations to inputs object
+    List<PoseObservation> poseObservations = DataSync.getObservations();
+    inputs.poseObservations = new PoseObservation[poseObservations.size()];
+    for (int i = 0; i < poseObservations.size(); i++) {
+      inputs.poseObservations[i] = poseObservations.get(i);
     }
-    inputs.rotatePose = rot;
-    if (rot != null) {
-      inputs.rotateX = rot.getX();
-      inputs.rotateY = rot.getY();
-      inputs.rotateZ = rot.getZ();
-    }
+
+    // Pose3d robotPose = DataSync.getRobotPose();
+    // Pose3d tagPose = DataSync.getTagPose();
+    // Rotation3d rot = DataSync.getRot();
+    // inputs.robotVisionPose = robotPose;
+    // inputs.targetPose = tagPose;
+    // if (tagPose != null) {
+    //   inputs.targetX = tagPose.getX();
+    //   inputs.targetY = tagPose.getY();
+    //   inputs.targetZ = tagPose.getZ();
+    // }
+    // inputs.rotatePose = rot;
+    // if (rot != null) {
+    //   inputs.rotateX = rot.getX();
+    //   inputs.rotateY = rot.getY();
+    //   inputs.rotateZ = rot.getZ();
+    // }
   }
 
   @Override
@@ -52,19 +67,37 @@ public class USBVisionIOReal implements USBVisionIO {
   }
 
   public static class DataSync {
-    private static Transform3d m_pose;
+    private static List<PoseObservation> m_poseObservations;
+    private static Pose3d m_robotPose;
+    private static Pose3d m_tagPose;
     private static Rotation3d m_rot;
 
-    public static synchronized void setPose(Transform3d pose) {
-      m_pose = pose;
+    public static synchronized void setObservations(List<PoseObservation> poseObservations) {
+      m_poseObservations = poseObservations;
+    }
+
+    public static synchronized void setRobotPose(Pose3d pose) {
+      m_robotPose = pose;
+    }
+
+    public static synchronized void setTagPose(Pose3d pose) {
+      m_tagPose = pose;
     }
 
     public static synchronized void setRot(Rotation3d rot) {
       m_rot = rot;
     }
 
-    public static synchronized Transform3d getPose() {
-      return m_pose;
+    public static synchronized List<PoseObservation> getObservations() {
+      return m_poseObservations;
+    }
+
+    public static synchronized Pose3d getRobotPose() {
+      return m_robotPose;
+    }
+
+    public static synchronized Pose3d getTagPose() {
+      return m_tagPose;
     }
 
     public static synchronized Rotation3d getRot() {
@@ -125,6 +158,9 @@ public class USBVisionIOReal implements USBVisionIO {
       Imgproc.cvtColor(mat, grayMat, Imgproc.COLOR_RGB2GRAY);
 
       AprilTagDetection[] detections = detector.detect(grayMat);
+      double timestamp = Timer.getFPGATimestamp();
+
+      List<PoseObservation> poseObservations = new LinkedList<>();
 
       // have not seen any tags yet
       tags.clear();
@@ -158,28 +194,45 @@ public class USBVisionIOReal implements USBVisionIO {
             crossColor,
             3);
 
-        // determine pose
-        Transform3d pose = estimator.estimate(detection);
-        DataSync.setPose(pose);
+        // Calculate robot pose
+        var tagPose = aprilTagLayout.getTagPose(detection.getId());
+        if (tagPose.isPresent()) {
+          Transform3d fieldToTarget =
+              new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
+          Transform3d cameraToTarget = estimator.estimate(detection);
+          Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
+          Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+          Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
-        // put pose into dashboard
-        Rotation3d rot = pose.getRotation();
-        DataSync.setRot(rot);
-        tagsTable
-            .getEntry("pose_" + detection.getId())
-            .setDoubleArray(
-                new double[] {
-                  pose.getX(), pose.getY(), pose.getZ(), rot.getX(), rot.getY(), rot.getZ()
-                });
+          Rotation3d rot = cameraToTarget.getRotation();
+
+          // Add observation
+          poseObservations.add(
+              new PoseObservation(
+                  timestamp, // Timestamp
+                  robotPose, // 3D pose estimate
+                  detection.getDecisionMargin(), // Ambiguity
+                  1, // Tag count
+                  cameraToTarget.getTranslation().getNorm())); // Average tag distance
+
+          tagsTable
+              .getEntry("pose_" + detection.getId())
+              .setDoubleArray(
+                  new double[] {
+                    robotPose.getX(), robotPose.getY(), robotPose.getZ(),
+                    robotPose.getRotation().getX(), robotPose.getRotation().getY(),
+                        robotPose.getRotation().getZ()
+                  });
+        }
       }
 
       // put list of tags onto dashboard
       // pubTags.set(tags.stream().mapToLong(Long::longValue).toArray());
+      DataSync.setObservations(poseObservations);
 
       // Give the output stream a new image to display
       outputStream.putFrame(mat);
     }
-
     // pubTags.close();
     detector.close();
   }

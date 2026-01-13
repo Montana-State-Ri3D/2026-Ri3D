@@ -4,8 +4,11 @@
 
 package frc.robot.subsystems.usb_vision;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
@@ -28,16 +31,30 @@ public class USBVision extends SubsystemBase {
 
   private final USBVisionIO io;
   private final USBVisionInputsAutoLogged inputs = new USBVisionInputsAutoLogged();
+  private final VisionConsumer consumer;
 
   /** Creates a new Vision Subsystem. */
-  public USBVision(USBVisionIO io) {
+  public USBVision(USBVisionIO io, VisionConsumer consumer) {
     this.io = io;
+    this.consumer = consumer;
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs(VisionConstants.ROOT_TABLE, inputs);
+
+    for (var observation : inputs.poseObservations) {
+      double stdDevFactor =
+          Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+      double linearStdDev = VisionConstants.linearStdDevBaseline * stdDevFactor;
+      double angularStdDev = VisionConstants.angularStdDevBaseline * stdDevFactor;
+
+      consumer.accept(
+          observation.pose().toPose2d(),
+          observation.timestamp(),
+          VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+    }
 
     // Updating tunable numbers
     var hc = hashCode();
@@ -58,11 +75,19 @@ public class USBVision extends SubsystemBase {
   //   return inputs.rotToTarget.getZ <= angleTolerance.get() * (Math.PI/180.0);
   // }
 
-  public Rotation3d getRotateToTarget() {
-    return inputs.rotatePose;
-  }
+  // public Rotation3d getRotateToTarget() {
+  //   return inputs.rotatePose;
+  // }
 
-  public Transform3d getDistToTarget() {
-    return inputs.targetPose;
+  // public Pose3d getDistToTarget() {
+  //   return inputs.targetPose;
+  // }
+
+  @FunctionalInterface
+  public static interface VisionConsumer {
+    public void accept(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs);
   }
 }
