@@ -140,8 +140,8 @@ public final class Constants {
     public static final String ROOT_TABLE = "Intake";
 
     public class FrontRollers {
-      public static final double GEAR_RATIO = 1; // TODO: determine (mech / motor)
-      public static final boolean INVERT = false; // TODO: determine
+      public static final double GEAR_RATIO = 1;
+      public static final boolean INVERT = true;
       public static final double MOI = 0.0001;
 
       public static final SparkFlexConfig MOTOR_CONFIG() {
@@ -176,11 +176,11 @@ public final class Constants {
     public class Extender {
       public static final boolean INVERT = false; // TODO: determine
       public static final Distance HOME_POSITION = Units.Meter.of(0); // TODO: determine
-      public static final double GEAR_RATIO = 1; // TODO: determine (critical gear / motor)
-      public static final Distance PULLEY_RADIUS = Units.Inch.of(2); // TODO: determine
+      public static final double GEAR_RATIO = 1 / 50.0; // TODO: determine (critical gear / motor)
+      public static final Distance PULLEY_RADIUS = Units.Inch.of(.827); // TODO: determine
       public static final double INCHES_TO_MOTOR_ROT =
           1.0 / (PULLEY_RADIUS.in(Units.Inches) * 2 * Math.PI * GEAR_RATIO);
-      public static final Distance MAX_LENGTH = Units.Inches.of(30); // TODO: determine
+      public static final Distance MAX_LENGTH = Units.Inches.of(10); // TODO: determine
 
       public static final SparkMaxConfig MOTOR_CONFIG() {
         SparkMaxConfig config = new SparkMaxConfig();
@@ -199,9 +199,9 @@ public final class Constants {
   public class ShooterConstants {
     public static final String ROOT_TABLE = "Shooter";
     public static final double GEAR_RATIO = 1; // TODO: determine (mech / motor)
-    public static final boolean INVERT = false; // TODO: determine
+    public static final boolean INVERT = true; // TODO: determine
     public static final double MOI = 0.0001;
-    public static final Distance HORIZONTAL_OFFSET = Units.Inches.of(5); // TODO: determine
+    public static final Distance HORIZONTAL_OFFSET = Units.Inches.of(10); // TODO: determine
     public static final boolean FOLLOW_INVERT = false; // TODO: determine
 
     public static final SparkFlexConfig MOTOR_CONFIG() {

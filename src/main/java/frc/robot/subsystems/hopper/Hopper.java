@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.hopper;
 
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -19,8 +17,6 @@ import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.Mode;
-import frc.robot.Constants.ShooterConstants;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Hopper extends SubsystemBase {
@@ -55,10 +51,10 @@ public class Hopper extends SubsystemBase {
       maxAccelerationConfig.initDefault(0.0);
 
     } else if (Constants.currentMode == Mode.REAL) {
-      kP.initDefault(0.0);
+      kP.initDefault(0.0002);
       kV.initDefault(0.0);
 
-      maxAccelerationConfig.initDefault(0.0);
+      maxAccelerationConfig.initDefault(1000);
     }
   }
 

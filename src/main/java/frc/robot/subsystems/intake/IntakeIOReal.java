@@ -14,8 +14,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.I2C.Port;
-import frc.lib.teamBSR.VL6180;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
@@ -37,10 +35,10 @@ public class IntakeIOReal implements IntakeIO {
   private final RelativeEncoder backRollersEncoder = backRollers.getEncoder();
   private final RelativeEncoder extenderEncoder = extender.getEncoder();
 
-  private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
+  // private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
 
   public IntakeIOReal() {
-    timeOfFlight.startContinuous((int) (Constants.defaultPeriod * 1000));
+    // timeOfFlight.startContinuous((int) (Constants.defaultPeriod * 1000));
   }
 
   @Override
@@ -67,7 +65,7 @@ public class IntakeIOReal implements IntakeIO {
 
   @Override
   public void setBackVoltage(double volts) {
-    frontRollers.setVoltage(volts);
+    backRollers.setVoltage(volts);
   }
 
   @Override

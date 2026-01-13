@@ -56,9 +56,9 @@ public class Shooter extends SubsystemBase {
 
     } else if (Constants.currentMode == Mode.REAL) {
       kP.initDefault(0.0);
-      kV.initDefault(0.0);
+      kV.initDefault(0.000162);
 
-      maxAccelerationConfig.initDefault(0.0);
+      maxAccelerationConfig.initDefault(8000);
     }
   }
 

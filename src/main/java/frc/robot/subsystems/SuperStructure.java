@@ -16,7 +16,6 @@ import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SuperStructureConstants;
 import frc.robot.subsystems.elevator.Elevator;
@@ -98,68 +97,70 @@ public class SuperStructure extends SubsystemBase {
   @Override
   public void periodic() {
     switch (state) {
-      case Idle:
-        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
-        intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
-        hopper.setVel(Units.RPM.of(0));
-        shooter.setVel(Units.RPM.of(0));
-        break;
-      case Intake:
-        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        intake.setFrontVel(Units.RPM.of(intakeFrontVelRPM.get()));
-        intake.setBackVel(Units.RPM.of(intakeBackVelRPM.get()));
-        intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
-        hopper.setVel(Units.RPM.of(0));
-        shooter.setVel(Units.RPM.of(0));
-        break;
-      case ScorePrep:
-        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
-        intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
-        hopper.setVel(Units.RPM.of(0));
-        shooter.setVel(
-            Units.RPM.of(
-                shooterVelRPM.get())); // TODO: replace with interpolating tree after filling tree
-        break;
-      case Score:
-        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
-        intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
-        hopper.setVel(Units.RPM.of(hopperVelRPM.get()));
-        shooter.setVel(
-            Units.RPM.of(
-                shooterVelRPM.get())); // TODO: replace with interpolating tree after filling tree
-        break;
-      case ClimbPrep:
-        elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
-        intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
-        if (intake.isExtenderAtTarget()) {
-          elevator.setServoPositions(elevatorServoActuatedPos.get());
-        } else {
-          elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        }
-        hopper.setVel(Units.RPM.of(0));
-        shooter.setVel(Units.RPM.of(0));
-        break;
-      case Climb:
-        elevator.setHeight(Units.Inches.of(climbElevatorHeightInches.get()));
-        elevator.setServoPositions(elevatorServoActuatedPos.get());
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
-        intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
-        hopper.setVel(Units.RPM.of(0));
-        shooter.setVel(Units.RPM.of(0));
-        break;
+        // case Idle:
+        //   elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        //   elevator.setServoPositions(elevatorServoUnactuatedPos.get());
+        //   intake.setFrontVel(Units.RPM.of(0));
+        //   intake.setBackVel(Units.RPM.of(0));
+        //   intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        //   hopper.setVel(Units.RPM.of(0));
+        //   shooter.setVel(Units.RPM.of(0));
+        //   break;
+        // case Intake:
+        //   elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        //   elevator.setServoPositions(elevatorServoUnactuatedPos.get());
+        //   intake.setFrontVel(Units.RPM.of(intakeFrontVelRPM.get()));
+        //   intake.setBackVel(Units.RPM.of(intakeBackVelRPM.get()));
+        //   intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        //   hopper.setVel(Units.RPM.of(0));
+        //   shooter.setVel(Units.RPM.of(0));
+        //   break;
+        // case ScorePrep:
+        //   elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        //   elevator.setServoPositions(elevatorServoUnactuatedPos.get());
+        //   intake.setFrontVel(Units.RPM.of(0));
+        //   intake.setBackVel(Units.RPM.of(0));
+        //   intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        //   hopper.setVel(Units.RPM.of(0));
+        //   shooter.setVel(
+        //       Units.RPM.of(
+        //           shooterVelRPM.get())); // TODO: replace with interpolating tree after filling
+        // tree
+        //   break;
+        // case Score:
+        //   elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        //   elevator.setServoPositions(elevatorServoUnactuatedPos.get());
+        //   intake.setFrontVel(Units.RPM.of(0));
+        //   intake.setBackVel(Units.RPM.of(0));
+        //   intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        //   hopper.setVel(Units.RPM.of(hopperVelRPM.get()));
+        //   shooter.setVel(
+        //       Units.RPM.of(
+        //           shooterVelRPM.get())); // TODO: replace with interpolating tree after filling
+        // tree
+        //   break;
+        // case ClimbPrep:
+        //   elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
+        //   intake.setFrontVel(Units.RPM.of(0));
+        //   intake.setBackVel(Units.RPM.of(0));
+        //   intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
+        //   if (intake.isExtenderAtTarget()) {
+        //     elevator.setServoPositions(elevatorServoActuatedPos.get());
+        //   } else {
+        //     elevator.setServoPositions(elevatorServoUnactuatedPos.get());
+        //   }
+        //   hopper.setVel(Units.RPM.of(0));
+        //   shooter.setVel(Units.RPM.of(0));
+        //   break;
+        // case Climb:
+        //   elevator.setHeight(Units.Inches.of(climbElevatorHeightInches.get()));
+        //   elevator.setServoPositions(elevatorServoActuatedPos.get());
+        //   intake.setFrontVel(Units.RPM.of(0));
+        //   intake.setBackVel(Units.RPM.of(0));
+        //   intake.setExtenderPos(IntakeConstants.Extender.HOME_POSITION);
+        //   hopper.setVel(Units.RPM.of(0));
+        //   shooter.setVel(Units.RPM.of(0));
+        //   break;
       default:
         break;
     }

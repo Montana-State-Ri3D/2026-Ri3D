@@ -83,12 +83,12 @@ public class Intake extends SubsystemBase {
       extenderkD.initDefault(0);
     } else if (Constants.currentMode == Mode.REAL) {
       frontRollerkP.initDefault(0.0);
-      frontRollerkV.initDefault(0.0);
-      frontRollerMaxAccelerationConfig.initDefault(0.0);
+      frontRollerkV.initDefault(0.0002);
+      frontRollerMaxAccelerationConfig.initDefault(1000);
 
       backRollerkP.initDefault(0.0);
-      backRollerkV.initDefault(0.0);
-      backRollerMaxAccelerationConfig.initDefault(0.0);
+      backRollerkV.initDefault(0.0002);
+      backRollerMaxAccelerationConfig.initDefault(1000);
 
       extenderkP.initDefault(0);
       extenderkD.initDefault(0);
