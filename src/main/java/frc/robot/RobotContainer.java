@@ -41,6 +41,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.*;
+import frc.robot.subsystems.usb_vision.*;
 import java.util.function.Supplier;
 
 /**
@@ -57,6 +58,7 @@ public class RobotContainer {
   private final Intake intake;
   private final Hopper hopper;
   private final Shooter shooter;
+  private final USBVision vision;
   // private final Vision vision;
 
   private final SuperStateMachine superStateMachine;
@@ -75,8 +77,9 @@ public class RobotContainer {
         drive = new Drive(new DriveModules(true), new GyroIOPigeon2(), controller);
         elevator = new Elevator(new ElevatorIO() {});
         intake = new Intake(new IntakeIO() {});
-        hopper = new Hopper(new HopperIO() {});
         shooter = new Shooter(new ShooterIO() {});
+        hopper = new Hopper(new HopperIO() {});
+        vision = new USBVision(new USBVisionIOReal() {}, drive::addVisionMeasurement);
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -90,6 +93,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOSim());
         shooter = new Shooter(new ShooterIOSim());
         hopper = new Hopper(new HopperIOSim());
+        vision = new USBVision(new USBVisionIO() {}, drive::addVisionMeasurement);
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -104,6 +108,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIO() {});
         hopper = new Hopper(new HopperIO() {});
+        vision = new USBVision(new USBVisionIO() {}, drive::addVisionMeasurement);
         // vision = new Vision(drive::addVisionMeasurement, new VisionIO() {}, new VisionIO() {});
         break;
     }

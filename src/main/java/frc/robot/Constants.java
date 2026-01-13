@@ -241,6 +241,15 @@ public final class Constants {
   }
 
   public class VisionConstants {
+    public static final String ROOT_TABLE = "Vision";
+
+    public static final Transform3d robotToCamera =
+        new Transform3d(
+            Units.Inches.of(8.375),
+            Units.Inches.of(15),
+            Units.Inches.of(19.25),
+            new Rotation3d(Units.Degrees.of(30), Units.Degrees.of(0), (Units.Degrees.of(0))));
+
     // AprilTag layout
     public static AprilTagFieldLayout aprilTagLayout =
         AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
