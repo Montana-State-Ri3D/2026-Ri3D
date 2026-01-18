@@ -211,10 +211,10 @@ public class Drive extends SubsystemBase {
   }
 
   private void driveController(Double omegaOverride) {
-    double angMagnitude = MathUtil.applyDeadband(-controller.getRightX(), DEADBAND);
+    double angMagnitude = MathUtil.applyDeadband(controller.getRightX(), DEADBAND);
     LinearVelocity speedX =
         DriveConstants.MAX_LINEAR_SPEED.times(
-            MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND));
+            MathUtil.applyDeadband(controller.getLeftY(), DEADBAND));
     LinearVelocity speedY =
         DriveConstants.MAX_LINEAR_SPEED.times(
             MathUtil.applyDeadband(-controller.getLeftX(), DEADBAND));
@@ -223,7 +223,7 @@ public class Drive extends SubsystemBase {
       speedY = speedY.unaryMinus();
     }
     driveRobotCentric(
-        ChassisSpeeds.fromFieldRelativeSpeeds(
+        ChassisSpeeds.fromRobotRelativeSpeeds(
             speedX,
             speedY,
             omegaOverride == null

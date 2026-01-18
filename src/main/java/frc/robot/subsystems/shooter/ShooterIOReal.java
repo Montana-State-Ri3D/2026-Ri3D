@@ -20,7 +20,7 @@ public class ShooterIOReal implements ShooterIO {
       new SparkFlex(Constants.CanIDs.SHOOTER_LEAD_CAN_ID, MotorType.kBrushless);
   private final SparkFlex followMotor =
       new SparkFlex(Constants.CanIDs.SHOOTER_FOLLOW_CAN_ID, MotorType.kBrushless);
-  private SparkFlexConfig config = Constants.ElevatorConstants.MOTOR_CONFIG();
+  private SparkFlexConfig config = ShooterConstants.MOTOR_CONFIG();
 
   private final RelativeEncoder encoder = leadMotor.getEncoder();
 

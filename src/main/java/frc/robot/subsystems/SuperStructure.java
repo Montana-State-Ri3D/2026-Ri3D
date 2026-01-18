@@ -24,6 +24,7 @@ import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class SuperStructure extends SubsystemBase {
 
@@ -33,7 +34,8 @@ public class SuperStructure extends SubsystemBase {
     ScorePrep,
     Score,
     ClimbPrep,
-    Climb
+    Climb,
+    Reverse
   }
 
   private StructureState state = StructureState.Idle;
@@ -119,24 +121,22 @@ public class SuperStructure extends SubsystemBase {
       case ScorePrep:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
         elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
+        intake.setFrontVel(Units.RPM.of(intakeFrontVelRPM.get()));
+        intake.setBackVel(Units.RPM.of(intakeBackVelRPM.get()));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
         hopper.setVel(Units.RPM.of(0));
         shooter.setVel(
-            Units.RPM.of(
-                shooterVelRPM.get())); // TODO: replace with interpolating tree after filling tree
+            getOptimalShooterVel());
         break;
       case Score:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
         elevator.setServoPositions(elevatorServoUnactuatedPos.get());
-        intake.setFrontVel(Units.RPM.of(0));
-        intake.setBackVel(Units.RPM.of(0));
+        intake.setFrontVel(Units.RPM.of(intakeFrontVelRPM.get()));
+        intake.setBackVel(Units.RPM.of(intakeBackVelRPM.get()));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
         hopper.setVel(Units.RPM.of(hopperVelRPM.get()));
         shooter.setVel(
-            Units.RPM.of(
-                shooterVelRPM.get())); // TODO: replace with interpolating tree after filling tree
+            getOptimalShooterVel());
         break;
       case ClimbPrep:
         elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
@@ -160,9 +160,22 @@ public class SuperStructure extends SubsystemBase {
         hopper.setVel(Units.RPM.of(0));
         shooter.setVel(Units.RPM.of(0));
         break;
+      case Reverse:
+        elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
+        elevator.setServoPositions(elevatorServoUnactuatedPos.get());
+        intake.setFrontVel(Units.RPM.of(0));
+        intake.setBackVel(Units.RPM.of(0));
+        intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
+        hopper.setVel(Units.RPM.of(-hopperVelRPM.get()));
+        shooter.setVel(Units.RPM.of(0));
+        break;
       default:
         break;
     }
+    Logger.recordOutput(
+        "Dist",
+        GeometryUtil.getDist(
+            robotPose.get().getTranslation(), FieldConstants.HUB_TRANSLATION_BLUE));
     stateLogger.info(state.name());
   }
 

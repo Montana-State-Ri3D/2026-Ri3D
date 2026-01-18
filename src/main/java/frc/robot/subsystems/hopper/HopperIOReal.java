@@ -13,7 +13,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants;
 import frc.robot.Constants.HopperConstants;
-import frc.robot.Constants.ShooterConstants;
 
 public class HopperIOReal implements HopperIO {
 
@@ -21,7 +20,7 @@ public class HopperIOReal implements HopperIO {
       new SparkFlex(Constants.CanIDs.HOPPER_LEAD_CAN_ID, MotorType.kBrushless);
   private final SparkFlex followMotor =
       new SparkFlex(Constants.CanIDs.HOPPER_FOLLOW_CAN_ID, MotorType.kBrushless);
-  private SparkFlexConfig config = Constants.ElevatorConstants.MOTOR_CONFIG();
+  private SparkFlexConfig config = Constants.HopperConstants.MOTOR_CONFIG();
 
   private final RelativeEncoder encoder = leadMotor.getEncoder();
 
@@ -29,8 +28,8 @@ public class HopperIOReal implements HopperIO {
 
   // private final VL6180 timeOfFlight = new VL6180(Port.kOnboard);
 
-  public HopperIOReal(){
-    followConfig.follow(leadMotor, ShooterConstants.FOLLOW_INVERT);
+  public HopperIOReal() {
+    followConfig.follow(leadMotor, HopperConstants.FOLLOW_INVERT);
     followMotor.configure(
         followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
@@ -69,8 +68,11 @@ public class HopperIOReal implements HopperIO {
   public boolean setIdleMode(IdleMode value) {
     config.idleMode(value);
     followConfig.idleMode(value);
-    return leadMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-        == REVLibError.kOk && followMotor.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
-        == REVLibError.kOk;
+    return leadMotor.configure(
+                config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+            == REVLibError.kOk
+        && followMotor.configure(
+                followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters)
+            == REVLibError.kOk;
   }
 }

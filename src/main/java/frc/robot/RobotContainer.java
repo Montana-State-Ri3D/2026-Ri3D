@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team2930.commands.RunsWhenDisabledInstantCommand;
+import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.autonomous.AutoManager;
 import frc.robot.stateMachines.SuperStateMachine;
 import frc.robot.stateMachines.SuperStateMachine.SuperState;
@@ -36,9 +38,11 @@ import frc.robot.subsystems.elevator.ElevatorIO;
 import frc.robot.subsystems.elevator.ElevatorIOSim;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.HopperIO;
+import frc.robot.subsystems.hopper.HopperIOReal;
 import frc.robot.subsystems.hopper.HopperIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.usb_vision.*;
@@ -60,6 +64,7 @@ public class RobotContainer {
   private final Shooter shooter;
   private final USBVision vision;
   // private final Vision vision;
+  private final TunableNumberGroup tempTunables = new TunableNumberGroup("TempTunables");
 
   private final SuperStateMachine superStateMachine;
 
@@ -76,10 +81,10 @@ public class RobotContainer {
       case REAL: // Real robot, instantiate hardware IO implementations
         drive = new Drive(new DriveModules(true), new GyroIOPigeon2(), controller);
         elevator = new Elevator(new ElevatorIO() {});
-        intake = new Intake(new IntakeIO() {});
-        shooter = new Shooter(new ShooterIO() {});
-        hopper = new Hopper(new HopperIO() {});
-        vision = new USBVision(new USBVisionIOReal() {}, drive::addVisionMeasurement);
+        intake = new Intake(new IntakeIOReal() {});
+        shooter = new Shooter(new ShooterIOReal() {});
+        hopper = new Hopper(new HopperIOReal() {});
+        vision = new USBVision(new USBVisionIO() {}, drive::addVisionMeasurement);
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -145,6 +150,12 @@ public class RobotContainer {
     controller
         .rightBumper()
         .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Intake))
+        .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Idle));
+
+    // Reverse
+    controller
+        .leftTrigger()
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Reverse))
         .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Idle));
 
     // Climb

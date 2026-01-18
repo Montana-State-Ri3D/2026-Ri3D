@@ -38,9 +38,11 @@ public class USBVisionIOReal implements USBVisionIO {
   public void updateInputs(USBVisionInputs inputs) {
     // Save pose observations to inputs object
     List<PoseObservation> poseObservations = DataSync.getObservations();
-    inputs.poseObservations = new PoseObservation[poseObservations.size()];
-    for (int i = 0; i < poseObservations.size(); i++) {
-      inputs.poseObservations[i] = poseObservations.get(i);
+    if (poseObservations != null) {
+      inputs.poseObservations = new PoseObservation[poseObservations.size()];
+      for (int i = 0; i < poseObservations.size(); i++) {
+        inputs.poseObservations[i] = poseObservations.get(i);
+      }
     }
 
     // Pose3d robotPose = DataSync.getRobotPose();
@@ -200,7 +202,16 @@ public class USBVisionIOReal implements USBVisionIO {
           Transform3d fieldToTarget =
               new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());
           Transform3d cameraToTarget = estimator.estimate(detection);
-          Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
+          Transform3d coordinateShiftCamToTarget =
+              new Transform3d(
+                  cameraToTarget.getX(),
+                  cameraToTarget.getZ(),
+                  cameraToTarget.getY(),
+                  new Rotation3d(
+                      cameraToTarget.getRotation().getX(),
+                      cameraToTarget.getRotation().getZ(),
+                      cameraToTarget.getRotation().getY()));
+          Transform3d fieldToCamera = fieldToTarget.plus(coordinateShiftCamToTarget.inverse());
           Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
           Pose3d robotPose = new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 

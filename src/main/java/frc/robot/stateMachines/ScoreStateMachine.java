@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.team2930.GeometryUtil;
 import frc.lib.team2930.LoggerEntry;
 import frc.lib.team2930.LoggerGroup;
@@ -13,7 +14,6 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.SuperStructure.StructureState;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.Drive.DriveState;
 
 public class ScoreStateMachine extends StateMachine {
 
@@ -23,6 +23,7 @@ public class ScoreStateMachine extends StateMachine {
   private final LoggerGroup conditions = LoggerGroup.build("ScoreStateMachine/ShootConditions");
   private final LoggerEntry.Bool shooterAtRPM = conditions.buildBoolean("ShooterAtRPM");
   private final LoggerEntry.Bool robotAtAngle = conditions.buildBoolean("RobotAtAngle");
+  Timer time = new Timer();
 
   public ScoreStateMachine(Drive drive, SuperStructure superStructure) {
     super("ScoreStateMachine");
@@ -34,14 +35,19 @@ public class ScoreStateMachine extends StateMachine {
   }
 
   private StateHandler scorePrep() {
+    if (!time.isRunning()) time.start();
     drive.setTargetAngle(calcDesiredRobotAngle());
-    drive.setState(DriveState.RotateToAngle);
-    superStructure.setState(StructureState.ScorePrep);
+    // drive.setState(DriveState.RotateToAngle);
+    // superStructure.setState(StructureState.ScorePrep);
+    superStructure.getShooter().setVel(Units.RPM.of(4000));
     boolean atRPM = superStructure.getShooter().isAtTarget();
     boolean atAngle = drive.isAtTargetAngle();
     shooterAtRPM.info(atRPM);
     robotAtAngle.info(atAngle);
-    return atRPM && atAngle ? stateWithName("Score", () -> score()) : null;
+    return time.hasElapsed(1)
+        // && atAngle
+        ? stateWithName("Score", () -> score())
+        : null;
   }
 
   private StateHandler score() {
