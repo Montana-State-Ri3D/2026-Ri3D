@@ -65,10 +65,6 @@ public class RobotContainer {
   private final USBVision vision;
   // private final Vision vision;
   private final TunableNumberGroup tempTunables = new TunableNumberGroup("TempTunables");
-  private final LoggedTunableNumber tempTunableNumber =
-      tempTunables.build("TempTunableNumber", 300);
-  private final LoggedTunableNumber tempTunableNumber2 =
-      tempTunables.build("TempTunableNumber2", 0.1);
 
   private final SuperStateMachine superStateMachine;
 
@@ -88,7 +84,7 @@ public class RobotContainer {
         intake = new Intake(new IntakeIOReal() {});
         shooter = new Shooter(new ShooterIOReal() {});
         hopper = new Hopper(new HopperIOReal() {});
-        vision = new USBVision(new USBVisionIOReal() {}, drive::addVisionMeasurement);
+        vision = new USBVision(new USBVisionIO() {}, drive::addVisionMeasurement);
         // vision =
         //     new Vision(
         //         drive::addVisionMeasurement,
@@ -156,41 +152,17 @@ public class RobotContainer {
         .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Intake))
         .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Idle));
 
+    // Reverse
+    controller
+        .leftTrigger()
+        .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Reverse))
+        .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Idle));
+
     // Climb
     controller
         .leftBumper()
         .onTrue(SuperStateMachine.setStateCommand(superStateMachine, SuperState.ClimbPrep))
         .onFalse(SuperStateMachine.setStateCommand(superStateMachine, SuperState.Climb));
-
-    // controller
-    //     .a()
-    //     .whileTrue(
-    //         Commands.run(
-    //             () -> {
-    //               System.out.println("RAN");
-    //               intake.setExtenderPos(Units.Inches.of(tempTunableNumber.get()));
-    //             }))
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               System.out.println("RAN B");
-    //               intake.setExtenderPercentOut(0);
-    //             }));
-
-    // controller
-    //     .b()
-    //     .whileTrue(
-    //         Commands.run(
-    //             () -> {
-    //               System.out.println("RAN");
-    //               intake.setExtenderPercentOut(tempTunableNumber2.get());
-    //             }))
-    //     .onFalse(
-    //         Commands.runOnce(
-    //             () -> {
-    //               System.out.println("RAN B");
-    //               intake.setExtenderPercentOut(0);
-    //             }));
 
     SmartDashboard.putData(
         "Brake Mode",

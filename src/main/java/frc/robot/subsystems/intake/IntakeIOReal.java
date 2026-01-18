@@ -15,7 +15,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.Constants;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.IntakeConstants;
 
 public class IntakeIOReal implements IntakeIO {
@@ -121,7 +120,7 @@ public class IntakeIOReal implements IntakeIO {
 
   @Override
   public void setExtenderSensorPosition(Distance position) {
-    extenderEncoder.setPosition(position.in(Units.Inches) * ElevatorConstants.INCHES_TO_MOTOR_ROT);
+    extenderEncoder.setPosition(position.in(Units.Inches));
   }
 
   @Override

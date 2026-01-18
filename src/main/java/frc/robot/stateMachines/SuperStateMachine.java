@@ -19,7 +19,8 @@ public class SuperStateMachine {
     ClimbPrep,
     Climb,
     AutoIntake,
-    ClimbPrepAuto
+    ClimbPrepAuto,
+    Reverse
   }
 
   private SuperState prevState = SuperState.Idle;
@@ -66,6 +67,10 @@ public class SuperStateMachine {
       case ClimbPrepAuto:
         superStructure.setState(StructureState.ClimbPrep);
         drive.setState(DriveState.PathFollow);
+        break;
+      case Reverse:
+        superStructure.setState(StructureState.Reverse);
+        drive.setState(DriveState.Controller);
         break;
       default:
         superStructure.setState(StructureState.Idle);

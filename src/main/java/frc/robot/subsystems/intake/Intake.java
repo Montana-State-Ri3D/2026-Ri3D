@@ -196,7 +196,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void resetExtenderSensorToHomePosition() {
-    io.setExtenderSensorPosition(IntakeConstants.Extender.HOME_POSITION);
+    io.setExtenderSensorPosition(IntakeConstants.Extender.MAX_LENGTH);
   }
 
   // Getters

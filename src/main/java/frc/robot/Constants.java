@@ -217,7 +217,9 @@ public final class Constants {
 
     public static final InterpolatingDoubleTreeMap SHOOTING_INTERPOLATOR() {
       InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
-      map.put(1.0, 1000.0);
+      map.put(2.168, 3000.0);
+      map.put(3.098, 3400.0);
+      map.put(3.741, 4000.0);
       return map;
     }
   }
