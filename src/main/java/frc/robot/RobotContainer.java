@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team2930.commands.RunsWhenDisabledInstantCommand;
-import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.autonomous.AutoManager;
 import frc.robot.stateMachines.SuperStateMachine;
 import frc.robot.stateMachines.SuperStateMachine.SuperState;
@@ -189,6 +188,12 @@ public class RobotContainer {
               elevator.resetSensorToHomePosition();
               intake.resetExtenderSensorToHomePosition();
             }));
+    SmartDashboard.putData(
+        "Shoot", SuperStateMachine.setStateCommand(superStateMachine, SuperState.Score));
+    SmartDashboard.putData(
+        "Idle", SuperStateMachine.setStateCommand(superStateMachine, SuperState.Idle));
+    SmartDashboard.putData(
+        "Intake", SuperStateMachine.setStateCommand(superStateMachine, SuperState.Intake));
   }
 
   private void configureAutoChooser() {

@@ -9,7 +9,10 @@ import frc.lib.team2930.GeometryUtil;
 import frc.lib.team2930.LoggerEntry;
 import frc.lib.team2930.LoggerGroup;
 import frc.lib.team2930.StateMachine;
+import frc.lib.team2930.TunableNumberGroup;
+import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.SuperStructure.StructureState;
@@ -25,6 +28,11 @@ public class ScoreStateMachine extends StateMachine {
   private final LoggerEntry.Bool robotAtAngle = conditions.buildBoolean("RobotAtAngle");
   Timer time = new Timer();
 
+  private static final TunableNumberGroup group =
+      new TunableNumberGroup("ScoreStateMachine");
+
+  private static final LoggedTunableNumber tunableRPM = group.build("flywheelRPM", 1000);
+
   public ScoreStateMachine(Drive drive, SuperStructure superStructure) {
     super("ScoreStateMachine");
 
@@ -39,7 +47,7 @@ public class ScoreStateMachine extends StateMachine {
     drive.setTargetAngle(calcDesiredRobotAngle());
     // drive.setState(DriveState.RotateToAngle);
     // superStructure.setState(StructureState.ScorePrep);
-    superStructure.getShooter().setVel(Units.RPM.of(4000));
+    superStructure.getShooter().setVel(Units.RPM.of(tunableRPM.get()));
     boolean atRPM = superStructure.getShooter().isAtTarget();
     boolean atAngle = drive.isAtTargetAngle();
     shooterAtRPM.info(atRPM);
