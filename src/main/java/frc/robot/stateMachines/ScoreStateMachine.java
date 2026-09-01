@@ -12,7 +12,6 @@ import frc.lib.team2930.StateMachine;
 import frc.lib.team2930.TunableNumberGroup;
 import frc.lib.team6328.LoggedTunableNumber;
 import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.HopperConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.SuperStructure.StructureState;
@@ -28,8 +27,7 @@ public class ScoreStateMachine extends StateMachine {
   private final LoggerEntry.Bool robotAtAngle = conditions.buildBoolean("RobotAtAngle");
   Timer time = new Timer();
 
-  private static final TunableNumberGroup group =
-      new TunableNumberGroup("ScoreStateMachine");
+  private static final TunableNumberGroup group = new TunableNumberGroup("ScoreStateMachine");
 
   private static final LoggedTunableNumber tunableRPM = group.build("flywheelRPM", 1000);
 

@@ -41,7 +41,6 @@ import frc.robot.subsystems.hopper.HopperIOReal;
 import frc.robot.subsystems.hopper.HopperIOSim;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
-import frc.robot.subsystems.intake.IntakeIOReal;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.shooter.*;
 import frc.robot.subsystems.usb_vision.*;
@@ -80,7 +79,7 @@ public class RobotContainer {
       case REAL: // Real robot, instantiate hardware IO implementations
         drive = new Drive(new DriveModules(true), new GyroIOPigeon2(), controller);
         elevator = new Elevator(new ElevatorIO() {});
-        intake = new Intake(new IntakeIOReal() {});
+        intake = new Intake(new IntakeIO() {});
         shooter = new Shooter(new ShooterIOReal() {});
         hopper = new Hopper(new HopperIOReal() {});
         vision = new USBVision(new USBVisionIO() {}, drive::addVisionMeasurement);

@@ -125,7 +125,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setBackVel(Units.RPM.of(intakeBackVelRPM.get()));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
         hopper.setVel(Units.RPM.of(0));
-        shooter.setVel(getOptimalShooterVel());
+        shooter.setVel(Units.RPM.of(shooterVelRPM.get()));
         break;
       case Score:
         elevator.setHeight(Units.Inches.of(stowElevatorHeightInches.get()));
@@ -134,7 +134,7 @@ public class SuperStructure extends SubsystemBase {
         intake.setBackVel(Units.RPM.of(intakeBackVelRPM.get()));
         intake.setExtenderPos(IntakeConstants.Extender.MAX_LENGTH);
         hopper.setVel(Units.RPM.of(hopperVelRPM.get()));
-        shooter.setVel(getOptimalShooterVel());
+        shooter.setVel(Units.RPM.of(shooterVelRPM.get()));
         break;
       case ClimbPrep:
         elevator.setHeight(Units.Inches.of(climbPrepElevatorHeightInches.get()));
